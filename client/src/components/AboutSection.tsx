@@ -29,35 +29,34 @@ function Feature({ icon, title, description, color, delay = 0 }: FeatureProps) {
 export default function AboutSection() {
   return (
     <section id="about" className="py-24 bg-white relative overflow-hidden">
-      {/* <div>
-        <RoundedTriangle
-          className="absolute left-48"
-          width="w-36"
-          height="h-36"
-          color="var(--color-red)"
-          rotate="-rotate-12"
-          animateClass="animate-floating"
-          shadow
-        />
+      <RoundedTriangle
+        className="absolute left-48 top-10"
+        width="w-36"
+        height="h-36"
+        color="var(--color-red)"
+        rotate="-rotate-12"
+        animateClass="animate-floating"
+        shadow
+      />
 
-        <RoundedSquare
-          className="absolute right-0 top-48"
-          width="w-36"
-          height="h-36"
-          rotate="rotate-12"
-          animateClass="animate-floating"
-          shadow
-        />
+      <RoundedSquare
+        className="absolute right-0 top-48"
+        width="w-36"
+        height="h-36"
+        color="var(--color-yellow)"
+        rotate="rotate-12"
+        animateClass="animate-floating"
+        shadow
+      />
 
-        <RoundedCircle
-          className="absolute bottom-1/4 left-10"
-          width="w-24"
-          height="h-24"
-          color="var(--color-blue)"
-          animateClass="animate-floating-delayed"
-          shadow
-        />
-      </div> */}
+      <RoundedCircle
+        className="absolute bottom-1/4 left-10"
+        width="w-24"
+        height="h-24"
+        color="var(--color-blue)"
+        animateClass="animate-floating-delayed"
+        shadow
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">

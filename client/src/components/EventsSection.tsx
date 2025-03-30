@@ -64,34 +64,35 @@ function EventCard({
 export default function EventsSection() {
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
-      {/* <div className="">
-        <RoundedTriangle
-          className="left-20 top-1/4"
-          width="w-36"
-          height="h-36"
-          rotate="rotate-45"
-          animateClass="animate-floating"
-          shadow
-        />
+      <RoundedTriangle
+        className="absolute left-20 top-1/4"
+        width="w-36"
+        height="h-36"
+        color="var(--color-red)"
+        rotate="rotate-45"
+        animateClass="animate-floating"
+        shadow
+      />
 
-        <RoundedSquare
-          className="right-16 top-20"
-          width="w-36"
-          height="h-36"
-          rotate="-rotate-12"
-          animateClass="animate-floating-delayed"
-          shadow
-        />
+      <RoundedSquare
+        className="absolute right-16 top-20"
+        width="w-36"
+        height="h-36"
+        color="var(--color-yellow)"
+        rotate="-rotate-12"
+        animateClass="animate-floating-delayed"
+        shadow
+      />
 
-        <RoundedCircle
-          className="left-1/3 top-10"
-          width="w-20"
-          height="h-20"
-          rotate="-rotate-12"
-          animateClass="animate-floating"
-          shadow
-        />
-      </div> */}
+      <RoundedCircle
+        className="absolute left-1/3 top-10"
+        width="w-20"
+        height="h-20"
+        color="var(--color-blue)"
+        rotate="-rotate-12"
+        animateClass="animate-floating"
+        shadow
+      />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">

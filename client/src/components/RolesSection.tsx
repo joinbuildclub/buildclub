@@ -86,27 +86,30 @@ export default function RolesSection() {
   return (
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
       <RoundedSquare
-        className="-left-12 top-48 sm:bottom-1/4"
+        className="absolute -left-12 top-48 sm:bottom-1/4"
         width="w-20 sm:w-36"
         height="h-20 sm:h-36"
+        color="var(--color-yellow)"
         rotate="-rotate-12"
         animateClass="animate-floating"
         shadow
       />
 
       <RoundedTriangle
-        className="sm:left-48 sm:top-10 top-0 -left-10"
+        className="absolute sm:left-48 sm:top-10 top-0 -left-10"
         width="w-36 sm:w-24"
         height="h-36 sm:h-24"
+        color="var(--color-red)"
         rotate="-rotate-45"
         animateClass="animate-floating-delayed"
         shadow
       />
 
       <RoundedCircle
-        className="right-4 sm:right-48 sm:top-10 top-4"
+        className="absolute right-4 sm:right-48 sm:top-10 top-4"
         width="w-24"
         height="h-24"
+        color="var(--color-blue)"
         rotate="-rotate-12"
         animateClass="animate-floating"
         shadow

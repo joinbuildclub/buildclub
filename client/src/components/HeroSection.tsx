@@ -1,10 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Hammer, Puzzle, Users } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import {
   RoundedTriangle,
   RoundedSquare,
   RoundedCircle,
 } from "@/components/shapes";
+import { 
+  SiOpenai, 
+  SiAnthropic, 
+  SiGoogle, 
+  SiMeta, 
+  SiAmazon, 
+  SiHuggingface, 
+  SiVercel, 
+  SiReplit 
+} from "react-icons/si";
 import logoPath from "../assets/logo.png";
 
 export default function HeroSection() {
@@ -85,30 +95,60 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Stats with clay-like cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="clay-card bg-[var(--color-red)] text-white text-center animate-floating group transition-all duration-500 hover:bg-[var(--color-red)]/90 cursor-pointer">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
-              <Users className="h-8 w-8 text-white" />
+        {/* Logo cloud section */}
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-block mb-6">
+              <div className="clay-shape bg-gray-700 px-5 py-2">
+                <span className="text-xl font-bold text-white flex items-center">
+                  <Sparkles className="w-5 h-5 mr-2" /> Build with leading AI technologies
+                </span>
+              </div>
             </div>
-            <p className="text-4xl font-bold">350+</p>
-            <p className="mt-2 font-medium">Community members</p>
           </div>
-
-          <div className="clay-card bg-[var(--color-yellow)] text-white text-center animate-floating-delayed group transition-all duration-500 hover:bg-[var(--color-yellow)]/90 cursor-pointer">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
-              <Puzzle className="h-8 w-8 text-white" />
+          
+          <div className="clay-card bg-white border border-gray-200 p-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 items-center justify-items-center">
+              <div className="flex flex-col items-center justify-center group">
+                <SiOpenai className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">OpenAI</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiAnthropic className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Anthropic</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiGoogle className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Google</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiMeta className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Meta</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiAmazon className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">AWS</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiHuggingface className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Hugging Face</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiVercel className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Vercel</span>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center group">
+                <SiReplit className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Replit</span>
+              </div>
             </div>
-            <p className="text-4xl font-bold">45+</p>
-            <p className="mt-2 font-medium">Meetups hosted</p>
-          </div>
-
-          <div className="clay-card bg-[var(--color-blue)] text-white text-center animate-floating group transition-all duration-500 hover:bg-[var(--color-blue)]/90 cursor-pointer">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
-              <Hammer className="h-8 w-8 text-white" />
-            </div>
-            <p className="text-4xl font-bold">28</p>
-            <p className="mt-2 font-medium">Projects launched</p>
           </div>
         </div>
       </div>
