@@ -18,7 +18,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Users, Square, Circle, Triangle, Twitter } from "lucide-react";
+import {
+  ArrowRight,
+  Users,
+  Square,
+  Circle,
+  Triangle,
+  Twitter,
+} from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
@@ -28,7 +35,9 @@ const formSchema = insertWaitlistSchema.extend({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  interestAreas: z.array(z.string()).min(1, "Please select at least one interest area"),
+  interestAreas: z
+    .array(z.string())
+    .min(1, "Please select at least one interest area"),
   aiInterests: z.string().optional(),
 });
 
@@ -58,7 +67,7 @@ export default function JoinSection() {
       toast({
         title: "Success!",
         description:
-          "You've been added to our waitlist. We'll be in touch soon!",
+          "You've joined the club! Check your email for next steps...",
         variant: "default",
       });
       setFormSuccess(true);
@@ -139,7 +148,12 @@ export default function JoinSection() {
                   soon about upcoming events and activities.
                 </p>
                 <Button
-                  onClick={() => window.open("https://twitter.com/intent/tweet?text=I%20just%20joined%20the%20BuildClub%20community%20of%20AI%20builders!%20%23BuildClub%20%23AIBuilders", "_blank")}
+                  onClick={() =>
+                    window.open(
+                      "https://twitter.com/intent/tweet?text=I%20just%20joined%20the%20club!%20If%20you're%20an%20AI%20builder%2C%20check%20out%20%40joinbuildclub",
+                      "_blank",
+                    )
+                  }
                   className="clay-button bg-[var(--color-yellow)] text-white font-bold border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90"
                 >
                   Share on Twitter <Twitter className="ml-2 h-4 w-4" />
