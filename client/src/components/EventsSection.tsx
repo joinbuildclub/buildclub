@@ -77,7 +77,7 @@ function EventCard({
   const month = dateParts[0];
 
   return (
-    <div className="event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1">
+    <div className={`event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? 'hackathon-event' : ''}`}>
       <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-row">
         {/* Left side with date and decorative element */}
         <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
@@ -86,14 +86,6 @@ function EventCard({
             <div className="text-sm font-medium text-gray-500 uppercase">
               {month}
             </div>
-          </div>
-          
-          {/* Icon representing the event type */}
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-            focuses.includes("product") ? "bg-red-100" : 
-            focuses.includes("design") ? "bg-blue-100" : "bg-yellow-100"
-          }`}>
-            <Icon className="w-6 h-6 text-gray-700" />
           </div>
         </div>
 
@@ -236,6 +228,7 @@ export default function EventsSection() {
               description={event.description}
               location={event.location}
               focuses={event.focuses}
+              isHackathon={event.isHackathon}
             />
           ))}
         </div>

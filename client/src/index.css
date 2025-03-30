@@ -90,3 +90,46 @@
 .animate-floating-delayed {
   animation: floating 6s ease-in-out 1s infinite;
 }
+
+/* Hackathon gradient border animation */
+.hackathon-event {
+  position: relative;
+}
+
+.hackathon-event::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(
+    45deg,
+    var(--color-red),
+    var(--color-blue),
+    var(--color-yellow),
+    var(--color-red)
+  );
+  border-radius: 14px;
+  z-index: -1;
+  background-size: 400% 400%;
+  animation: gradient-border 6s linear infinite;
+}
+
+@keyframes gradient-border {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
