@@ -15,11 +15,29 @@ export default function HeroSection() {
 
   return (
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
-      {/* Clay-like decorative shapes */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rounded-3xl rotate-12 animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md -rotate-12 animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] rounded-3xl animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      {/* Clay-like decorative shapes - mapped to roles */}
+      {/* Red Triangle (Product) */}
+      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rotate-12 animate-floating" 
+           style={{ 
+             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
+           }}>
+      </div>
+      {/* Blue Circle (Design) */}
+      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
+           style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}>
+      </div>
+      {/* Yellow Square (Engineering) */}
+      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md -rotate-12 animate-floating" 
+           style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
+      </div>
+      {/* Red Triangle (Product - smaller) */}
+      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-floating-delayed" 
+           style={{ 
+             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' 
+           }}>
+      </div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">

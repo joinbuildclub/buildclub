@@ -75,9 +75,22 @@ function RoleSection({
 export default function RolesSection() {
   return (
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
-      {/* Clay-like decorative shapes */}
-      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] rounded-full rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-10 bottom-20 w-20 h-20 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}></div>
+      {/* Clay-like decorative shapes - matched to their roles */}
+      {/* Red Triangle (Product) */}
+      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] animate-floating" 
+           style={{ 
+             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
+           }}>
+      </div>
+      {/* Blue Circle (Design) */}
+      <div className="absolute right-10 bottom-20 w-28 h-28 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
+           style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}>
+      </div>
+      {/* Yellow Square (Engineering) */}
+      <div className="absolute right-1/4 top-40 w-24 h-24 bg-[var(--color-yellow)] rounded-md rotate-12 animate-floating" 
+           style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
+      </div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">
