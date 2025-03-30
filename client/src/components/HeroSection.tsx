@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Hammer, Puzzle, Users } from "lucide-react";
+import { RoundedTriangle, RoundedSquare, RoundedCircle } from '@/components/shapes';
 
 export default function HeroSection() {
   const handleNavigation = (href: string) => {
@@ -17,53 +18,46 @@ export default function HeroSection() {
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
       {/* Clay-like decorative shapes - mapped to roles */}
       {/* Red Triangle (Product) */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 rotate-12 animate-floating overflow-hidden" 
-           style={{ 
-             filter: 'url(#round-triangle)',
-             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)'
-           }}>
-           <svg width="0" height="0" className="absolute">
-             <defs>
-               <filter id="round-triangle">
-                 <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-                 <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-                 <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-               </filter>
-             </defs>
-           </svg>
-           <div 
-             className="w-full h-full bg-[var(--color-red)]" 
-             style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-           ></div>
-      </div>
+      <RoundedTriangle 
+        className="absolute -left-20 top-1/4" 
+        width="w-40" 
+        height="h-40" 
+        color="var(--color-red)"
+        rotate="rotate-12" 
+        animateClass="animate-floating" 
+        shadow
+      />
+      
       {/* Blue Circle (Design) */}
-      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
-           style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
+      <RoundedCircle 
+        className="absolute -right-16 top-1/3" 
+        width="w-32" 
+        height="h-32"
+        color="var(--color-blue)"
+        animateClass="animate-floating-delayed"
+        shadow
+      />
+      
       {/* Yellow Square (Engineering) */}
-      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md -rotate-12 animate-floating" 
-           style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
+      <RoundedSquare 
+        className="absolute left-1/4 bottom-20"
+        width="w-24"
+        height="h-24"
+        color="var(--color-yellow)"
+        rotate="-rotate-12" 
+        animateClass="animate-floating"
+        shadow
+      />
+      
       {/* Red Triangle (Product - smaller) */}
-      <div className="absolute right-1/3 top-20 w-20 h-20 rotate-0 animate-floating-delayed overflow-hidden" 
-           style={{ 
-             filter: 'url(#round-triangle-small)',
-             boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)'
-           }}>
-           <svg width="0" height="0" className="absolute">
-             <defs>
-               <filter id="round-triangle-small">
-                 <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-                 <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-                 <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-               </filter>
-             </defs>
-           </svg>
-           <div 
-             className="w-full h-full bg-[var(--color-red)]" 
-             style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-           ></div>
-      </div>
+      <RoundedTriangle 
+        className="absolute right-1/3 top-20" 
+        width="w-20" 
+        height="h-20"
+        color="var(--color-red)"
+        animateClass="animate-floating-delayed"
+        shadow
+      />
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
