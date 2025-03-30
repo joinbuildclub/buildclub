@@ -14,19 +14,29 @@ interface FeatureProps {
 function Feature({ icon, title, description, color, delay = 0 }: FeatureProps) {
   return (
     <div
-      className="bg-white rounded-3xl p-8 shadow-lg relative group overflow-hidden transform transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+      className="bg-white rounded-2xl shadow-lg relative group overflow-hidden transform transition-all duration-500 hover:-translate-y-2 cursor-pointer flex flex-col h-full"
       style={{ 
-        transitionDelay: `${delay}ms`,
-        borderLeft: `8px solid ${color === 'bg-[var(--color-red)]' ? 'var(--color-red)' : 
-                              color === 'bg-[var(--color-blue)]' ? 'var(--color-blue)' : 
-                              'var(--color-yellow)'}` 
+        transitionDelay: `${delay}ms`
       }}
     >
-      <div className={`${color} rounded-2xl w-16 h-16 mb-6 flex items-center justify-center transition-all duration-500 shadow-md`}>
-        {icon}
+      <div 
+        className={`${color} h-24 w-full flex items-center justify-center relative overflow-hidden`}
+        style={{
+          borderRadius: '0.75rem 0.75rem 0 0'
+        }}
+      >
+        <div className="absolute inset-0 bg-white/10"></div>
+        <div className="bg-white/90 rounded-full p-4 shadow-lg transform -translate-y-1/4">
+          <div className="text-gray-800">
+            {icon}
+          </div>
+        </div>
       </div>
-      <h3 className="text-2xl font-bold mb-3 text-gray-800">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      
+      <div className="p-8 flex-1 flex flex-col">
+        <h3 className="text-2xl font-bold mb-3 text-gray-800">{title}</h3>
+        <p className="text-gray-600 flex-grow">{description}</p>
+      </div>
     </div>
   );
 }
@@ -83,14 +93,14 @@ export default function AboutSection() {
 
         <div className="grid md:grid-cols-3 gap-8">
           <Feature
-            icon={<Users className="w-8 h-8 text-white" />}
+            icon={<Users className="w-8 h-8 text-gray-800" />}
             title="In-Person Collaboration"
             description="We believe in the creative power of being physically together. Our meetups and hackathons focus on face-to-face collaboration in shared spaces."
             color="bg-[var(--color-red)]"
           />
 
           <Feature
-            icon={<Zap className="w-8 h-8 text-white" />}
+            icon={<Zap className="w-8 h-8 text-gray-800" />}
             title="Learning by Building"
             description="We learn through hands-on creation rather than just discussion. Our community values experimental prototyping and practical problem-solving."
             color="bg-[var(--color-blue)]"
@@ -98,7 +108,7 @@ export default function AboutSection() {
           />
 
           <Feature
-            icon={<Cpu className="w-8 h-8 text-white" />}
+            icon={<Cpu className="w-8 h-8 text-gray-800" />}
             title="Diverse Perspectives"
             description="Our strength comes from our mix of backgrounds. We bring together product thinkers, designers, and engineers to create more thoughtful AI solutions."
             color="bg-[var(--color-yellow)]"
