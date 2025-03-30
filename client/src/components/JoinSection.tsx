@@ -112,7 +112,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-medium mb-2">First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your first name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
+                            <Input placeholder="Your first name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all focus:bg-white bg-white focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -125,7 +125,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-medium mb-2">Last Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your last name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
+                            <Input placeholder="Your last name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all focus:bg-white bg-white focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -140,7 +140,7 @@ export default function JoinSection() {
                       <FormItem>
                         <FormLabel className="text-gray-700 font-medium mb-2">Email Address</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="you@example.com" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
+                          <Input type="email" placeholder="you@example.com" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all focus:bg-white bg-white focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -158,7 +158,7 @@ export default function JoinSection() {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all h-auto">
+                            <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all h-auto focus:bg-white bg-white focus-visible:ring-0 focus-visible:ring-offset-0">
                               <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                           </FormControl>
@@ -184,7 +184,7 @@ export default function JoinSection() {
                           <Textarea 
                             placeholder="Tell us a bit about your interests..." 
                             rows={3} 
-                            className="border-gray-200 focus:border-gray-400 focus:ring-0 px-4 py-3 rounded-lg transition-all resize-none"
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 px-4 py-3 rounded-lg transition-all resize-none focus:bg-white bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                             {...field} 
                           />
                         </FormControl>
