@@ -13,7 +13,8 @@ import {
   SiAmazon, 
   SiHuggingface, 
   SiVercel, 
-  SiReplit 
+  SiReplit,
+  SiStabilityai
 } from "react-icons/si";
 import logoPath from "../assets/logo.png";
 
