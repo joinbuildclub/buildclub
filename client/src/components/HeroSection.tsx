@@ -16,15 +16,15 @@ export default function HeroSection() {
   return (
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-green)] rounded-3xl rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-3xl -rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] rounded-full" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-green)] rounded-3xl rotate-12 animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-3xl -rotate-12 animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
-            Let's <span className="text-[var(--color-red)]">build</span> cool <span className="text-[var(--color-blue)]">AI stuff</span> together!
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-gray-800">
+            Where <span className="text-[var(--color-red)]">AI</span> builders meet <span className="text-[var(--color-blue)]">IRL</span>
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12">
             A fun community of product makers, designers, and engineers collaborating to build meaningful AI solutions in real life.
@@ -49,7 +49,7 @@ export default function HeroSection() {
         
         {/* Stats with clay-like cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="clay-card bg-[var(--color-red)] text-white text-center transform transition-transform hover:-translate-y-2">
+          <div className="clay-card bg-[var(--color-red)] text-white text-center animate-floating">
             <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Users className="h-8 w-8 text-white" />
             </div>
@@ -57,7 +57,7 @@ export default function HeroSection() {
             <p className="mt-2 font-medium">Community members</p>
           </div>
           
-          <div className="clay-card bg-[var(--color-green)] text-white text-center transform transition-transform hover:-translate-y-2">
+          <div className="clay-card bg-[var(--color-green)] text-white text-center animate-floating-delayed">
             <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Puzzle className="h-8 w-8 text-white" />
             </div>
@@ -65,7 +65,7 @@ export default function HeroSection() {
             <p className="mt-2 font-medium">Meetups hosted</p>
           </div>
           
-          <div className="clay-card bg-[var(--color-blue)] text-white text-center transform transition-transform hover:-translate-y-2">
+          <div className="clay-card bg-[var(--color-blue)] text-white text-center animate-floating">
             <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Hammer className="h-8 w-8 text-white" />
             </div>

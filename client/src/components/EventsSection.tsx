@@ -64,7 +64,7 @@ export default function EventsSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Join Our Upcoming <span className="text-[var(--color-green)]">Events</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Join Our Upcoming <span className="text-[var(--color-green)]">Events</span></h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             Come hang out with us in-person where we collaborate, learn, and build cool AI stuff together!
           </p>

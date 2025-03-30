@@ -39,7 +39,7 @@ export default function AboutSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">What is <span className="text-[var(--color-red)]">BuildClub</span>?</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">What is <span className="text-[var(--color-red)]">BuildClub</span>?</h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             We're a playful community of builders making AI come to life through collaboration and hands-on creation in real-world environments.
           </p>

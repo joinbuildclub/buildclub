@@ -88,7 +88,7 @@ export default function RolesSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Who builds at <span className="text-[var(--color-red)]">BuildClub</span>?</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Who builds at <span className="text-[var(--color-red)]">BuildClub</span>?</h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             Our diverse community brings together different skills and perspectives to create awesome AI solutions.
           </p>

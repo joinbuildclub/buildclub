@@ -95,7 +95,7 @@ export default function JoinSection() {
                 </span>
               </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Join the <span className="text-[var(--color-red)]">BuildClub</span> Community</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Join the <span className="text-[var(--color-red)]">BuildClub</span> Community</h2>
             <p className="text-xl text-gray-700 max-w-2xl mx-auto">
               Be part of our fun crew of builders creating cool AI stuff together! Sign up for our upcoming events.
             </p>
