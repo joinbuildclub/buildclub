@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, PartyPopper, ArrowRight, Clock } from "lucide-react";
+import { MapPin, Calendar, PartyPopper, ArrowRight, Clock, Briefcase, Palette, Code } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
+
+// Focus type for the different areas
+type Focus = "product" | "design" | "engineering";
 
 interface EventCardProps {
   date: string;
@@ -12,6 +15,36 @@ interface EventCardProps {
   imageSrc: string;
   color: string;
   index: number;
+  focuses: Focus[];
+}
+
+// Shape component for focus areas
+function FocusBadge({ focus }: { focus: Focus }) {
+  switch (focus) {
+    case "product":
+      return (
+        <div className="flex items-center gap-1.5 bg-red-50 text-red-600 py-1 px-2 rounded-md text-xs">
+          <div className="w-3 h-3 bg-[var(--color-red)] rounded-tl-md rounded-tr-md rounded-bl-md transform rotate-45"></div>
+          <span className="font-medium">Product</span>
+        </div>
+      );
+    case "design":
+      return (
+        <div className="flex items-center gap-1.5 bg-blue-50 text-blue-600 py-1 px-2 rounded-md text-xs">
+          <div className="w-3 h-3 bg-[var(--color-blue)] rounded-full"></div>
+          <span className="font-medium">Design</span>
+        </div>
+      );
+    case "engineering":
+      return (
+        <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-600 py-1 px-2 rounded-md text-xs">
+          <div className="w-3 h-3 bg-[var(--color-yellow)] rounded-md transform rotate-3"></div>
+          <span className="font-medium">Engineering</span>
+        </div>
+      );
+    default:
+      return null;
+  }
 }
 
 function EventCard({
@@ -22,46 +55,74 @@ function EventCard({
   imageSrc,
   color,
   index,
+  focuses,
 }: EventCardProps) {
-  // Determine shape for the event's decoration
-  const Shape = index % 3 === 0 
-    ? <div className="w-12 h-12 bg-[var(--color-red)] rounded-tl-xl rounded-tr-xl rounded-bl-xl rotate-45"></div>
-    : index % 3 === 1 
-    ? <div className="w-12 h-12 bg-[var(--color-blue)] rounded-full"></div>
-    : <div className="w-12 h-12 bg-[var(--color-yellow)] rounded-lg rotate-12"></div>;
-    
+  // Get icon based on primary focus
+  const Icon = focuses.includes("product") ? Briefcase : 
+               focuses.includes("design") ? Palette : 
+               focuses.includes("engineering") ? Code : 
+               Calendar;
+  
+  // Format the date components
+  const dateParts = date.split(" ");
+  const day = dateParts[1].replace(",", "");
+  const month = dateParts[0];
+
   return (
     <div className="event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1">
       <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-row">
         {/* Left side with date and decorative element */}
         <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
           <div className="mb-2 text-center">
-            <div className="text-2xl font-bold text-gray-800">{date.split(" ")[1].replace(",", "")}</div>
-            <div className="text-sm font-medium text-gray-500 uppercase">{date.split(" ")[0]}</div>
+            <div className="text-2xl font-bold text-gray-800">
+              {day}
+            </div>
+            <div className="text-sm font-medium text-gray-500 uppercase">
+              {month}
+            </div>
           </div>
-          <div className="opacity-80">{Shape}</div>
+          
+          {/* Icon in themed background */}
+          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${color === "var(--color-red)" ? "bg-red-100" : color === "var(--color-blue)" ? "bg-blue-100" : "bg-yellow-100"}`}>
+            <Icon className="w-6 h-6 text-gray-700" />
+          </div>
         </div>
-        
+
         {/* Main content */}
         <div className="flex-1 p-5">
-          <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">{title}</h3>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{description}</p>
+          <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">
+            {title}
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
+            {description}
+          </p>
           
+          {/* Focus area tags */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {focuses.map((focus, i) => (
+              <FocusBadge key={i} focus={focus} />
+            ))}
+          </div>
+
           {/* Event details */}
-          <div className="flex items-center text-gray-600 mb-3 text-sm">
+          <div className="flex items-center text-gray-600 mb-3 text-xs">
             <Clock className="w-4 h-4 mr-2 text-gray-400" />
             <span>{date}</span>
           </div>
-          
-          <div className="flex items-center text-gray-600 text-sm">
+
+          <div className="flex items-center text-gray-600 text-xs">
             <MapPin className="w-4 h-4 mr-2 text-gray-400" />
             <span>{location}</span>
           </div>
         </div>
-        
+
         {/* Right side with action button */}
         <div className="w-24 flex flex-col items-center justify-center p-3 bg-gray-50 border-l border-gray-100">
-          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-0 flex flex-col items-center gap-2 h-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-0 flex flex-col items-center gap-2 h-auto"
+          >
             <ArrowRight className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" />
             <span className="text-xs font-medium">Details</span>
           </Button>
@@ -72,6 +133,36 @@ function EventCard({
 }
 
 export default function EventsSection() {
+  const events = [
+    {
+      date: "Jun 15, 2023",
+      title: "AI Product Workshop",
+      description: "Learn how to identify and validate AI product opportunities with practical exercises and expert feedback.",
+      location: "San Francisco, CA",
+      imageSrc: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622",
+      color: "var(--color-red)",
+      focuses: ["product", "design"] as Focus[],
+    },
+    {
+      date: "Jul 8, 2023",
+      title: "AI Design Hackathon",
+      description: "A weekend-long event where designers tackle AI interface challenges and create innovative solutions.",
+      location: "New York, NY",
+      imageSrc: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+      color: "var(--color-blue)",
+      focuses: ["design", "engineering"] as Focus[],
+    },
+    {
+      date: "Jul 22, 2023",
+      title: "AI Engineering Summit",
+      description: "Deep dive into the latest AI engineering practices with hands-on workshops and technical discussions.",
+      location: "Austin, TX",
+      imageSrc: "https://images.unsplash.com/photo-1582192730841-2a682d7375f9",
+      color: "var(--color-yellow)",
+      focuses: ["engineering", "product"] as Focus[],
+    },
+  ];
+
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
       <RoundedTriangle
@@ -124,35 +215,19 @@ export default function EventsSection() {
         </div>
 
         <div className="flex flex-col space-y-5 max-w-4xl mx-auto">
-          <EventCard
-            date="Jun 15, 2023"
-            title="AI Product Workshop"
-            description="Learn how to identify and validate AI product opportunities with practical exercises and expert feedback."
-            location="San Francisco, CA"
-            imageSrc="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3269&q=80"
-            color="bg-[var(--color-red)]"
-            index={0}
-          />
-
-          <EventCard
-            date="Jul 8-9, 2023"
-            title="AI Design Hackathon"
-            description="A weekend-long event where designers tackle AI interface challenges and create innovative solutions."
-            location="New York, NY"
-            imageSrc="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80"
-            color="bg-[var(--color-blue)]"
-            index={1}
-          />
-
-          <EventCard
-            date="Jul 22, 2023"
-            title="AI Engineering Summit"
-            description="Deep dive into the latest AI engineering practices with hands-on workshops and technical discussions."
-            location="Austin, TX"
-            imageSrc="https://images.unsplash.com/photo-1582192730841-2a682d7375f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2574&q=80"
-            color="bg-[var(--color-yellow)]"
-            index={2}
-          />
+          {events.map((event, idx) => (
+            <EventCard
+              key={idx}
+              date={event.date}
+              title={event.title}
+              description={event.description}
+              location={event.location}
+              imageSrc={event.imageSrc}
+              color={event.color}
+              index={idx}
+              focuses={event.focuses}
+            />
+          ))}
         </div>
 
         <div className="mt-16 text-center">
