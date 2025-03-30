@@ -77,12 +77,24 @@ export default function RolesSection() {
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes - matched to their roles */}
       {/* Red Triangle (Product) */}
-      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] animate-floating" 
+      <div className="absolute -left-16 top-32 w-32 h-32 animate-floating overflow-hidden" 
            style={{ 
-             clipPath: 'polygon(50% 10%, 15% 85%, 85% 85%)',
-             borderRadius: '16px',
+             filter: 'url(#round-triangle-roles)',
              boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
            }}>
+        <svg width="0" height="0" className="absolute">
+          <defs>
+            <filter id="round-triangle-roles">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
+              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
+        <div 
+          className="w-full h-full bg-[var(--color-red)]" 
+          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
+        ></div>
       </div>
       {/* Blue Circle (Design) */}
       <div className="absolute right-10 bottom-20 w-28 h-28 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 

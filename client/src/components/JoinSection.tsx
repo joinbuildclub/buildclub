@@ -78,13 +78,26 @@ export default function JoinSection() {
       {/* Clay-like decorative shapes - mapped to roles */}
       {/* Red Triangle (Product) */}
       <div
-        className="absolute -left-10 bottom-10 w-28 h-28 bg-[var(--color-red)] animate-floating"
+        className="absolute -left-10 bottom-10 w-28 h-28 animate-floating overflow-hidden"
         style={{ 
-          clipPath: 'polygon(50% 10%, 15% 85%, 85% 85%)',
-          borderRadius: '15px',
+          filter: 'url(#round-triangle-join)',
           boxShadow: "0 10px 0 0 rgba(0,0,0,0.1)" 
         }}
-      ></div>
+      >
+        <svg width="0" height="0" className="absolute">
+          <defs>
+            <filter id="round-triangle-join">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
+              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
+        <div 
+          className="w-full h-full bg-[var(--color-red)]" 
+          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
+        ></div>
+      </div>
       {/* Yellow Square (Engineer) */}
       <div
         className="absolute right-20 top-40 w-32 h-32 bg-[var(--color-yellow)] rounded-md rotate-12 animate-floating-delayed"
@@ -235,14 +248,25 @@ export default function JoinSection() {
                                   }
                                 }}
                               >
-                                <Triangle
-                                  className={cn(
-                                    "w-10 h-10 transition-all duration-300",
-                                    field.value.includes("product")
-                                      ? "text-[var(--color-red)]"
-                                      : "text-gray-400",
-                                  )}
-                                />
+                                <div className="overflow-hidden rounded-lg" style={{ filter: 'url(#round-triangle-icon)' }}>
+                                  <svg width="0" height="0" className="absolute">
+                                    <defs>
+                                      <filter id="round-triangle-icon">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+                                        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
+                                        <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+                                      </filter>
+                                    </defs>
+                                  </svg>
+                                  <Triangle
+                                    className={cn(
+                                      "w-10 h-10 transition-all duration-300",
+                                      field.value.includes("product")
+                                        ? "text-[var(--color-red)]"
+                                        : "text-gray-400",
+                                    )}
+                                  />
+                                </div>
                               </div>
                               <span
                                 className={cn(

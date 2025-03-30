@@ -17,12 +17,24 @@ export default function HeroSection() {
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
       {/* Clay-like decorative shapes - mapped to roles */}
       {/* Red Triangle (Product) */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rotate-12 animate-floating" 
+      <div className="absolute -left-20 top-1/4 w-40 h-40 rotate-12 animate-floating overflow-hidden" 
            style={{ 
-             clipPath: 'polygon(50% 10%, 15% 85%, 85% 85%)',
-             borderRadius: '20px',
-             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
+             filter: 'url(#round-triangle)',
+             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)'
            }}>
+           <svg width="0" height="0" className="absolute">
+             <defs>
+               <filter id="round-triangle">
+                 <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+                 <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
+                 <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+               </filter>
+             </defs>
+           </svg>
+           <div 
+             className="w-full h-full bg-[var(--color-red)]" 
+             style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
+           ></div>
       </div>
       {/* Blue Circle (Design) */}
       <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
@@ -33,12 +45,24 @@ export default function HeroSection() {
            style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
       </div>
       {/* Red Triangle (Product - smaller) */}
-      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-floating-delayed" 
+      <div className="absolute right-1/3 top-20 w-20 h-20 rotate-0 animate-floating-delayed overflow-hidden" 
            style={{ 
-             clipPath: 'polygon(50% 10%, 15% 85%, 85% 85%)',
-             borderRadius: '15px',
-             boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' 
+             filter: 'url(#round-triangle-small)',
+             boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)'
            }}>
+           <svg width="0" height="0" className="absolute">
+             <defs>
+               <filter id="round-triangle-small">
+                 <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+                 <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
+                 <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+               </filter>
+             </defs>
+           </svg>
+           <div 
+             className="w-full h-full bg-[var(--color-red)]" 
+             style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
+           ></div>
       </div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
