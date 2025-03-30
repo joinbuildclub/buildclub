@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { insertWaitlistSchema } from "@shared/schema";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -16,15 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Users } from "lucide-react";
+import { ArrowRight, Users, Square, Circle, Triangle } from "lucide-react";
 
 // Extend the schema with validation rules
 const formSchema = insertWaitlistSchema.extend({
@@ -165,22 +159,108 @@ export default function JoinSection() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-gray-700 font-bold mb-2">Your Role</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-gray-300 py-6 px-4 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm h-auto">
-                              <SelectValue placeholder="Select your role" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="product">Product Manager</SelectItem>
-                            <SelectItem value="design">Designer</SelectItem>
-                            <SelectItem value="engineering">Engineer</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <div className="grid grid-cols-3 gap-4">
+                            {/* Product Manager - Circle */}
+                            <div 
+                              className={cn(
+                                "clay-shape flex flex-col items-center justify-center py-6 px-4 cursor-pointer transition-all duration-300 group hover:scale-105",
+                                field.value === "product" 
+                                  ? "bg-[var(--color-red)] shadow-md" 
+                                  : "bg-gray-100 hover:bg-gray-200"
+                              )}
+                              onClick={() => field.onChange("product")}
+                            >
+                              <div className={cn(
+                                "rounded-full w-16 h-16 flex items-center justify-center mb-3 transition-all duration-300",
+                                field.value === "product" 
+                                  ? "bg-white/20" 
+                                  : "bg-[var(--color-red)]/10 group-hover:bg-[var(--color-red)]/20"
+                              )}>
+                                <Circle className={cn(
+                                  "w-8 h-8 transition-all duration-300",
+                                  field.value === "product" ? "text-white" : "text-[var(--color-red)]"
+                                )} />
+                              </div>
+                              <span className={cn(
+                                "font-bold text-center transition-all duration-300",
+                                field.value === "product" ? "text-white" : "text-gray-800"
+                              )}>Product</span>
+                              <p className={cn(
+                                "text-xs text-center mt-1 transition-all duration-300",
+                                field.value === "product" ? "text-white/90" : "text-gray-600"
+                              )}>
+                                Bringing people together
+                              </p>
+                            </div>
+                            
+                            {/* Designer - Square */}
+                            <div 
+                              className={cn(
+                                "clay-shape flex flex-col items-center justify-center py-6 px-4 cursor-pointer transition-all duration-300 group hover:scale-105",
+                                field.value === "design" 
+                                  ? "bg-[var(--color-green)] shadow-md" 
+                                  : "bg-gray-100 hover:bg-gray-200"
+                              )}
+                              onClick={() => field.onChange("design")}
+                            >
+                              <div className={cn(
+                                "rounded-md w-16 h-16 flex items-center justify-center mb-3 transition-all duration-300",
+                                field.value === "design" 
+                                  ? "bg-white/20" 
+                                  : "bg-[var(--color-green)]/10 group-hover:bg-[var(--color-green)]/20"
+                              )}>
+                                <Square className={cn(
+                                  "w-8 h-8 transition-all duration-300",
+                                  field.value === "design" ? "text-white" : "text-[var(--color-green)]"
+                                )} />
+                              </div>
+                              <span className={cn(
+                                "font-bold text-center transition-all duration-300",
+                                field.value === "design" ? "text-white" : "text-gray-800"
+                              )}>Designer</span>
+                              <p className={cn(
+                                "text-xs text-center mt-1 transition-all duration-300",
+                                field.value === "design" ? "text-white/90" : "text-gray-600"
+                              )}>
+                                Creating structured layouts
+                              </p>
+                            </div>
+                            
+                            {/* Engineer - Triangle */}
+                            <div 
+                              className={cn(
+                                "clay-shape flex flex-col items-center justify-center py-6 px-4 cursor-pointer transition-all duration-300 group hover:scale-105",
+                                field.value === "engineering" 
+                                  ? "bg-[var(--color-blue)] shadow-md" 
+                                  : "bg-gray-100 hover:bg-gray-200"
+                              )}
+                              onClick={() => field.onChange("engineering")}
+                            >
+                              <div className={cn(
+                                "rounded-md w-16 h-16 flex items-center justify-center mb-3 transition-all duration-300",
+                                field.value === "engineering" 
+                                  ? "bg-white/20" 
+                                  : "bg-[var(--color-blue)]/10 group-hover:bg-[var(--color-blue)]/20"
+                              )}>
+                                <Triangle className={cn(
+                                  "w-8 h-8 transition-all duration-300",
+                                  field.value === "engineering" ? "text-white" : "text-[var(--color-blue)]"
+                                )} />
+                              </div>
+                              <span className={cn(
+                                "font-bold text-center transition-all duration-300",
+                                field.value === "engineering" ? "text-white" : "text-gray-800"
+                              )}>Engineer</span>
+                              <p className={cn(
+                                "text-xs text-center mt-1 transition-all duration-300",
+                                field.value === "engineering" ? "text-white/90" : "text-gray-600"
+                              )}>
+                                Building the structure
+                              </p>
+                            </div>
+                          </div>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

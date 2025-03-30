@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetTrigger 
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  
+
   const handleNavigation = (href: string) => {
     setOpen(false);
     // Smooth scroll to section
@@ -17,7 +13,7 @@ export default function Navbar() {
     if (element) {
       window.scrollTo({
         top: element.getBoundingClientRect().top + window.scrollY - 80,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -27,27 +23,41 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <span className="font-bold text-xl text-gray-900">Build<span className="text-primary">Club</span></span>
+            <span className="font-bold text-xl text-gray-900">
+              Build<span className="text-primary">Club</span>
+            </span>
           </div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-8">
-              <button onClick={() => handleNavigation('#about')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
+              <button
+                onClick={() => handleNavigation("#about")}
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              >
                 About
               </button>
-              <button onClick={() => handleNavigation('#roles')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
+              <button
+                onClick={() => handleNavigation("#roles")}
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              >
                 Roles
               </button>
-              <button onClick={() => handleNavigation('#events')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
+              <button
+                onClick={() => handleNavigation("#events")}
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              >
                 Events
               </button>
-              <Button onClick={() => handleNavigation('#join')} className="bg-primary hover:bg-primary/90 text-white">
+              <Button
+                onClick={() => handleNavigation("#join")}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
                 Join Waitlist
               </Button>
             </div>
           </div>
-          
+
           {/* Mobile Navigation */}
           <div className="md:hidden">
             <Sheet open={open} onOpenChange={setOpen}>
@@ -59,29 +69,29 @@ export default function Navbar() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[80%] sm:w-[385px]">
                 <div className="flex flex-col gap-6 pt-6">
-                  <button 
-                    onClick={() => handleNavigation('#about')} 
+                  <button
+                    onClick={() => handleNavigation("#about")}
                     className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     About
                   </button>
-                  <button 
-                    onClick={() => handleNavigation('#roles')} 
+                  <button
+                    onClick={() => handleNavigation("#roles")}
                     className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     Roles
                   </button>
-                  <button 
-                    onClick={() => handleNavigation('#events')} 
+                  <button
+                    onClick={() => handleNavigation("#events")}
                     className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     Events
                   </button>
-                  <Button 
-                    onClick={() => handleNavigation('#join')} 
+                  <Button
+                    onClick={() => handleNavigation("#join")}
                     className="bg-primary hover:bg-primary/90 text-white w-full"
                   >
-                    Join Waitlist
+                    Join the club
                   </Button>
                 </div>
               </SheetContent>
