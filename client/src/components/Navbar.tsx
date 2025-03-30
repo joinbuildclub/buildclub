@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
   Sheet, 
@@ -24,26 +23,26 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full bg-background/80 backdrop-blur-md z-50 border-b border-border/40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="fixed w-full bg-white z-50 border-b border-gray-200">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <span className="font-sans font-bold text-2xl text-foreground">Build<span className="text-primary">Club</span></span>
+            <span className="font-bold text-xl text-gray-900">Build<span className="text-primary">Club</span></span>
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-8">
-              <button onClick={() => handleNavigation('#about')} className="text-foreground hover:text-primary text-sm font-medium transition-colors">
+              <button onClick={() => handleNavigation('#about')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
                 About
               </button>
-              <button onClick={() => handleNavigation('#roles')} className="text-foreground hover:text-primary text-sm font-medium transition-colors">
+              <button onClick={() => handleNavigation('#roles')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
                 Roles
               </button>
-              <button onClick={() => handleNavigation('#events')} className="text-foreground hover:text-primary text-sm font-medium transition-colors">
+              <button onClick={() => handleNavigation('#events')} className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
                 Events
               </button>
-              <Button onClick={() => handleNavigation('#join')} className="bg-primary hover:bg-primary/90 text-white rounded-full">
+              <Button onClick={() => handleNavigation('#join')} className="bg-primary hover:bg-primary/90 text-white">
                 Join Waitlist
               </Button>
             </div>
@@ -62,25 +61,25 @@ export default function Navbar() {
                 <div className="flex flex-col gap-6 pt-6">
                   <button 
                     onClick={() => handleNavigation('#about')} 
-                    className="text-left px-2 py-2 text-foreground hover:text-primary text-lg font-medium transition-colors"
+                    className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     About
                   </button>
                   <button 
                     onClick={() => handleNavigation('#roles')} 
-                    className="text-left px-2 py-2 text-foreground hover:text-primary text-lg font-medium transition-colors"
+                    className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     Roles
                   </button>
                   <button 
                     onClick={() => handleNavigation('#events')} 
-                    className="text-left px-2 py-2 text-foreground hover:text-primary text-lg font-medium transition-colors"
+                    className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     Events
                   </button>
                   <Button 
                     onClick={() => handleNavigation('#join')} 
-                    className="bg-primary hover:bg-primary/90 text-white rounded-full w-full"
+                    className="bg-primary hover:bg-primary/90 text-white w-full"
                   >
                     Join Waitlist
                   </Button>
