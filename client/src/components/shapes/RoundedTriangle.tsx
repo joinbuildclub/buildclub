@@ -27,7 +27,8 @@ export default function RoundedTriangle({
       className={`${className} ${width} ${height} ${rotate} ${animateClass} overflow-hidden`}
       style={{ 
         filter: `url(#${filterId})`,
-        boxShadow: shadow ? '0 10px 0 0 rgba(0,0,0,0.1)' : 'none'
+        boxShadow: shadow ? '0 8px 0 0 rgba(200,200,200,0.8)' : 'none',
+        position: 'relative'
       }}
     >
       <svg width="0" height="0" className="absolute">
@@ -48,7 +49,7 @@ export default function RoundedTriangle({
         className="w-full h-full" 
         style={{ 
           backgroundColor: color,
-          clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)'
+          clipPath: 'polygon(50% 0%, 0% 86.6%, 100% 86.6%)'
         }}
       />
     </div>
