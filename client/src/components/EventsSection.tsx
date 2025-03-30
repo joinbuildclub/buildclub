@@ -43,10 +43,10 @@ function EventCard({ date, title, description, location, imageSrc, color }: Even
 
 export default function EventsSection() {
   return (
-    <section id="events" className="py-20 bg-gradient-to-br from-primary/5 to-[#7928CA]/5">
+    <section id="events" className="py-20 bg-white bg-gradient-to-tr from-white via-purple-50/30 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6">Upcoming <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">Events</span></h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 font-heading">Upcoming <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">Events</span></h2>
           <p className="text-lg text-muted-foreground">Join us for in-person gatherings where we collaborate, learn, and build together.</p>
         </div>
         

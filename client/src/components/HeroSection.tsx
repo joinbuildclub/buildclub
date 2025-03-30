@@ -14,10 +14,10 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-gray-50">
+    <section className="relative pt-32 pb-24 overflow-hidden bg-white bg-gradient-to-b from-white via-purple-50/30 to-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight font-heading">
             Where <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">AI builders</span> meet IRL
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">

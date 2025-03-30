@@ -79,11 +79,11 @@ export default function JoinSection() {
   }
 
   return (
-    <section id="join" className="py-24 bg-gray-50">
+    <section id="join" className="py-24 bg-white bg-gradient-to-br from-white via-purple-50/30 to-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-3xl font-bold mb-6 text-gray-900">Join the <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span> Community</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-900 font-heading">Join the <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span> Community</h2>
             <p className="text-xl text-gray-600">
               Be part of a passionate group of builders creating the future of AI together. Apply to join our waitlist for upcoming events and activities.
             </p>

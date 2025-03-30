@@ -20,10 +20,10 @@ function Feature({ icon, title, description }: FeatureProps) {
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="py-24 bg-white bg-gradient-to-tl from-white via-purple-50/20 to-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">What is <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span>?</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900 font-heading">What is <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span>?</h2>
           <p className="text-xl text-gray-600 max-w-3xl">
             We're a community of builders focused on bringing AI innovations from concepts to reality through collaboration and hands-on creation in real-life environments.
           </p>
