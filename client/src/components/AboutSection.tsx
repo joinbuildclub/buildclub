@@ -25,10 +25,10 @@ function FeatureCard({ icon, title, description, iconBgColor, iconColor }: Featu
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-primary/5 to-[#EC4899]/5">
+    <section id="about" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6">What is <span className="bg-gradient-to-r from-primary to-[#EC4899] text-transparent bg-clip-text">BuildClub</span>?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">What is <span className="bg-gradient-to-r from-primary to-[#EC4899] text-transparent bg-clip-text">BuildClub</span>?</h2>
           <p className="text-lg text-muted-foreground">We're a community of builders focused on bringing AI innovations from concepts to reality through collaboration and hands-on creation.</p>
         </div>
         
