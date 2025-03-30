@@ -17,9 +17,9 @@ export default function HeroSection() {
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
       {/* Clay-like decorative shapes - mapped to roles */}
       {/* Red Triangle (Product) */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rotate-12 animate-floating" 
+      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rotate-12 animate-floating rounded-3xl" 
            style={{ 
-             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             clipPath: 'polygon(50% 10%, 10% 90%, 90% 90%)',
              boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
            }}>
       </div>
@@ -32,9 +32,9 @@ export default function HeroSection() {
            style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
       </div>
       {/* Red Triangle (Product - smaller) */}
-      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-floating-delayed" 
+      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-floating-delayed rounded-2xl" 
            style={{ 
-             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             clipPath: 'polygon(50% 10%, 10% 90%, 90% 90%)',
              boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' 
            }}>
       </div>

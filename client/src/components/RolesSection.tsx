@@ -77,9 +77,9 @@ export default function RolesSection() {
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes - matched to their roles */}
       {/* Red Triangle (Product) */}
-      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] animate-floating" 
+      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] animate-floating rounded-3xl" 
            style={{ 
-             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+             clipPath: 'polygon(50% 10%, 10% 90%, 90% 90%)',
              boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
            }}>
       </div>

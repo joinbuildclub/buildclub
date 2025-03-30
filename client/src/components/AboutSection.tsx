@@ -39,9 +39,9 @@ export default function AboutSection() {
       ></div>
       {/* Red Triangle (Product) */}
       <div
-        className="absolute left-1/3 top-32 w-28 h-28 bg-[var(--color-red)] animate-floating"
+        className="absolute left-1/3 top-32 w-28 h-28 bg-[var(--color-red)] animate-floating rounded-2xl"
         style={{ 
-          clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+          clipPath: 'polygon(50% 10%, 10% 90%, 90% 90%)',
           boxShadow: "0 8px 0 0 rgba(0,0,0,0.1)" 
         }}
       ></div>
