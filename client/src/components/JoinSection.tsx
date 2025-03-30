@@ -59,6 +59,7 @@ export default function JoinSection() {
         title: "Success!",
         description:
           "You've been added to our waitlist. We'll be in touch soon!",
+        variant: "default",
       });
       setFormSuccess(true);
       form.reset();
