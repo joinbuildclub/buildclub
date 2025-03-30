@@ -23,80 +23,48 @@ function EventCard({
   color,
   index,
 }: EventCardProps) {
-  // Create shape component based on the index
-  const ShapeComponent = 
-    index % 3 === 0 ? RoundedTriangle : 
-    index % 3 === 1 ? RoundedCircle : 
-    RoundedSquare;
-
-  // Get color variable based on the color class
-  const colorVar = 
-    color === "bg-[var(--color-red)]" ? "var(--color-red)" : 
-    color === "bg-[var(--color-blue)]" ? "var(--color-blue)" : 
-    "var(--color-yellow)";
+  // Determine shape for the event's decoration
+  const Shape = index % 3 === 0 
+    ? <div className="w-12 h-12 bg-[var(--color-red)] rounded-tl-xl rounded-tr-xl rounded-bl-xl rotate-45"></div>
+    : index % 3 === 1 
+    ? <div className="w-12 h-12 bg-[var(--color-blue)] rounded-full"></div>
+    : <div className="w-12 h-12 bg-[var(--color-yellow)] rounded-lg rotate-12"></div>;
     
   return (
-    <div className="relative group cursor-pointer transform transition-all duration-500 hover:-translate-y-2">
-      {/* Background shape with rotation for clay-like effect */}
-      <div className="absolute inset-0 bg-gray-100 rounded-3xl rotate-3 translate-x-2 translate-y-2"></div>
-      
-      {/* Main card container */}
-      <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row h-full">
-        {/* Left side with image */}
-        <div className="md:w-2/5 relative">
-          <div className="h-64 md:h-full relative overflow-hidden">
-            <img
-              src={imageSrc}
-              alt={title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            
-            {/* Color overlay with brand shape */}
-            <div className="absolute inset-0 bg-black/40 transition-opacity duration-500 group-hover:bg-black/20"></div>
-            
-            {/* Date badge */}
-            <div className="absolute bottom-4 left-4 bg-white py-3 px-5 rounded-xl shadow-lg flex flex-col items-center justify-center">
-              <span className="text-xl font-bold text-gray-800">{date.split(",")[0].split(" ")[1]}</span>
-              <span className="text-xs font-medium text-gray-500 uppercase">{date.split(",")[0].split(" ")[0]}</span>
-            </div>
-            
-            {/* Floating accent shape */}
-            <div className="absolute -top-10 -right-10 opacity-50 transition-all duration-500 group-hover:rotate-12">
-              <ShapeComponent
-                width="w-28"
-                height="h-28"
-                color={colorVar}
-                rotate={index % 2 === 0 ? "rotate-12" : "-rotate-12"}
-                shadow
-              />
-            </div>
+    <div className="event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1">
+      <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-row">
+        {/* Left side with date and decorative element */}
+        <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
+          <div className="mb-2 text-center">
+            <div className="text-2xl font-bold text-gray-800">{date.split(" ")[1].replace(",", "")}</div>
+            <div className="text-sm font-medium text-gray-500 uppercase">{date.split(" ")[0]}</div>
+          </div>
+          <div className="opacity-80">{Shape}</div>
+        </div>
+        
+        {/* Main content */}
+        <div className="flex-1 p-5">
+          <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">{title}</h3>
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{description}</p>
+          
+          {/* Event details */}
+          <div className="flex items-center text-gray-600 mb-3 text-sm">
+            <Clock className="w-4 h-4 mr-2 text-gray-400" />
+            <span>{date}</span>
+          </div>
+          
+          <div className="flex items-center text-gray-600 text-sm">
+            <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+            <span>{location}</span>
           </div>
         </div>
         
-        {/* Right side with content */}
-        <div className="p-6 md:w-3/5 flex flex-col justify-between">
-          <div>
-            <h3 className="font-bold text-2xl mb-3 text-gray-800 group-hover:text-gray-900">{title}</h3>
-            <p className="text-gray-600 mb-6">{description}</p>
-          </div>
-          
-          <div className="space-y-3">
-            <div className="flex items-center text-gray-700">
-              <Clock className="w-5 h-5 mr-3 text-gray-400" />
-              <span>{date}</span>
-            </div>
-            <div className="flex items-center text-gray-700">
-              <MapPin className="w-5 h-5 mr-3 text-gray-400" />
-              <span>{location}</span>
-            </div>
-            
-            <div className="pt-4">
-              <Button className={`${color} text-white px-6 py-2 rounded-full h-auto transition-all duration-300 group-hover:brightness-110 flex items-center gap-2`}>
-                RSVP Now
-                <ArrowRight className="w-4 h-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </div>
-          </div>
+        {/* Right side with action button */}
+        <div className="w-24 flex flex-col items-center justify-center p-3 bg-gray-50 border-l border-gray-100">
+          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-0 flex flex-col items-center gap-2 h-auto">
+            <ArrowRight className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" />
+            <span className="text-xs font-medium">Details</span>
+          </Button>
         </div>
       </div>
     </div>
@@ -155,7 +123,7 @@ export default function EventsSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="flex flex-col space-y-5 max-w-4xl mx-auto">
           <EventCard
             date="Jun 15, 2023"
             title="AI Product Workshop"
