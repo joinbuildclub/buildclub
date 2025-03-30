@@ -59,9 +59,9 @@ export default function Navbar() {
               </button>
               <Button
                 onClick={() => handleNavigation("#join")}
-                className="bg-primary hover:bg-primary/90 text-white"
+                className="bg-[--color-green] hover:bg-[--color-green]/90 text-white"
               >
-                Join Waitlist
+                Join the club
               </Button>
             </div>
           </div>

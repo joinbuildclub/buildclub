@@ -1,4 +1,7 @@
 import { Users, Zap, Cpu, Sparkles } from "lucide-react";
+import RoundedTriangle from "@/components/shapes/RoundedTriangle";
+import RoundedCircle from "@/components/shapes/RoundedCircle";
+import RoundedSquare from "@/components/shapes/RoundedSquare";
 
 interface FeatureProps {
   icon: React.ReactNode;
@@ -26,39 +29,35 @@ function Feature({ icon, title, description, color, delay = 0 }: FeatureProps) {
 export default function AboutSection() {
   return (
     <section id="about" className="py-24 bg-white relative overflow-hidden">
-      {/* Clay-like decorative shapes - mapped to roles */}
-      {/* Blue Circle (Designer) */}
-      <div
-        className="absolute -right-16 -bottom-10 w-36 h-36 bg-[var(--color-blue)] rounded-full animate-floating"
-        style={{ boxShadow: "0 10px 0 0 rgba(0,0,0,0.1)" }}
-      ></div>
-      {/* Yellow Square (Engineer) */}
-      <div
-        className="absolute left-10 top-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md rotate-12 animate-floating-delayed"
-        style={{ boxShadow: "0 8px 0 0 rgba(0,0,0,0.1)" }}
-      ></div>
-      {/* Red Triangle (Product) */}
-      <div
-        className="absolute left-1/3 top-32 w-28 h-28 animate-floating overflow-hidden"
-        style={{ 
-          filter: 'url(#round-triangle-about)',
-          boxShadow: "0 8px 0 0 rgba(0,0,0,0.1)" 
-        }}
-      >
-        <svg width="0" height="0" className="absolute">
-          <defs>
-            <filter id="round-triangle-about">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-        <div 
-          className="w-full h-full bg-[var(--color-red)]" 
-          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-        ></div>
-      </div>
+      {/* <div>
+        <RoundedTriangle
+          className="absolute left-48"
+          width="w-36"
+          height="h-36"
+          color="var(--color-red)"
+          rotate="-rotate-12"
+          animateClass="animate-floating"
+          shadow
+        />
+
+        <RoundedSquare
+          className="absolute right-0 top-48"
+          width="w-36"
+          height="h-36"
+          rotate="rotate-12"
+          animateClass="animate-floating"
+          shadow
+        />
+
+        <RoundedCircle
+          className="absolute bottom-1/4 left-10"
+          width="w-24"
+          height="h-24"
+          color="var(--color-blue)"
+          animateClass="animate-floating-delayed"
+          shadow
+        />
+      </div> */}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">

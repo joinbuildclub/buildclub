@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, PartyPopper } from "lucide-react";
+import RoundedTriangle from "@/components/shapes/RoundedTriangle";
+import RoundedCircle from "@/components/shapes/RoundedCircle";
+import RoundedSquare from "@/components/shapes/RoundedSquare";
 
 interface EventCardProps {
   date: string;
@@ -11,14 +14,24 @@ interface EventCardProps {
   index: number;
 }
 
-function EventCard({ date, title, description, location, imageSrc, color, index }: EventCardProps) {
+function EventCard({
+  date,
+  title,
+  description,
+  location,
+  imageSrc,
+  color,
+  index,
+}: EventCardProps) {
   return (
-    <div className={`clay-card ${color} text-white overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:${color.replace('bg-', 'bg-')}/95 group cursor-pointer`}>
+    <div
+      className={`clay-card ${color} text-white overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:${color.replace("bg-", "bg-")}/95 group cursor-pointer`}
+    >
       <div className="h-48 relative overflow-hidden rounded-t-2xl">
-        <img 
-          src={imageSrc} 
-          alt={title} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+        <img
+          src={imageSrc}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-black/20 transition-opacity duration-500 group-hover:bg-black/10"></div>
         <div className="absolute top-4 left-4 bg-white/20 text-white font-bold px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-500 group-hover:bg-white/30">
@@ -32,7 +45,7 @@ function EventCard({ date, title, description, location, imageSrc, color, index 
           <MapPin className="w-4 h-4 mr-2 transition-transform duration-500 group-hover:scale-110" />
           <span>{location}</span>
         </div>
-        
+
         {/* Decorative elements with transitions */}
         {index % 3 === 0 && (
           <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full transition-all duration-700 group-hover:bg-white/20"></div>
@@ -51,36 +64,35 @@ function EventCard({ date, title, description, location, imageSrc, color, index 
 export default function EventsSection() {
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
-      {/* Clay-like decorative shapes - mapped to roles */}
-      {/* Yellow Square (Engineer) */}
-      <div className="absolute -right-16 top-20 w-36 h-36 bg-[var(--color-yellow)] rounded-md -rotate-12 animate-floating" 
-           style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
-      {/* Blue Circle (Designer) */}
-      <div className="absolute left-10 bottom-20 w-24 h-24 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
-           style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
-      {/* Red Triangle (Product) */}
-      <div className="absolute left-1/4 top-1/4 w-28 h-28 animate-floating overflow-hidden" 
-           style={{ 
-             filter: 'url(#round-triangle-events)',
-             boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' 
-           }}>
-        <svg width="0" height="0" className="absolute">
-          <defs>
-            <filter id="round-triangle-events">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-        <div 
-          className="w-full h-full bg-[var(--color-red)]" 
-          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-        ></div>
-      </div>
-      
+      {/* <div className="">
+        <RoundedTriangle
+          className="left-20 top-1/4"
+          width="w-36"
+          height="h-36"
+          rotate="rotate-45"
+          animateClass="animate-floating"
+          shadow
+        />
+
+        <RoundedSquare
+          className="right-16 top-20"
+          width="w-36"
+          height="h-36"
+          rotate="-rotate-12"
+          animateClass="animate-floating-delayed"
+          shadow
+        />
+
+        <RoundedCircle
+          className="left-1/3 top-10"
+          width="w-20"
+          height="h-20"
+          rotate="-rotate-12"
+          animateClass="animate-floating"
+          shadow
+        />
+      </div> */}
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
           <div className="inline-block mb-6">
@@ -90,14 +102,18 @@ export default function EventsSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Join Our Upcoming <span className="text-[var(--color-blue)]">Events</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+            Join Our Upcoming{" "}
+            <span className="text-[var(--color-blue)]">Events</span>
+          </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Come hang out with us in-person where we collaborate, learn, and build cool AI stuff together!
+            Come hang out with us in-person where we collaborate, learn, and
+            build cool AI stuff together!
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-8">
-          <EventCard 
+          <EventCard
             date="Jun 15, 2023"
             title="AI Product Workshop"
             description="Learn how to identify and validate AI product opportunities with practical exercises and expert feedback."
@@ -106,8 +122,8 @@ export default function EventsSection() {
             color="bg-[var(--color-red)]"
             index={0}
           />
-          
-          <EventCard 
+
+          <EventCard
             date="Jul 8-9, 2023"
             title="AI Design Hackathon"
             description="A weekend-long event where designers tackle AI interface challenges and create innovative solutions."
@@ -116,8 +132,8 @@ export default function EventsSection() {
             color="bg-[var(--color-blue)]"
             index={1}
           />
-          
-          <EventCard 
+
+          <EventCard
             date="Jul 22, 2023"
             title="AI Engineering Summit"
             description="Deep dive into the latest AI engineering practices with hands-on workshops and technical discussions."
@@ -127,12 +143,11 @@ export default function EventsSection() {
             index={2}
           />
         </div>
-        
+
         <div className="mt-16 text-center">
-          <Button 
-            className="clay-button bg-[var(--color-yellow)] text-white font-bold px-8 py-4 text-lg h-auto border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90 group"
-          >
-            <PartyPopper className="mr-2 h-5 w-5 transition-transform duration-500 group-hover:rotate-12" /> View all events
+          <Button className="clay-button bg-[var(--color-yellow)] text-white font-bold px-8 py-4 text-lg h-auto border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90 group">
+            <PartyPopper className="mr-2 h-5 w-5 transition-transform duration-500 group-hover:rotate-12" />{" "}
+            View all events
           </Button>
         </div>
       </div>

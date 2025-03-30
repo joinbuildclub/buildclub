@@ -1,5 +1,8 @@
 import { Check, Users, Lightbulb, Code, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RoundedTriangle from "@/components/shapes/RoundedTriangle";
+import RoundedCircle from "@/components/shapes/RoundedCircle";
+import RoundedSquare from "@/components/shapes/RoundedSquare";
 
 interface RoleFeatureProps {
   children: React.ReactNode;
@@ -9,7 +12,10 @@ interface RoleFeatureProps {
 function RoleFeature({ children, color }: RoleFeatureProps) {
   return (
     <li className="flex items-start mb-4">
-      <div className={`rounded-full ${color} p-1 mr-3 flex-shrink-0`} style={{ boxShadow: '0 3px 0 0 rgba(0,0,0,0.1)' }}>
+      <div
+        className={`rounded-full ${color} p-1 mr-3 flex-shrink-0`}
+        style={{ boxShadow: "0 3px 0 0 rgba(0,0,0,0.1)" }}
+      >
         <Check className="h-4 w-4 text-white" />
       </div>
       <span className="text-gray-700">{children}</span>
@@ -27,26 +33,30 @@ interface RoleSectionProps {
   index: number;
 }
 
-function RoleSection({ 
-  title, 
+function RoleSection({
+  title,
   icon,
-  description, 
-  features, 
+  description,
+  features,
   color,
   bgColor,
-  index
+  index,
 }: RoleSectionProps) {
   return (
-    <div className={`clay-card ${bgColor} p-8 mb-12 relative overflow-hidden transition-all duration-500 hover:${bgColor.replace('bg-', 'bg-')}/95 group cursor-pointer`}>
+    <div
+      className={`clay-card ${bgColor} p-8 mb-12 relative overflow-hidden transition-all duration-500 hover:${bgColor.replace("bg-", "bg-")}/95 group cursor-pointer`}
+    >
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          <div className={`inline-flex items-center ${color} rounded-full px-4 py-2 mb-4 clay-shape transition-all duration-500 group-hover:${color.replace('bg-', 'bg-')}/80`}>
+          <div
+            className={`inline-flex items-center ${color} rounded-full px-4 py-2 mb-4 clay-shape transition-all duration-500 group-hover:${color.replace("bg-", "bg-")}/80`}
+          >
             {icon}
             <span className="ml-2 font-bold text-white">{title}</span>
           </div>
           <h3 className="text-2xl font-bold mb-4 text-white">{title} Role</h3>
           <p className="text-white/90 mb-6 leading-relaxed">{description}</p>
-          
+
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full opacity-30 transition-all duration-700 group-hover:bg-white/20"></div>
           {index % 2 === 0 && (
             <div className="absolute top-10 -right-6 w-24 h-24 bg-white/10 rounded-full opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
@@ -55,7 +65,7 @@ function RoleSection({
             <div className="absolute -bottom-8 left-1/3 w-28 h-28 bg-white/10 rounded-3xl rotate-12 opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
           )}
         </div>
-        
+
         <div>
           <div className="bg-white/10 rounded-2xl p-5 transition-all duration-500 group-hover:bg-white/20">
             <ul>
@@ -75,36 +85,33 @@ function RoleSection({
 export default function RolesSection() {
   return (
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
-      {/* Clay-like decorative shapes - matched to their roles */}
-      {/* Red Triangle (Product) */}
-      <div className="absolute -left-16 top-32 w-32 h-32 animate-floating overflow-hidden" 
-           style={{ 
-             filter: 'url(#round-triangle-roles)',
-             boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' 
-           }}>
-        <svg width="0" height="0" className="absolute">
-          <defs>
-            <filter id="round-triangle-roles">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-        <div 
-          className="w-full h-full bg-[var(--color-red)]" 
-          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-        ></div>
-      </div>
-      {/* Blue Circle (Design) */}
-      <div className="absolute right-10 bottom-20 w-28 h-28 bg-[var(--color-blue)] rounded-full animate-floating-delayed" 
-           style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
-      {/* Yellow Square (Engineering) */}
-      <div className="absolute right-1/4 top-40 w-24 h-24 bg-[var(--color-yellow)] rounded-md rotate-12 animate-floating" 
-           style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
-      </div>
-      
+      <RoundedSquare
+        className="-left-12 bottom-1/4"
+        width="w-36"
+        height="h-36"
+        rotate="-rotate-12"
+        animateClass="animate-floating"
+        shadow
+      />
+
+      <RoundedTriangle
+        className="left-48 top-10"
+        width="w-24"
+        height="h-24"
+        rotate="-rotate-45"
+        animateClass="animate-floating-delayed"
+        shadow
+      />
+
+      <RoundedCircle
+        className="right-48 top-10"
+        width="w-24"
+        height="h-24"
+        rotate="-rotate-12"
+        animateClass="animate-floating"
+        shadow
+      />
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">
           <div className="inline-block mb-6">
@@ -114,49 +121,53 @@ export default function RolesSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Who builds at <span className="text-[var(--color-red)]">BuildClub</span>?</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+            Who builds at{" "}
+            <span className="text-[var(--color-red)]">BuildClub</span>?
+          </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Our diverse community brings together different skills and perspectives to create awesome AI solutions.
+            Our diverse community brings together different skills and
+            perspectives to create awesome AI solutions.
           </p>
         </div>
-        
+
         <div>
-          <RoleSection 
+          <RoleSection
             title="Product"
             icon={<Users className="h-5 w-5 text-white" />}
             description="Product leaders who translate AI capabilities into user-centered experiences. They bridge technical possibilities with market needs to create things people love."
             features={[
               "Define AI-enhanced product roadmaps",
               "Balance technical innovation with user needs",
-              "Create ethical AI product strategies"
+              "Create ethical AI product strategies",
             ]}
             color="bg-[var(--color-red)]"
             bgColor="bg-[var(--color-red)]"
             index={0}
           />
-          
-          <RoleSection 
+
+          <RoleSection
             title="Design"
             icon={<Lightbulb className="h-5 w-5 text-white" />}
             description="Experience designers crafting intuitive interfaces for AI tools. They humanize complex AI interactions, making technology accessible and fun to use!"
             features={[
               "Create intuitive AI interaction patterns",
               "Design for transparency and trust",
-              "Visualize complex AI concepts for users"
+              "Visualize complex AI concepts for users",
             ]}
             color="bg-[var(--color-blue)]"
             bgColor="bg-[var(--color-blue)]"
             index={1}
           />
-          
-          <RoleSection 
+
+          <RoleSection
             title="Engineering"
             icon={<Code className="h-5 w-5 text-white" />}
             description="Technical builders bringing AI innovations to life. They architect AI-powered applications and make the magic happen behind the scenes."
             features={[
               "Develop scalable AI infrastructure",
               "Integrate AI models into applications",
-              "Build AI tools with responsible practices"
+              "Build AI tools with responsible practices",
             ]}
             color="bg-[var(--color-yellow)]"
             bgColor="bg-[var(--color-yellow)]"

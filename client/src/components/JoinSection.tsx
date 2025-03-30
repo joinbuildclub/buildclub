@@ -19,6 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Users, Square, Circle, Triangle } from "lucide-react";
+import RoundedTriangle from "@/components/shapes/RoundedTriangle";
+import RoundedSquare from "@/components/shapes/RoundedSquare";
+import RoundedCircle from "@/components/shapes/RoundedCircle";
 
 // Extend the schema with validation rules
 const formSchema = insertWaitlistSchema.extend({
@@ -75,39 +78,33 @@ export default function JoinSection() {
 
   return (
     <section id="join" className="py-24 bg-white relative overflow-hidden">
-      {/* Clay-like decorative shapes - mapped to roles */}
-      {/* Red Triangle (Product) */}
-      <div
-        className="absolute -left-10 bottom-10 w-28 h-28 animate-floating overflow-hidden"
-        style={{ 
-          filter: 'url(#round-triangle-join)',
-          boxShadow: "0 10px 0 0 rgba(0,0,0,0.1)" 
-        }}
-      >
-        <svg width="0" height="0" className="absolute">
-          <defs>
-            <filter id="round-triangle-join">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-              <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
-            </filter>
-          </defs>
-        </svg>
-        <div 
-          className="w-full h-full bg-[var(--color-red)]" 
-          style={{ clipPath: 'polygon(50% 10%, 15% 90%, 85% 90%)' }}
-        ></div>
+      <div>
+        <RoundedTriangle
+          className="absolute left-24"
+          width="w-48"
+          height="h-48"
+          rotate="-rotate-12"
+          animateClass="animate-floating"
+          shadow
+        />
+
+        <RoundedSquare
+          className="absolute right-0 top-48"
+          width="w-48"
+          height="h-48"
+          rotate="rotate-12"
+          animateClass="animate-floating"
+          shadow
+        />
+
+        <RoundedCircle
+          className="absolute bottom-1/4 -left-24"
+          width="w-36"
+          height="h-36"
+          animateClass="animate-floating-delayed"
+          shadow
+        />
       </div>
-      {/* Yellow Square (Engineer) */}
-      <div
-        className="absolute right-20 top-40 w-32 h-32 bg-[var(--color-yellow)] rounded-md rotate-12 animate-floating-delayed"
-        style={{ boxShadow: "0 8px 0 0 rgba(0,0,0,0.1)" }}
-      ></div>
-      {/* Blue Circle (Designer) */}
-      <div
-        className="absolute right-1/4 bottom-1/3 w-20 h-20 bg-[var(--color-blue)] rounded-full animate-floating"
-        style={{ boxShadow: "0 7px 0 0 rgba(0,0,0,0.1)" }}
-      ></div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-3xl mx-auto">
@@ -130,7 +127,7 @@ export default function JoinSection() {
             </p>
           </div>
 
-          <div className="clay-card bg-white p-10 border-0 rounded-3xl">
+          <div className="bg-white p-10 border border-gray-200 rounded-3xl">
             {formSuccess ? (
               <div className="text-center py-8">
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">
@@ -248,13 +245,35 @@ export default function JoinSection() {
                                   }
                                 }}
                               >
-                                <div className="overflow-hidden rounded-lg" style={{ filter: 'url(#round-triangle-icon)' }}>
-                                  <svg width="0" height="0" className="absolute">
+                                <div
+                                  className="overflow-hidden rounded-lg"
+                                  style={{
+                                    filter: "url(#round-triangle-icon)",
+                                  }}
+                                >
+                                  <svg
+                                    width="0"
+                                    height="0"
+                                    className="absolute"
+                                  >
                                     <defs>
                                       <filter id="round-triangle-icon">
-                                        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
-                                        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9" result="roundTriangle" />
-                                        <feComposite in="SourceGraphic" in2="roundTriangle" operator="atop" />
+                                        <feGaussianBlur
+                                          in="SourceGraphic"
+                                          stdDeviation="1"
+                                          result="blur"
+                                        />
+                                        <feColorMatrix
+                                          in="blur"
+                                          type="matrix"
+                                          values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -9"
+                                          result="roundTriangle"
+                                        />
+                                        <feComposite
+                                          in="SourceGraphic"
+                                          in2="roundTriangle"
+                                          operator="atop"
+                                        />
                                       </filter>
                                     </defs>
                                   </svg>
@@ -397,7 +416,7 @@ export default function JoinSection() {
 
                   <Button
                     type="submit"
-                    className="w-full clay-button bg-[var(--color-red)] text-white font-bold text-lg h-auto py-6 border-0 transition-all duration-500 hover:bg-[var(--color-red)]/90 group"
+                    className="w-full clay-button bg-[var(--color-green)] text-white font-bold text-lg h-auto py-6 border-0 transition-all duration-500 hover:bg-[var(--color-green)]/90 group"
                     disabled={submitMutation.isPending}
                   >
                     {submitMutation.isPending
