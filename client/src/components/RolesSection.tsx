@@ -1,81 +1,54 @@
-import { Check, Users, Lightbulb, Code, Sparkles } from "lucide-react";
+import { Check, Users, Lightbulb, Code, Sparkles, Zap, PenTool, BrainCircuit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
 
-interface RoleFeatureProps {
-  children: React.ReactNode;
+interface InterestAreaProps {
+  shape: React.ReactNode;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  topics: string[];
   color: string;
 }
 
-function RoleFeature({ children, color }: RoleFeatureProps) {
+function InterestTopic({ children }: { children: React.ReactNode }) {
   return (
-    <li className="flex items-start mb-4">
-      <div
-        className={`rounded-full ${color} p-1 mr-3 flex-shrink-0`}
-        style={{ boxShadow: "0 3px 0 0 rgba(0,0,0,0.1)" }}
-      >
-        <Check className="h-4 w-4 text-white" />
-      </div>
-      <span className="text-gray-700">{children}</span>
-    </li>
+    <div className="bg-white/10 rounded-full px-4 py-2 text-white/90 text-sm font-medium transition-all duration-300 hover:bg-white/20">
+      {children}
+    </div>
   );
 }
 
-interface RoleSectionProps {
-  title: string;
-  icon: React.ReactNode;
-  description: string;
-  features: string[];
-  color: string;
-  bgColor: string;
-  index: number;
-}
-
-function RoleSection({
-  title,
+function InterestArea({
+  shape,
   icon,
+  title,
   description,
-  features,
-  color,
-  bgColor,
-  index,
-}: RoleSectionProps) {
+  topics,
+  color
+}: InterestAreaProps) {
   return (
-    <div
-      className={`clay-card ${bgColor} p-8 mb-12 relative overflow-hidden transition-all duration-500 hover:${bgColor.replace("bg-", "bg-")}/95 group cursor-pointer`}
-    >
-      <div className="grid md:grid-cols-2 gap-10">
-        <div>
-          <div
-            className={`inline-flex items-center ${color} rounded-full px-4 py-2 mb-4 clay-shape transition-all duration-500 group-hover:${color.replace("bg-", "bg-")}/80`}
-          >
-            {icon}
-            <span className="ml-2 font-bold text-white">{title}</span>
-          </div>
-          <h3 className="text-2xl font-bold mb-4 text-white">{title} Role</h3>
-          <p className="text-white/90 mb-6 leading-relaxed">{description}</p>
-
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full opacity-30 transition-all duration-700 group-hover:bg-white/20"></div>
-          {index % 2 === 0 && (
-            <div className="absolute top-10 -right-6 w-24 h-24 bg-white/10 rounded-full opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
-          )}
-          {index % 2 === 1 && (
-            <div className="absolute -bottom-8 left-1/3 w-28 h-28 bg-white/10 rounded-3xl rotate-12 opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
-          )}
+    <div className={`bg-white rounded-3xl p-6 shadow-lg relative group overflow-hidden border-t-8 ${color}`}>
+      <div className="absolute -top-6 -right-6 opacity-10 transition-all duration-500 group-hover:opacity-20 transform group-hover:scale-110">
+        {shape}
+      </div>
+      
+      <div className="relative z-10">
+        <div className={`${color.replace("border", "bg")} w-14 h-14 rounded-2xl mb-5 flex items-center justify-center shadow-md`}>
+          {icon}
         </div>
-
-        <div>
-          <div className="bg-white/10 rounded-2xl p-5 transition-all duration-500 group-hover:bg-white/20">
-            <ul>
-              {features.map((feature, idx) => (
-                <RoleFeature key={idx} color={color}>
-                  {feature}
-                </RoleFeature>
-              ))}
-            </ul>
-          </div>
+        
+        <h3 className="text-2xl font-bold mb-3 text-gray-800">{title}</h3>
+        <p className="text-gray-600 mb-6">{description}</p>
+        
+        <div className="flex flex-wrap gap-2">
+          {topics.map((topic, idx) => (
+            <InterestTopic key={idx}>
+              {topic}
+            </InterestTopic>
+          ))}
         </div>
       </div>
     </div>
@@ -83,10 +56,42 @@ function RoleSection({
 }
 
 export default function RolesSection() {
+  // Create triangle shape for Product interest
+  const productShape = (
+    <RoundedTriangle
+      width="w-48"
+      height="h-48"
+      color="var(--color-red)"
+      rotate="rotate-12"
+      shadow={false}
+    />
+  );
+  
+  // Create circle shape for Design interest
+  const designShape = (
+    <RoundedCircle
+      width="w-48"
+      height="h-48"
+      color="var(--color-blue)"
+      shadow={false}
+    />
+  );
+  
+  // Create square shape for Engineering interest
+  const engineeringShape = (
+    <RoundedSquare
+      width="w-48"
+      height="h-48"
+      color="var(--color-yellow)"
+      rotate="rotate-12"
+      shadow={false}
+    />
+  );
+
   return (
-    <section id="roles" className="py-24 bg-white relative overflow-hidden">
+    <section id="roles" className="py-24 bg-gray-50 relative overflow-hidden">
       <RoundedSquare
-        className="absolute -left-12 top-48 sm:bottom-1/4"
+        className="absolute -left-12 top-48 sm:bottom-1/4 hidden sm:block"
         width="w-20 sm:w-36"
         height="h-20 sm:h-36"
         color="var(--color-yellow)"
@@ -96,7 +101,7 @@ export default function RolesSection() {
       />
 
       <RoundedTriangle
-        className="absolute sm:left-48 sm:top-10 top-0 -left-10"
+        className="absolute sm:left-48 sm:top-10 top-0 -left-10 hidden sm:block"
         width="w-36 sm:w-24"
         height="h-36 sm:h-24"
         color="var(--color-red)"
@@ -106,7 +111,7 @@ export default function RolesSection() {
       />
 
       <RoundedCircle
-        className="absolute right-4 sm:right-48 sm:top-10 top-4"
+        className="absolute right-4 sm:right-48 sm:top-10 top-4 hidden sm:block"
         width="w-24"
         height="h-24"
         color="var(--color-blue)"
@@ -115,66 +120,68 @@ export default function RolesSection() {
         shadow
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">
           <div className="inline-block mb-6">
-            <div className="clay-shape bg-[var(--color-yellow)] px-5 py-2">
+            <div className="clay-shape bg-gray-700 px-5 py-2">
               <span className="text-xl font-bold text-white flex items-center">
-                <Sparkles className="w-5 h-5 mr-2" /> The Crew
+                <Sparkles className="w-5 h-5 mr-2" /> Join The Community
               </span>
             </div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
-            Who builds at{" "}
-            <span className="text-[var(--color-red)]">BuildClub</span>?
+            Find your <span className="text-[var(--color-red)]">interest</span> area
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Our diverse community brings together different skills and
-            perspectives to create awesome AI solutions.
+            Our community welcomes all backgrounds and perspectives. 
+            Find where you fit based on your interests and curiosities!
           </p>
         </div>
 
-        <div>
-          <RoleSection
-            title="Product"
-            icon={<Users className="h-5 w-5 text-white" />}
-            description="Product leaders who translate AI capabilities into user-centered experiences. They bridge technical possibilities with market needs to create things people love."
-            features={[
-              "Define AI-enhanced product roadmaps",
-              "Balance technical innovation with user needs",
-              "Create ethical AI product strategies",
+        <div className="grid md:grid-cols-3 gap-8">
+          <InterestArea
+            shape={productShape}
+            icon={<BrainCircuit className="h-7 w-7 text-white" />}
+            title="Product Strategy"
+            description="Explore how AI transforms product thinking and strategy. Perfect if you're curious about the business of AI."
+            topics={[
+              "AI Product Discovery",
+              "User Research",
+              "Market Validation",
+              "Ethical AI Products",
+              "Go-to-market Strategy"
             ]}
-            color="bg-[var(--color-red)]"
-            bgColor="bg-[var(--color-red)]"
-            index={0}
+            color="border-[var(--color-red)]"
           />
 
-          <RoleSection
-            title="Design"
-            icon={<Lightbulb className="h-5 w-5 text-white" />}
-            description="Experience designers crafting intuitive interfaces for AI tools. They humanize complex AI interactions, making technology accessible and fun to use!"
-            features={[
-              "Create intuitive AI interaction patterns",
-              "Design for transparency and trust",
-              "Visualize complex AI concepts for users",
+          <InterestArea
+            shape={designShape}
+            icon={<PenTool className="h-7 w-7 text-white" />}
+            title="Design & UX"
+            description="Discover how to craft delightful experiences with AI. Great for visual thinkers and experience designers."
+            topics={[
+              "AI Interface Design",
+              "Prompt Engineering",
+              "Information Design",
+              "Interaction Patterns",
+              "Visual Systems"
             ]}
-            color="bg-[var(--color-blue)]"
-            bgColor="bg-[var(--color-blue)]"
-            index={1}
+            color="border-[var(--color-blue)]"
           />
 
-          <RoleSection
-            title="Engineering"
-            icon={<Code className="h-5 w-5 text-white" />}
-            description="Technical builders bringing AI innovations to life. They architect AI-powered applications and make the magic happen behind the scenes."
-            features={[
-              "Develop scalable AI infrastructure",
-              "Integrate AI models into applications",
-              "Build AI tools with responsible practices",
+          <InterestArea
+            shape={engineeringShape}
+            icon={<Zap className="h-7 w-7 text-white" />}
+            title="Technical Building"
+            description="Learn how to build with AI under the hood. Ideal for those curious about bringing AI capabilities to life."
+            topics={[
+              "API Integration",
+              "Model Tuning",
+              "RAG Systems",
+              "AI Infrastructure",
+              "Data Processing"
             ]}
-            color="bg-[var(--color-yellow)]"
-            bgColor="bg-[var(--color-yellow)]"
-            index={2}
+            color="border-[var(--color-yellow)]"
           />
         </div>
       </div>
