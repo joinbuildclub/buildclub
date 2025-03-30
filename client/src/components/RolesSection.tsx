@@ -76,8 +76,8 @@ export default function RolesSection() {
   return (
     <section id="roles" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-green)] rounded-3xl rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-10 bottom-20 w-20 h-20 bg-[var(--color-yellow)] rounded-full" style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -left-16 top-32 w-32 h-32 bg-[var(--color-red)] rounded-full rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-10 bottom-20 w-20 h-20 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">
@@ -118,8 +118,8 @@ export default function RolesSection() {
               "Design for transparency and trust",
               "Visualize complex AI concepts for users"
             ]}
-            color="bg-[var(--color-green)]"
-            bgColor="bg-[var(--color-green)]"
+            color="bg-[var(--color-blue)]"
+            bgColor="bg-[var(--color-blue)]"
             index={1}
           />
           
@@ -132,8 +132,8 @@ export default function RolesSection() {
               "Integrate AI models into applications",
               "Build AI tools with responsible practices"
             ]}
-            color="bg-[var(--color-blue)]"
-            bgColor="bg-[var(--color-blue)]"
+            color="bg-[var(--color-yellow)]"
+            bgColor="bg-[var(--color-yellow)]"
             index={2}
           />
         </div>

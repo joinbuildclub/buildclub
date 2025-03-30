@@ -52,8 +52,8 @@ export default function EventsSection() {
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -right-16 top-20 w-36 h-36 bg-[var(--color-blue)] rounded-3xl -rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute left-10 bottom-20 w-24 h-24 bg-[var(--color-red)] rounded-full" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -right-16 top-20 w-36 h-36 bg-[var(--color-yellow)] rounded-md -rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute left-10 bottom-20 w-24 h-24 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
@@ -64,7 +64,7 @@ export default function EventsSection() {
               </span>
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Join Our Upcoming <span className="text-[var(--color-green)]">Events</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Join Our Upcoming <span className="text-[var(--color-blue)]">Events</span></h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             Come hang out with us in-person where we collaborate, learn, and build cool AI stuff together!
           </p>
@@ -87,7 +87,7 @@ export default function EventsSection() {
             description="A weekend-long event where designers tackle AI interface challenges and create innovative solutions."
             location="New York, NY"
             imageSrc="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80"
-            color="bg-[var(--color-green)]"
+            color="bg-[var(--color-blue)]"
             index={1}
           />
           
@@ -97,7 +97,7 @@ export default function EventsSection() {
             description="Deep dive into the latest AI engineering practices with hands-on workshops and technical discussions."
             location="Austin, TX"
             imageSrc="https://images.unsplash.com/photo-1582192730841-2a682d7375f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2574&q=80"
-            color="bg-[var(--color-blue)]"
+            color="bg-[var(--color-yellow)]"
             index={2}
           />
         </div>

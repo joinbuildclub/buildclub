@@ -27,8 +27,8 @@ export default function AboutSection() {
   return (
     <section id="about" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -right-16 -bottom-10 w-36 h-36 bg-[var(--color-yellow)] rounded-full" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute left-10 top-20 w-24 h-24 bg-[var(--color-green)] rounded-3xl rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -right-16 -bottom-10 w-36 h-36 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute left-10 top-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mb-16 text-center">
@@ -57,7 +57,7 @@ export default function AboutSection() {
             icon={<Zap className="w-8 h-8 text-white" />}
             title="Cross-Disciplinary"
             description="Bringing together product managers, designers, engineers, and AI specialists to create solutions from multiple perspectives."
-            color="bg-[var(--color-green)]"
+            color="bg-[var(--color-blue)]"
             delay={100}
           />
           
@@ -65,7 +65,7 @@ export default function AboutSection() {
             icon={<Cpu className="w-8 h-8 text-white" />}
             title="Build-Focused"
             description="We prioritize creating tangible AI products rather than just talking about them. We build stuff that works!"
-            color="bg-[var(--color-blue)]"
+            color="bg-[var(--color-yellow)]"
             delay={200}
           />
         </div>
