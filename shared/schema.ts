@@ -13,7 +13,7 @@ export const waitlistEntries = pgTable("waitlist_entries", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
-  role: text("role").notNull(),
+  role: text("role").array().notNull(),
   interests: text("interests"),
 });
 

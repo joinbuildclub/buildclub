@@ -25,7 +25,7 @@ const formSchema = insertWaitlistSchema.extend({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  role: z.string().min(1, "Please select your role"),
+  role: z.array(z.string()).min(1, "Please select at least one interest"),
   interests: z.string().optional(),
 });
 
@@ -40,7 +40,7 @@ export default function JoinSection() {
       firstName: "",
       lastName: "",
       email: "",
-      role: "",
+      role: [],
       interests: "",
     },
   });
@@ -75,9 +75,9 @@ export default function JoinSection() {
   return (
     <section id="join" className="py-24 bg-white relative overflow-hidden">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -left-10 bottom-10 w-28 h-28 bg-[var(--color-red)] rounded-full" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-20 top-40 w-32 h-32 bg-[var(--color-green)] rounded-3xl rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-1/4 bottom-1/3 w-20 h-20 bg-[var(--color-yellow)] rounded-full" style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -left-10 bottom-10 w-28 h-28 bg-[var(--color-red)] rounded-3xl" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-20 top-40 w-32 h-32 bg-[var(--color-yellow)] rounded-md rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-1/4 bottom-1/3 w-20 h-20 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 7px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-3xl mx-auto">
@@ -102,7 +102,7 @@ export default function JoinSection() {
                 <p className="text-gray-700 mb-6">You're now part of the BuildClub community! We'll be in touch soon about upcoming events and activities.</p>
                 <Button 
                   onClick={() => setFormSuccess(false)}
-                  className="clay-button bg-[var(--color-green)] text-white font-bold border-0 transition-all duration-500 hover:bg-[var(--color-green)]/90"
+                  className="clay-button bg-[var(--color-yellow)] text-white font-bold border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90"
                 >
                   Join with another email
                 </Button>
@@ -158,7 +158,7 @@ export default function JoinSection() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700 font-bold mb-2">Your Role</FormLabel>
+                        <FormLabel className="text-gray-700 font-bold mb-2">Your Interests</FormLabel>
                         <FormControl>
                           <div className="flex justify-center gap-8 py-4">
                             {/* Product Manager - Triangle */}
@@ -166,22 +166,30 @@ export default function JoinSection() {
                               <div 
                                 className={cn(
                                   "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
-                                  field.value === "product" 
+                                  field.value.includes("product") 
                                     ? "ring-4 ring-[var(--color-red)] ring-opacity-50 outline outline-2 outline-[var(--color-red)]" 
                                     : "bg-white border-2 border-gray-200 hover:border-[var(--color-red)]/40"
                                 )}
-                                onClick={() => field.onChange("product")}
+                                onClick={() => {
+                                  const newValue = [...field.value];
+                                  if (newValue.includes("product")) {
+                                    field.onChange(newValue.filter(item => item !== "product"));
+                                  } else {
+                                    newValue.push("product");
+                                    field.onChange(newValue);
+                                  }
+                                }}
                               >
                                 <Triangle 
                                   className={cn(
                                     "w-10 h-10 transition-all duration-300",
-                                    field.value === "product" ? "text-[var(--color-red)]" : "text-gray-400"
+                                    field.value.includes("product") ? "text-[var(--color-red)]" : "text-gray-400"
                                   )} 
                                 />
                               </div>
                               <span className={cn(
                                 "text-sm font-medium transition-all duration-300",
-                                field.value === "product" ? "text-[var(--color-red)]" : "text-gray-500"
+                                field.value.includes("product") ? "text-[var(--color-red)]" : "text-gray-500"
                               )}>Product</span>
                             </div>
                             
@@ -190,22 +198,30 @@ export default function JoinSection() {
                               <div 
                                 className={cn(
                                   "relative w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300",
-                                  field.value === "design" 
+                                  field.value.includes("design") 
                                     ? "ring-4 ring-[var(--color-blue)] ring-opacity-50 outline outline-2 outline-[var(--color-blue)]" 
                                     : "bg-white border-2 border-gray-200 hover:border-[var(--color-blue)]/40"
                                 )}
-                                onClick={() => field.onChange("design")}
+                                onClick={() => {
+                                  const newValue = [...field.value];
+                                  if (newValue.includes("design")) {
+                                    field.onChange(newValue.filter(item => item !== "design"));
+                                  } else {
+                                    newValue.push("design");
+                                    field.onChange(newValue);
+                                  }
+                                }}
                               >
                                 <Circle 
                                   className={cn(
                                     "w-10 h-10 transition-all duration-300",
-                                    field.value === "design" ? "text-[var(--color-blue)]" : "text-gray-400"
+                                    field.value.includes("design") ? "text-[var(--color-blue)]" : "text-gray-400"
                                   )} 
                                 />
                               </div>
                               <span className={cn(
                                 "text-sm font-medium transition-all duration-300",
-                                field.value === "design" ? "text-[var(--color-blue)]" : "text-gray-500"
+                                field.value.includes("design") ? "text-[var(--color-blue)]" : "text-gray-500"
                               )}>Design</span>
                             </div>
                             
@@ -214,22 +230,30 @@ export default function JoinSection() {
                               <div 
                                 className={cn(
                                   "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
-                                  field.value === "engineering" 
+                                  field.value.includes("engineering") 
                                     ? "ring-4 ring-[var(--color-yellow)] ring-opacity-50 outline outline-2 outline-[var(--color-yellow)]" 
                                     : "bg-white border-2 border-gray-200 hover:border-[var(--color-yellow)]/40"
                                 )}
-                                onClick={() => field.onChange("engineering")}
+                                onClick={() => {
+                                  const newValue = [...field.value];
+                                  if (newValue.includes("engineering")) {
+                                    field.onChange(newValue.filter(item => item !== "engineering"));
+                                  } else {
+                                    newValue.push("engineering");
+                                    field.onChange(newValue);
+                                  }
+                                }}
                               >
                                 <Square 
                                   className={cn(
                                     "w-10 h-10 transition-all duration-300",
-                                    field.value === "engineering" ? "text-[var(--color-yellow)]" : "text-gray-400"
+                                    field.value.includes("engineering") ? "text-[var(--color-yellow)]" : "text-gray-400"
                                   )} 
                                 />
                               </div>
                               <span className={cn(
                                 "text-sm font-medium transition-all duration-300",
-                                field.value === "engineering" ? "text-[var(--color-yellow)]" : "text-gray-500"
+                                field.value.includes("engineering") ? "text-[var(--color-yellow)]" : "text-gray-500"
                               )}>Engineer</span>
                             </div>
                           </div>

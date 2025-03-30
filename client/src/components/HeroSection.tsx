@@ -16,10 +16,10 @@ export default function HeroSection() {
   return (
     <section className="relative pt-24 pb-32 overflow-hidden bg-white">
       {/* Clay-like decorative shapes */}
-      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-green)] rounded-3xl rotate-12 animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-3xl -rotate-12 animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
-      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-red)] rounded-3xl rotate-12 animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full animate-morph" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-md -rotate-12 animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] rounded-3xl animate-morph" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
@@ -57,7 +57,7 @@ export default function HeroSection() {
             <p className="mt-2 font-medium">Community members</p>
           </div>
           
-          <div className="clay-card bg-[var(--color-green)] text-white text-center animate-floating-delayed group transition-all duration-500 hover:bg-[var(--color-green)]/90 cursor-pointer">
+          <div className="clay-card bg-[var(--color-yellow)] text-white text-center animate-floating-delayed group transition-all duration-500 hover:bg-[var(--color-yellow)]/90 cursor-pointer">
             <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
               <Puzzle className="h-8 w-8 text-white" />
             </div>
