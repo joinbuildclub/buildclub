@@ -20,28 +20,28 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-64 pb-32 overflow-hidden bg-white">
+    <section className="relative pt-12 sm:pt-64 pb-32 overflow-hidden bg-white">
       <RoundedTriangle
-        className="left-20 top-1/4"
-        width="w-56"
-        height="h-56"
+        className="sm:left-20 sm:top-1/4"
+        width="w-16 sm:w-56"
+        height="h-16 sm:h-56"
         rotate="rotate-12"
         animateClass="animate-floating"
         shadow
       />
 
       <RoundedCircle
-        className="right-16 top-1/4"
-        width="w-48"
-        height="h-48"
+        className="top-20 right-2 sm:right-16 sm:top-1/4"
+        width="w-12 sm:w-48"
+        height="h-12 sm:h-48"
         animateClass="animate-floating-delayed"
         shadow
       />
 
       <RoundedSquare
-        className="left-1/3 top-10"
-        width="w-48"
-        height="h-48"
+        className="top-80 sm:left-1/3 sm:top-10"
+        width="w-12 sm:w-48"
+        height="h-12 sm:h-48"
         rotate="-rotate-12"
         animateClass="animate-floating"
         shadow
@@ -49,14 +49,18 @@ export default function HeroSection() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex w-full justify-center items-center py-8">
-          <img src={logoPath} alt="BuildClub Logo" className="h-24 w-auto" />
+          <img
+            src={logoPath}
+            alt="BuildClub Logo"
+            className="hidden sm:block h-24 w-auto"
+          />
         </div>
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-gray-800">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-gray-800">
             Where <span className="text-[var(--color-red)]">AI</span> builders
             meet <span className="text-[var(--color-blue)]">IRL</span>
           </h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12">
+          <p className="text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto mb-12">
             A fun community of product makers, designers, and engineers
             collaborating to build meaningful AI solutions in real life.
           </p>
@@ -65,7 +69,7 @@ export default function HeroSection() {
               <Button
                 onClick={() => handleNavigation("#join")}
                 size="lg"
-                className="clay-button bg-[var(--color-green)] text-white font-bold px-10 py-6 text-2xl h-auto border-0 transition-all duration-500 hover:bg-[var(--color-red)]/90"
+                className="clay-button bg-[var(--color-green)] text-white font-bold px-10 py-6 text-lg sm:text-2xl h-auto border-0 transition-all duration-500 hover:bg-[var(--color-red)]/90"
               >
                 Join the club
               </Button>
