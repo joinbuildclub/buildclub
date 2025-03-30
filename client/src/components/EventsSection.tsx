@@ -13,8 +13,8 @@ interface EventCardProps {
 function EventCard({ date, title, description, location, imageSrc, color }: EventCardProps) {
   const colorClasses = {
     primary: "bg-primary",
-    secondary: "bg-[#9333EA]",
-    accent: "bg-[#10B981]"
+    secondary: "bg-[#7928CA]", 
+    accent: "bg-[#0D9488]"
   };
 
   return (
@@ -43,10 +43,10 @@ function EventCard({ date, title, description, location, imageSrc, color }: Even
 
 export default function EventsSection() {
   return (
-    <section id="events" className="py-20 bg-gradient-to-br from-primary/5 to-[#9333EA]/5">
+    <section id="events" className="py-20 bg-gradient-to-br from-primary/5 to-[#7928CA]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6">Upcoming <span className="bg-gradient-to-r from-primary to-[#9333EA] text-transparent bg-clip-text">Events</span></h2>
+          <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6">Upcoming <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">Events</span></h2>
           <p className="text-lg text-muted-foreground">Join us for in-person gatherings where we collaborate, learn, and build together.</p>
         </div>
         

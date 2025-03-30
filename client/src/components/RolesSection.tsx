@@ -67,7 +67,7 @@ export default function RolesSection() {
     <section id="roles" className="py-24 bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">Who builds at <span className="bg-gradient-to-r from-primary to-[#9333EA] text-transparent bg-clip-text">BuildClub</span>?</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">Who builds at <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span>?</h2>
           <p className="text-xl text-gray-600 max-w-3xl">
             Our diverse community brings together different skills and perspectives to create innovative AI solutions.
           </p>
