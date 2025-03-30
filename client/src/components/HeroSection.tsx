@@ -33,14 +33,14 @@ export default function HeroSection() {
             <Button 
               onClick={() => handleNavigation('#join')} 
               size="lg" 
-              className="clay-button bg-[var(--color-red)] text-white font-bold px-10 py-6 text-lg h-auto border-0"
+              className="clay-button bg-[var(--color-red)] text-white font-bold px-10 py-6 text-lg h-auto border-0 transition-all duration-500 hover:bg-[var(--color-red)]/90"
             >
-              Join the club <ArrowRight className="ml-2 h-5 w-5" />
+              Join the club <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-500 group-hover:translate-x-1" />
             </Button>
             <Button 
               onClick={() => handleNavigation('#events')} 
               size="lg" 
-              className="clay-button bg-[var(--color-blue)] text-white font-bold px-10 py-6 text-lg h-auto border-0"
+              className="clay-button bg-[var(--color-blue)] text-white font-bold px-10 py-6 text-lg h-auto border-0 transition-all duration-500 hover:bg-[var(--color-blue)]/90"
             >
               Explore events
             </Button>
@@ -49,24 +49,24 @@ export default function HeroSection() {
         
         {/* Stats with clay-like cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="clay-card bg-[var(--color-red)] text-white text-center animate-floating">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <div className="clay-card bg-[var(--color-red)] text-white text-center animate-floating group transition-all duration-500 hover:bg-[var(--color-red)]/90 cursor-pointer">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
               <Users className="h-8 w-8 text-white" />
             </div>
             <p className="text-4xl font-bold">350+</p>
             <p className="mt-2 font-medium">Community members</p>
           </div>
           
-          <div className="clay-card bg-[var(--color-green)] text-white text-center animate-floating-delayed">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <div className="clay-card bg-[var(--color-green)] text-white text-center animate-floating-delayed group transition-all duration-500 hover:bg-[var(--color-green)]/90 cursor-pointer">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
               <Puzzle className="h-8 w-8 text-white" />
             </div>
             <p className="text-4xl font-bold">45+</p>
             <p className="mt-2 font-medium">Meetups hosted</p>
           </div>
           
-          <div className="clay-card bg-[var(--color-blue)] text-white text-center animate-floating">
-            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <div className="clay-card bg-[var(--color-blue)] text-white text-center animate-floating group transition-all duration-500 hover:bg-[var(--color-blue)]/90 cursor-pointer">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
               <Hammer className="h-8 w-8 text-white" />
             </div>
             <p className="text-4xl font-bold">28</p>

@@ -108,7 +108,7 @@ export default function JoinSection() {
                 <p className="text-gray-700 mb-6">You're now part of the BuildClub community! We'll be in touch soon about upcoming events and activities.</p>
                 <Button 
                   onClick={() => setFormSuccess(false)}
-                  className="clay-button bg-[var(--color-green)] text-white font-bold border-0"
+                  className="clay-button bg-[var(--color-green)] text-white font-bold border-0 transition-all duration-500 hover:bg-[var(--color-green)]/90"
                 >
                   Join with another email
                 </Button>
@@ -124,7 +124,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-bold mb-2">First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your first name" className="border-gray-300 py-6 px-4 rounded-xl transition-all bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
+                            <Input placeholder="Your first name" className="border-gray-300 py-6 px-4 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -137,7 +137,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-bold mb-2">Last Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your last name" className="border-gray-300 py-6 px-4 rounded-xl transition-all bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
+                            <Input placeholder="Your last name" className="border-gray-300 py-6 px-4 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -152,7 +152,7 @@ export default function JoinSection() {
                       <FormItem>
                         <FormLabel className="text-gray-700 font-bold mb-2">Email Address</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="you@example.com" className="border-gray-300 py-6 px-4 rounded-xl transition-all bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
+                          <Input type="email" placeholder="you@example.com" className="border-gray-300 py-6 px-4 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -170,7 +170,7 @@ export default function JoinSection() {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="border-gray-300 py-6 px-4 rounded-xl transition-all bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm h-auto">
+                            <SelectTrigger className="border-gray-300 py-6 px-4 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm h-auto">
                               <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                           </FormControl>
@@ -196,7 +196,7 @@ export default function JoinSection() {
                           <Textarea 
                             placeholder="Tell us a bit about your interests..." 
                             rows={3} 
-                            className="border-gray-300 px-4 py-3 rounded-xl transition-all bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm resize-none"
+                            className="border-gray-300 px-4 py-3 rounded-xl transition-all duration-300 bg-white focus:outline-none focus:border-[var(--color-blue)] focus:border-2 shadow-sm resize-none"
                             {...field} 
                           />
                         </FormControl>
@@ -207,10 +207,10 @@ export default function JoinSection() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full clay-button bg-[var(--color-red)] text-white font-bold text-lg h-auto py-6 border-0"
+                    className="w-full clay-button bg-[var(--color-red)] text-white font-bold text-lg h-auto py-6 border-0 transition-all duration-500 hover:bg-[var(--color-red)]/90 group"
                     disabled={submitMutation.isPending}
                   >
-                    {submitMutation.isPending ? "Submitting..." : "Join the club"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
+                    {submitMutation.isPending ? "Submitting..." : "Join the club"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-500 group-hover:translate-x-1" />}
                   </Button>
                   
                   <p className="text-sm text-gray-500 text-center">

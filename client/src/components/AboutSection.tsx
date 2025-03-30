@@ -11,10 +11,10 @@ interface FeatureProps {
 function Feature({ icon, title, description, color, delay = 0 }: FeatureProps) {
   return (
     <div 
-      className={`clay-card ${color} text-white transform transition-all duration-300 hover:-translate-y-2`}
+      className={`clay-card ${color} text-white transform transition-all duration-500 hover:-translate-y-2 hover:${color.replace('bg-', 'bg-')}/90 group cursor-pointer`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="rounded-full bg-white/20 w-16 h-16 mb-6 flex items-center justify-center">
+      <div className="rounded-full bg-white/20 w-16 h-16 mb-6 flex items-center justify-center transition-all duration-500 group-hover:bg-white/30">
         {icon}
       </div>
       <h3 className="text-2xl font-bold mb-3">{title}</h3>

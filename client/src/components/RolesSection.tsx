@@ -37,27 +37,27 @@ function RoleSection({
   index
 }: RoleSectionProps) {
   return (
-    <div className={`clay-card ${bgColor} p-8 mb-12 relative overflow-hidden`}>
+    <div className={`clay-card ${bgColor} p-8 mb-12 relative overflow-hidden transition-all duration-500 hover:${bgColor.replace('bg-', 'bg-')}/95 group cursor-pointer`}>
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          <div className={`inline-flex items-center ${color} rounded-full px-4 py-2 mb-4 clay-shape`}>
+          <div className={`inline-flex items-center ${color} rounded-full px-4 py-2 mb-4 clay-shape transition-all duration-500 group-hover:${color.replace('bg-', 'bg-')}/80`}>
             {icon}
             <span className="ml-2 font-bold text-white">{title}</span>
           </div>
           <h3 className="text-2xl font-bold mb-4 text-white">{title} Role</h3>
           <p className="text-white/90 mb-6 leading-relaxed">{description}</p>
           
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full opacity-30"></div>
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full opacity-30 transition-all duration-700 group-hover:bg-white/20"></div>
           {index % 2 === 0 && (
-            <div className="absolute top-10 -right-6 w-24 h-24 bg-white/10 rounded-full opacity-20"></div>
+            <div className="absolute top-10 -right-6 w-24 h-24 bg-white/10 rounded-full opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
           )}
           {index % 2 === 1 && (
-            <div className="absolute -bottom-8 left-1/3 w-28 h-28 bg-white/10 rounded-3xl rotate-12 opacity-20"></div>
+            <div className="absolute -bottom-8 left-1/3 w-28 h-28 bg-white/10 rounded-3xl rotate-12 opacity-20 transition-all duration-700 group-hover:bg-white/20"></div>
           )}
         </div>
         
         <div>
-          <div className="bg-white/10 rounded-2xl p-5">
+          <div className="bg-white/10 rounded-2xl p-5 transition-all duration-500 group-hover:bg-white/20">
             <ul>
               {features.map((feature, idx) => (
                 <RoleFeature key={idx} color={color}>

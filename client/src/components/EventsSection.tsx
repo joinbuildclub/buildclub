@@ -13,15 +13,15 @@ interface EventCardProps {
 
 function EventCard({ date, title, description, location, imageSrc, color, index }: EventCardProps) {
   return (
-    <div className={`clay-card ${color} text-white overflow-hidden transform transition-all duration-300 hover:-translate-y-2`}>
+    <div className={`clay-card ${color} text-white overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:${color.replace('bg-', 'bg-')}/95 group cursor-pointer`}>
       <div className="h-48 relative overflow-hidden rounded-t-2xl">
         <img 
           src={imageSrc} 
           alt={title} 
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110" 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
         />
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute top-4 left-4 bg-white/20 text-white font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+        <div className="absolute inset-0 bg-black/20 transition-opacity duration-500 group-hover:bg-black/10"></div>
+        <div className="absolute top-4 left-4 bg-white/20 text-white font-bold px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-500 group-hover:bg-white/30">
           {date}
         </div>
       </div>
@@ -29,19 +29,19 @@ function EventCard({ date, title, description, location, imageSrc, color, index 
         <h3 className="font-bold text-2xl mb-3">{title}</h3>
         <p className="text-white/80 mb-4">{description}</p>
         <div className="flex items-center text-white/90 font-medium">
-          <MapPin className="w-4 h-4 mr-2" />
+          <MapPin className="w-4 h-4 mr-2 transition-transform duration-500 group-hover:scale-110" />
           <span>{location}</span>
         </div>
         
-        {/* Decorative elements */}
+        {/* Decorative elements with transitions */}
         {index % 3 === 0 && (
-          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full"></div>
+          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full transition-all duration-700 group-hover:bg-white/20"></div>
         )}
         {index % 3 === 1 && (
-          <div className="absolute -top-10 -right-6 w-24 h-24 bg-white/10 rounded-3xl rotate-12"></div>
+          <div className="absolute -top-10 -right-6 w-24 h-24 bg-white/10 rounded-3xl rotate-12 transition-all duration-700 group-hover:bg-white/20"></div>
         )}
         {index % 3 === 2 && (
-          <div className="absolute -bottom-8 -right-8 w-28 h-28 bg-white/10 rounded-full"></div>
+          <div className="absolute -bottom-8 -right-8 w-28 h-28 bg-white/10 rounded-full transition-all duration-700 group-hover:bg-white/20"></div>
         )}
       </div>
     </div>
@@ -104,9 +104,9 @@ export default function EventsSection() {
         
         <div className="mt-16 text-center">
           <Button 
-            className="clay-button bg-[var(--color-yellow)] text-white font-bold px-8 py-4 text-lg h-auto border-0"
+            className="clay-button bg-[var(--color-yellow)] text-white font-bold px-8 py-4 text-lg h-auto border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90 group"
           >
-            <PartyPopper className="mr-2 h-5 w-5" /> View all events
+            <PartyPopper className="mr-2 h-5 w-5 transition-transform duration-500 group-hover:rotate-12" /> View all events
           </Button>
         </div>
       </div>
