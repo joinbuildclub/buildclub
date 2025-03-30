@@ -1,96 +1,88 @@
 import { Link } from "wouter";
-import { Facebook, Twitter, Github, Dribbble, Mail, MapPin } from "lucide-react";
+import { Facebook, Twitter, Github, Dribbble, Mail, MapPin, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8">
+    <footer className="relative bg-[var(--color-blue)] text-white py-16 overflow-hidden">
+      {/* Clay-like decorative shapes */}
+      <div className="absolute -left-10 bottom-20 w-32 h-32 bg-white/10 rounded-full"></div>
+      <div className="absolute right-20 top-10 w-36 h-36 bg-white/10 rounded-3xl rotate-12"></div>
+      <div className="absolute right-1/4 bottom-1/3 w-20 h-20 bg-white/10 rounded-full"></div>
+      
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <div className="font-sans font-bold text-2xl text-white mb-4">Build<span className="text-primary">Club</span></div>
-            <p className="text-gray-300 mb-6 max-w-md">A community of curious minds building the future with AI, one meetup at a time.</p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Facebook className="w-6 h-6" />
-                <span className="sr-only">Facebook</span>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Twitter className="w-6 h-6" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Github className="w-6 h-6" />
-                <span className="sr-only">GitHub</span>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Dribbble className="w-6 h-6" />
-                <span className="sr-only">Dribbble</span>
-              </a>
+            <div className="font-sans font-bold text-3xl text-white mb-5">
+              Build<span className="text-[var(--color-yellow)]">Club</span>
+            </div>
+            <p className="text-white/80 mb-6 max-w-md text-lg">
+              A fun community of creative minds building the future with AI, one meetup at a time! 
+            </p>
+            <div className="flex space-x-3">
+              {[Facebook, Twitter, Github, Dribbble].map((Icon, i) => (
+                <a 
+                  key={i} 
+                  href="#" 
+                  className="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition-colors" 
+                  style={{ boxShadow: '0 4px 0 0 rgba(0,0,0,0.1)' }}
+                >
+                  <Icon className="w-5 h-5 text-white" />
+                  <span className="sr-only">Social Media</span>
+                </a>
+              ))}
             </div>
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <button 
-                  onClick={() => {
-                    document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }} 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  About
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => {
-                    document.querySelector('#roles')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }} 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Who We Are
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => {
-                    document.querySelector('#events')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }} 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Events
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => {
-                    document.querySelector('#join')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }} 
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Join Us
-                </button>
-              </li>
+            <h3 className="text-xl font-bold mb-5">Quick Links</h3>
+            <ul className="space-y-3">
+              {[
+                { id: '#about', label: 'About' },
+                { id: '#roles', label: 'Who We Are' },
+                { id: '#events', label: 'Events' },
+                { id: '#join', label: 'Join Us' }
+              ].map((link, i) => (
+                <li key={i}>
+                  <button 
+                    onClick={() => {
+                      document.querySelector(link.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }} 
+                    className="text-white/80 hover:text-white transition-colors flex items-center"
+                  >
+                    <div className="w-1.5 h-1.5 bg-[var(--color-yellow)] rounded-full mr-2"></div>
+                    {link.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Contact</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-5">Contact Us</h3>
+            <ul className="space-y-4">
               <li className="flex items-start">
-                <Mail className="h-5 w-5 text-gray-300 mr-2 mt-0.5" />
-                <span className="text-gray-300">hello@buildclub.io</span>
+                <div className="clay-shape bg-[var(--color-red)] p-2 mr-3">
+                  <Mail className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-white/90 pt-1">hello@buildclub.io</span>
               </li>
               <li className="flex items-start">
-                <MapPin className="h-5 w-5 text-gray-300 mr-2 mt-0.5" />
-                <span className="text-gray-300">San Francisco, CA</span>
+                <div className="clay-shape bg-[var(--color-green)] p-2 mr-3">
+                  <MapPin className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-white/90 pt-1">San Francisco, CA</span>
+              </li>
+              <li className="flex items-start">
+                <div className="clay-shape bg-[var(--color-yellow)] p-2 mr-3">
+                  <MessageCircle className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-white/90 pt-1">Let's chat!</span>
               </li>
             </ul>
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t border-gray-700 text-center text-gray-300 text-sm">
+        <div className="mt-16 pt-8 border-t border-white/20 text-center text-white/70">
           <p>&copy; {new Date().getFullYear()} BuildClub. All rights reserved.</p>
         </div>
       </div>
