@@ -1,5 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, PartyPopper, ArrowRight, Clock, Briefcase, Palette, Code } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  PartyPopper,
+  ArrowRight,
+  Clock,
+  Briefcase,
+  Palette,
+  Code,
+} from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
@@ -12,10 +21,8 @@ interface EventCardProps {
   title: string;
   description: string;
   location: string;
-  imageSrc: string;
-  color: string;
-  index: number;
   focuses: Focus[];
+  isHackathon?: boolean;
 }
 
 // Shape component for focus areas
@@ -52,17 +59,18 @@ function EventCard({
   title,
   description,
   location,
-  imageSrc,
-  color,
-  index,
   focuses,
+  isHackathon = false,
 }: EventCardProps) {
   // Get icon based on primary focus
-  const Icon = focuses.includes("product") ? Briefcase : 
-               focuses.includes("design") ? Palette : 
-               focuses.includes("engineering") ? Code : 
-               Calendar;
-  
+  const Icon = focuses.includes("product")
+    ? Briefcase
+    : focuses.includes("design")
+      ? Palette
+      : focuses.includes("engineering")
+        ? Code
+        : Calendar;
+
   // Format the date components
   const dateParts = date.split(" ");
   const day = dateParts[1].replace(",", "");
@@ -74,16 +82,17 @@ function EventCard({
         {/* Left side with date and decorative element */}
         <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
           <div className="mb-2 text-center">
-            <div className="text-2xl font-bold text-gray-800">
-              {day}
-            </div>
+            <div className="text-2xl font-bold text-gray-800">{day}</div>
             <div className="text-sm font-medium text-gray-500 uppercase">
               {month}
             </div>
           </div>
           
-          {/* Icon in themed background */}
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${color === "var(--color-red)" ? "bg-red-100" : color === "var(--color-blue)" ? "bg-blue-100" : "bg-yellow-100"}`}>
+          {/* Icon representing the event type */}
+          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+            focuses.includes("product") ? "bg-red-100" : 
+            focuses.includes("design") ? "bg-blue-100" : "bg-yellow-100"
+          }`}>
             <Icon className="w-6 h-6 text-gray-700" />
           </div>
         </div>
@@ -93,10 +102,8 @@ function EventCard({
           <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">
             {title}
           </h3>
-          <p className="text-gray-600 text-sm mb-4">
-            {description}
-          </p>
-          
+          <p className="text-gray-600 text-sm mb-4">{description}</p>
+
           {/* Focus area tags */}
           <div className="flex flex-wrap gap-2 mb-4">
             {focuses.map((focus, i) => (
@@ -135,31 +142,37 @@ function EventCard({
 export default function EventsSection() {
   const events = [
     {
-      date: "Jun 15, 2023",
-      title: "AI Product Workshop",
-      description: "Learn how to identify and validate AI product opportunities with practical exercises and expert feedback.",
-      location: "San Francisco, CA",
-      imageSrc: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622",
-      color: "var(--color-red)",
-      focuses: ["product", "design"] as Focus[],
+      date: "April 17, 2025",
+      title: "AI Agents Workshop",
+      description:
+        "Learn all about AI agents and get hands-on with a practical workshop.",
+      location: "Providence, RI",
+      focuses: ["engineering"] as Focus[],
     },
     {
-      date: "Jul 8, 2023",
-      title: "AI Design Hackathon",
-      description: "A weekend-long event where designers tackle AI interface challenges and create innovative solutions.",
-      location: "New York, NY",
-      imageSrc: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
-      color: "var(--color-blue)",
-      focuses: ["design", "engineering"] as Focus[],
+      date: "May 15, 2025",
+      title: "AI UI/UX Workshop",
+      description:
+        "Learn about emrging AI UI/UX patterns and how to build impactful interfaces for the age of AI.",
+      location: "Providence, RI",
+      focuses: ["design"] as Focus[],
     },
     {
-      date: "Jul 22, 2023",
-      title: "AI Engineering Summit",
-      description: "Deep dive into the latest AI engineering practices with hands-on workshops and technical discussions.",
-      location: "Austin, TX",
-      imageSrc: "https://images.unsplash.com/photo-1582192730841-2a682d7375f9",
-      color: "var(--color-yellow)",
-      focuses: ["engineering", "product"] as Focus[],
+      date: "Jun 19, 2025",
+      title: "AI Product Strategy Workshop",
+      description:
+        "Deep dive into the latest AI engineering product strategy best-practices with hands-on workshops and discussions.",
+      location: "Providence, RI",
+      focuses: ["product"] as Focus[],
+    },
+    {
+      date: "Jul 19, 2025",
+      title: "AI Hackathon",
+      description:
+        "Teamup with product, design, and engineering peers to something impactiful using your AI know-how.",
+      location: "Providence, RI",
+      isHackathon: true,
+      focuses: ["product", "design", "engineering"] as Focus[],
     },
   ];
 
@@ -222,9 +235,6 @@ export default function EventsSection() {
               title={event.title}
               description={event.description}
               location={event.location}
-              imageSrc={event.imageSrc}
-              color={event.color}
-              index={idx}
               focuses={event.focuses}
             />
           ))}
