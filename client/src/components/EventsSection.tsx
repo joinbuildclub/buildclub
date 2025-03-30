@@ -32,7 +32,7 @@ function FocusBadge({ focus }: { focus: Focus }) {
     case "product":
       return (
         <div className="flex items-center gap-1.5 bg-red-50 text-red-600 py-1 px-2 rounded-md text-xs">
-          <div className="w-3 h-3 bg-[var(--color-red)] rounded-tl-md rounded-tr-md rounded-bl-md transform rotate-45"></div>
+          <div className="w-3 h-3 bg-[var(--color-red)] rounded-full transform rotate-45"></div>
           <span className="font-medium">Product</span>
         </div>
       );
@@ -77,10 +77,14 @@ function EventCard({
   const dateParts = date.split(" ");
   const day = dateParts[1].replace(",", "");
   const month = dateParts[0];
-  const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+  const dayOfWeek = new Date(date).toLocaleDateString("en-US", {
+    weekday: "long",
+  });
 
   return (
-    <div className={`event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? 'hackathon-event' : ''}`}>
+    <div
+      className={`event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? "hackathon-event" : ""}`}
+    >
       <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-row">
         {/* Left side with date and decorative element */}
         <div className="w-28 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
@@ -112,7 +116,7 @@ function EventCard({
           {/* Event details */}
           <div className="flex items-center text-gray-600 mb-3 text-xs">
             <Clock className="w-4 h-4 mr-2 text-gray-400" />
-            <span>{time || 'Time TBD'}</span>
+            <span>{time || "Time TBD"}</span>
           </div>
 
           <div className="flex items-center text-gray-600 text-xs">
@@ -141,7 +145,7 @@ export default function EventsSection() {
   const events = [
     {
       date: "April 17, 2025",
-      time: "6:00 PM - 8:30 PM",
+      time: "6:30 PM - 9:30 PM",
       title: "AI Agents Workshop",
       description:
         "Learn all about AI agents and get hands-on with a practical workshop.",
@@ -150,7 +154,7 @@ export default function EventsSection() {
     },
     {
       date: "May 15, 2025",
-      time: "5:30 PM - 8:00 PM",
+      time: "6:30 PM - 9:30 PM",
       title: "AI UI/UX Workshop",
       description:
         "Learn about emrging AI UI/UX patterns and how to build impactful interfaces for the age of AI.",
@@ -159,7 +163,7 @@ export default function EventsSection() {
     },
     {
       date: "Jun 19, 2025",
-      time: "6:00 PM - 8:30 PM",
+      time: "6:30 PM - 9:30 PM",
       title: "AI Product Strategy Workshop",
       description:
         "Deep dive into the latest AI engineering product strategy best-practices with hands-on workshops and discussions.",
@@ -168,7 +172,7 @@ export default function EventsSection() {
     },
     {
       date: "Jul 19, 2025",
-      time: "10:00 AM - 6:00 PM",
+      time: "10:00 AM - 4:00 PM",
       title: "AI Hackathon",
       description:
         "Teamup with product, design, and engineering peers to something impactiful using your AI know-how.",
