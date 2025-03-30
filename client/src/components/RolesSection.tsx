@@ -15,7 +15,7 @@ interface InterestAreaProps {
 
 function InterestTopic({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white/10 rounded-full px-4 py-2 text-white/90 text-sm font-medium transition-all duration-300 hover:bg-white/20">
+    <div className="bg-gray-100 rounded-full px-4 py-2 text-gray-700 text-sm font-medium transition-all duration-300 hover:bg-gray-200 border border-gray-200">
       {children}
     </div>
   );
@@ -130,11 +130,11 @@ export default function RolesSection() {
             </div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
-            Find your <span className="text-[var(--color-red)]">interest</span> area
+            What we <span className="text-[var(--color-red)]">explore</span> together
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Our community welcomes all backgrounds and perspectives. 
-            Find where you fit based on your interests and curiosities!
+            Our community primarily covers these interconnected areas,
+            welcoming members from all backgrounds and skill levels.
           </p>
         </div>
 
@@ -143,7 +143,7 @@ export default function RolesSection() {
             shape={productShape}
             icon={<BrainCircuit className="h-7 w-7 text-white" />}
             title="Product Strategy"
-            description="Explore how AI transforms product thinking and strategy. Perfect if you're curious about the business of AI."
+            description="We discuss how AI transforms product thinking and strategy, exploring both business opportunities and human-centered approaches."
             topics={[
               "AI Product Discovery",
               "User Research",
@@ -158,7 +158,7 @@ export default function RolesSection() {
             shape={designShape}
             icon={<PenTool className="h-7 w-7 text-white" />}
             title="Design & UX"
-            description="Discover how to craft delightful experiences with AI. Great for visual thinkers and experience designers."
+            description="We craft delightful AI experiences together, sharing techniques for making advanced technology accessible and intuitive for everyone."
             topics={[
               "AI Interface Design",
               "Prompt Engineering",
@@ -173,7 +173,7 @@ export default function RolesSection() {
             shape={engineeringShape}
             icon={<Zap className="h-7 w-7 text-white" />}
             title="Technical Building"
-            description="Learn how to build with AI under the hood. Ideal for those curious about bringing AI capabilities to life."
+            description="We collaborate on implementation challenges, solving tough problems around integrating AI capabilities into meaningful applications."
             topics={[
               "API Integration",
               "Model Tuning",
