@@ -195,7 +195,7 @@ export default function JoinSection() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-6 rounded-lg shadow-sm transition-all focus:outline-none focus:bg-[#370B73]/95"
+                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-6 rounded-lg shadow-sm transition-all focus:outline-none focus:shadow-md"
                     disabled={submitMutation.isPending}
                   >
                     {submitMutation.isPending ? "Submitting..." : "Join the club"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
