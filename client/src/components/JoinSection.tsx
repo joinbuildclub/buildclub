@@ -162,60 +162,75 @@ export default function JoinSection() {
                         <FormControl>
                           <div className="flex justify-center gap-8 py-4">
                             {/* Product Manager - Circle */}
-                            <div 
-                              className={cn(
-                                "relative w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300",
-                                field.value === "product" 
-                                  ? "ring-4 ring-[var(--color-red)] ring-opacity-50 outline outline-2 outline-[var(--color-red)]" 
-                                  : "bg-white border-2 border-gray-200 hover:border-[var(--color-red)]/40"
-                              )}
-                              onClick={() => field.onChange("product")}
-                            >
-                              <Circle 
+                            <div className="flex flex-col items-center gap-2">
+                              <div 
                                 className={cn(
-                                  "w-10 h-10 transition-all duration-300",
-                                  field.value === "product" ? "text-[var(--color-red)]" : "text-gray-400"
-                                )} 
-                              />
-
+                                  "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
+                                  field.value === "product" 
+                                    ? "ring-4 ring-[var(--color-red)] ring-opacity-50 outline outline-2 outline-[var(--color-red)]" 
+                                    : "bg-white border-2 border-gray-200 hover:border-[var(--color-red)]/40"
+                                )}
+                                onClick={() => field.onChange("product")}
+                              >
+                                <Circle 
+                                  className={cn(
+                                    "w-10 h-10 transition-all duration-300",
+                                    field.value === "product" ? "text-[var(--color-red)]" : "text-gray-400"
+                                  )} 
+                                />
+                              </div>
+                              <span className={cn(
+                                "text-sm font-medium transition-all duration-300",
+                                field.value === "product" ? "text-[var(--color-red)]" : "text-gray-500"
+                              )}>Product</span>
                             </div>
                             
                             {/* Designer - Square */}
-                            <div 
-                              className={cn(
-                                "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
-                                field.value === "design" 
-                                  ? "ring-4 ring-[var(--color-green)] ring-opacity-50 outline outline-2 outline-[var(--color-green)]" 
-                                  : "bg-white border-2 border-gray-200 hover:border-[var(--color-green)]/40"
-                              )}
-                              onClick={() => field.onChange("design")}
-                            >
-                              <Square 
+                            <div className="flex flex-col items-center gap-2">
+                              <div 
                                 className={cn(
-                                  "w-10 h-10 transition-all duration-300",
-                                  field.value === "design" ? "text-[var(--color-green)]" : "text-gray-400"
-                                )} 
-                              />
-
+                                  "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
+                                  field.value === "design" 
+                                    ? "ring-4 ring-[var(--color-green)] ring-opacity-50 outline outline-2 outline-[var(--color-green)]" 
+                                    : "bg-white border-2 border-gray-200 hover:border-[var(--color-green)]/40"
+                                )}
+                                onClick={() => field.onChange("design")}
+                              >
+                                <Square 
+                                  className={cn(
+                                    "w-10 h-10 transition-all duration-300",
+                                    field.value === "design" ? "text-[var(--color-green)]" : "text-gray-400"
+                                  )} 
+                                />
+                              </div>
+                              <span className={cn(
+                                "text-sm font-medium transition-all duration-300",
+                                field.value === "design" ? "text-[var(--color-green)]" : "text-gray-500"
+                              )}>Design</span>
                             </div>
                             
                             {/* Engineer - Triangle */}
-                            <div 
-                              className={cn(
-                                "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
-                                field.value === "engineering" 
-                                  ? "ring-4 ring-[var(--color-blue)] ring-opacity-50 outline outline-2 outline-[var(--color-blue)]" 
-                                  : "bg-white border-2 border-gray-200 hover:border-[var(--color-blue)]/40"
-                              )}
-                              onClick={() => field.onChange("engineering")}
-                            >
-                              <Triangle 
+                            <div className="flex flex-col items-center gap-2">
+                              <div 
                                 className={cn(
-                                  "w-10 h-10 transition-all duration-300",
-                                  field.value === "engineering" ? "text-[var(--color-blue)]" : "text-gray-400"
-                                )} 
-                              />
-
+                                  "relative w-20 h-20 rounded-md flex items-center justify-center cursor-pointer transition-all duration-300",
+                                  field.value === "engineering" 
+                                    ? "ring-4 ring-[var(--color-blue)] ring-opacity-50 outline outline-2 outline-[var(--color-blue)]" 
+                                    : "bg-white border-2 border-gray-200 hover:border-[var(--color-blue)]/40"
+                                )}
+                                onClick={() => field.onChange("engineering")}
+                              >
+                                <Triangle 
+                                  className={cn(
+                                    "w-10 h-10 transition-all duration-300",
+                                    field.value === "engineering" ? "text-[var(--color-blue)]" : "text-gray-400"
+                                  )} 
+                                />
+                              </div>
+                              <span className={cn(
+                                "text-sm font-medium transition-all duration-300",
+                                field.value === "engineering" ? "text-[var(--color-blue)]" : "text-gray-500"
+                              )}>Engineer</span>
                             </div>
                           </div>
                         </FormControl>
