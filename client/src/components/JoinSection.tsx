@@ -83,17 +83,17 @@ export default function JoinSection() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-3xl font-bold mb-6 text-gray-900 font-heading">Join the <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span> Community</h2>
-            <p className="text-xl text-gray-600">
-              Be part of a passionate group of builders creating the future of AI together. Apply to join our waitlist for upcoming events and activities.
+            <h2 className="text-4xl font-bold mb-6 text-gray-900 font-heading">Join the <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">BuildClub</span> Community</h2>
+            <p className="text-xl text-gray-600 max-w-2xl">
+              Be part of a passionate group of builders creating the future of AI together. Sign up for upcoming events and activities.
             </p>
           </div>
           
-          <div className="bg-white rounded-lg p-8 border border-gray-200">
+          <div className="bg-white rounded-2xl p-12 shadow-lg border-0">
             {formSuccess ? (
               <div className="text-center py-8">
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">Thanks for joining!</h3>
-                <p className="text-gray-600 mb-6">We've added you to our waitlist and will be in touch soon about upcoming events and community activities.</p>
+                <p className="text-gray-600 mb-6">You're now part of the BuildClub community! We'll be in touch soon about upcoming events and activities.</p>
                 <Button 
                   onClick={() => setFormSuccess(false)}
                   className="bg-[#370B73] hover:bg-[#370B73]/90 text-white"
@@ -103,16 +103,16 @@ export default function JoinSection() {
               </div>
             ) : (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   <div className="grid md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-gray-700">First Name</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium mb-2">First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your first name" className="border-gray-300 focus:border-primary" {...field} />
+                            <Input placeholder="Your first name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -123,9 +123,9 @@ export default function JoinSection() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-gray-700">Last Name</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium mb-2">Last Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your last name" className="border-gray-300 focus:border-primary" {...field} />
+                            <Input placeholder="Your last name" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -138,9 +138,9 @@ export default function JoinSection() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700">Email Address</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium mb-2">Email Address</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="you@example.com" className="border-gray-300 focus:border-primary" {...field} />
+                          <Input type="email" placeholder="you@example.com" className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -152,13 +152,13 @@ export default function JoinSection() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700">Your Role</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium mb-2">Your Role</FormLabel>
                         <Select 
                           onValueChange={field.onChange} 
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="border-gray-300 focus:border-primary">
+                            <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-0 py-6 px-4 rounded-lg transition-all h-auto">
                               <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                           </FormControl>
@@ -179,12 +179,12 @@ export default function JoinSection() {
                     name="interests"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700">What interests you most about AI?</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium mb-2">What interests you most about AI?</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder="Tell us a bit about your interests..." 
                             rows={3} 
-                            className="border-gray-300 focus:border-primary resize-none"
+                            className="border-gray-200 focus:border-gray-400 focus:ring-0 px-4 py-3 rounded-lg transition-all resize-none"
                             {...field} 
                           />
                         </FormControl>
@@ -195,10 +195,10 @@ export default function JoinSection() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-3"
+                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-6 rounded-lg shadow-sm transition-all"
                     disabled={submitMutation.isPending}
                   >
-                    {submitMutation.isPending ? "Submitting..." : "Join the waitlist"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
+                    {submitMutation.isPending ? "Submitting..." : "Join the club"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                   </Button>
                   
                   <p className="text-sm text-gray-500 text-center">

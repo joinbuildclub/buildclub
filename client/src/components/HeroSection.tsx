@@ -29,7 +29,7 @@ export default function HeroSection() {
               size="lg" 
               className="bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium px-10 py-6 rounded-lg text-lg h-auto"
             >
-              Join the waitlist <ArrowRight className="ml-2 h-5 w-5" />
+              Join the club <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               onClick={() => handleNavigation('#events')} 
