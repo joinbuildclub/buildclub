@@ -61,9 +61,10 @@ export default function EventsSection() {
            style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}>
       </div>
       {/* Red Triangle (Product) */}
-      <div className="absolute left-1/4 top-1/4 w-28 h-28 bg-[var(--color-red)] animate-floating rounded-2xl" 
+      <div className="absolute left-1/4 top-1/4 w-28 h-28 bg-[var(--color-red)] animate-floating" 
            style={{ 
-             clipPath: 'polygon(50% 10%, 10% 90%, 90% 90%)',
+             clipPath: 'polygon(50% 10%, 15% 85%, 85% 85%)',
+             borderRadius: '15px',
              boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' 
            }}>
       </div>

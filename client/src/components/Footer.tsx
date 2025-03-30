@@ -8,7 +8,7 @@ import {
   MapPin,
   MessageCircle,
 } from "lucide-react";
-import logoPath from "../assets/logo.png";
+import logoPath from "../assets/logo-light.png";
 
 export default function Footer() {
   return (
@@ -22,7 +22,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
             <div className="mb-5">
-              <img src={logoPath} alt="BuildClub Logo" className="h-10 w-auto" />
+              <img
+                src={logoPath}
+                alt="BuildClub Logo"
+                className="h-16 w-auto"
+              />
             </div>
             <p className="text-white/80 mb-6 max-w-md text-lg">
               A fun community of creative minds building the future with AI, one
@@ -55,12 +59,10 @@ export default function Footer() {
                 <li key={i}>
                   <button
                     onClick={() => {
-                      document
-                        .querySelector(link.id)
-                        ?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
+                      document.querySelector(link.id)?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
                     }}
                     className="text-white/80 hover:text-white transition-colors flex items-center"
                   >

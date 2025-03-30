@@ -24,8 +24,15 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <button onClick={() => handleNavigation('#')} className="focus:outline-none">
-              <img src={logoPath} alt="BuildClub Logo" className="h-8 w-auto" />
+            <button
+              onClick={() => handleNavigation("#")}
+              className="focus:outline-none"
+            >
+              <img
+                src={logoPath}
+                alt="BuildClub Logo"
+                className="h-14 w-auto"
+              />
             </button>
           </div>
 
