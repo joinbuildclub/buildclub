@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Hammer, Puzzle, Users } from "lucide-react";
 
 export default function HeroSection() {
   const handleNavigation = (href: string) => {
@@ -14,47 +14,63 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-white bg-gradient-to-b from-white via-purple-50/30 to-white">
+    <section className="relative pt-24 pb-32 overflow-hidden bg-white">
+      {/* Clay-like decorative shapes */}
+      <div className="absolute -left-20 top-1/4 w-40 h-40 bg-[var(--color-green)] rounded-3xl rotate-12" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute -right-16 top-1/3 w-32 h-32 bg-[var(--color-blue)] rounded-full" style={{ boxShadow: '0 10px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute left-1/4 bottom-20 w-24 h-24 bg-[var(--color-yellow)] rounded-3xl -rotate-12" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      <div className="absolute right-1/3 top-20 w-20 h-20 bg-[var(--color-red)] rounded-full" style={{ boxShadow: '0 8px 0 0 rgba(0,0,0,0.1)' }}></div>
+      
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight font-heading">
-            Where <span className="bg-gradient-to-r from-primary to-[#7928CA] text-transparent bg-clip-text">AI builders</span> meet IRL
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
+            Let's <span className="text-[var(--color-red)]">build</span> cool <span className="text-[var(--color-blue)]">AI stuff</span> together!
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            A community of product managers, designers, and engineers collaborating to build meaningful AI solutions in real life.
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12">
+            A fun community of product makers, designers, and engineers collaborating to build meaningful AI solutions in real life.
           </p>
           <div className="flex flex-col sm:flex-row gap-5 justify-center">
             <Button 
               onClick={() => handleNavigation('#join')} 
               size="lg" 
-              className="bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium px-10 py-6 rounded-lg text-lg h-auto"
+              className="clay-button bg-[var(--color-red)] text-white font-bold px-10 py-6 text-lg h-auto border-0"
             >
               Join the club <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               onClick={() => handleNavigation('#events')} 
-              variant="outline"
               size="lg" 
-              className="border-gray-300 hover:border-primary hover:bg-white text-gray-800 font-medium px-10 py-6 rounded-lg text-lg h-auto"
+              className="clay-button bg-[var(--color-blue)] text-white font-bold px-10 py-6 text-lg h-auto border-0"
             >
               Explore events
             </Button>
           </div>
         </div>
         
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto border-t border-gray-200 pt-16">
-          <div className="text-center">
-            <p className="text-4xl font-bold text-gray-900">350+</p>
-            <p className="text-gray-600 mt-2">Community members</p>
+        {/* Stats with clay-like cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="clay-card bg-[var(--color-red)] text-white text-center transform transition-transform hover:-translate-y-2">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Users className="h-8 w-8 text-white" />
+            </div>
+            <p className="text-4xl font-bold">350+</p>
+            <p className="mt-2 font-medium">Community members</p>
           </div>
-          <div className="text-center">
-            <p className="text-4xl font-bold text-gray-900">45+</p>
-            <p className="text-gray-600 mt-2">Meetups hosted</p>
+          
+          <div className="clay-card bg-[var(--color-green)] text-white text-center transform transition-transform hover:-translate-y-2">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Puzzle className="h-8 w-8 text-white" />
+            </div>
+            <p className="text-4xl font-bold">45+</p>
+            <p className="mt-2 font-medium">Meetups hosted</p>
           </div>
-          <div className="text-center">
-            <p className="text-4xl font-bold text-gray-900">28</p>
-            <p className="text-gray-600 mt-2">Projects launched</p>
+          
+          <div className="clay-card bg-[var(--color-blue)] text-white text-center transform transition-transform hover:-translate-y-2">
+            <div className="rounded-full bg-white/20 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Hammer className="h-8 w-8 text-white" />
+            </div>
+            <p className="text-4xl font-bold">28</p>
+            <p className="mt-2 font-medium">Projects launched</p>
           </div>
         </div>
       </div>
