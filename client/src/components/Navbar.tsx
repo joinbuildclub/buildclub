@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import logoPath from "../assets/logo.png";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -23,9 +24,9 @@ export default function Navbar() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <span className="font-bold text-xl text-gray-900">
-              Build<span className="text-primary">Club</span>
-            </span>
+            <button onClick={() => handleNavigation('#')} className="focus:outline-none">
+              <img src={logoPath} alt="BuildClub Logo" className="h-8 w-auto" />
+            </button>
           </div>
 
           {/* Desktop Navigation */}

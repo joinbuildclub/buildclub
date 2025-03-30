@@ -8,6 +8,7 @@ import {
   MapPin,
   MessageCircle,
 } from "lucide-react";
+import logoPath from "../assets/logo.png";
 
 export default function Footer() {
   return (
@@ -20,8 +21,8 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <div className="font-sans font-bold text-3xl text-white mb-5">
-              Build<span className="text-[var(--color-yellow)]">Club</span>
+            <div className="mb-5">
+              <img src={logoPath} alt="BuildClub Logo" className="h-10 w-auto" />
             </div>
             <p className="text-white/80 mb-6 max-w-md text-lg">
               A fun community of creative minds building the future with AI, one
