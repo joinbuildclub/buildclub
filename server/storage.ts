@@ -65,31 +65,48 @@ export class DatabaseStorage implements IStorage {
   }
   
   private async processWithSendGrid(entry: WaitlistEntry): Promise<void> {
-    if (!process.env.SENDGRID_API_KEY) {
-      console.warn("SendGrid API key not found. Skipping SendGrid integration.");
+    // Check if SendGrid is properly configured
+    const isSendGridConfigured = !!process.env.SENDGRID_API_KEY && !!process.env.ADMIN_EMAIL;
+    
+    if (!isSendGridConfigured) {
+      console.log("SendGrid not fully configured. Skipping email operations but form submission was successful.");
       return;
     }
     
     try {
-      // Add contact to SendGrid mailing list
-      const contactAdded = await addContactToSendGrid(entry);
-      if (contactAdded) {
-        console.log(`Contact ${entry.email} added to SendGrid successfully`);
+      // Try to add contact to SendGrid mailing list
+      try {
+        const contactAdded = await addContactToSendGrid(entry);
+        if (contactAdded) {
+          console.log(`Contact ${entry.email} added to SendGrid successfully`);
+        }
+      } catch (err) {
+        console.error("Error adding contact to SendGrid:", err);
+        // Continue with other operations even if this one fails
       }
       
-      // Send welcome email to the subscriber
-      const welcomeEmailSent = await sendWelcomeEmail(entry);
-      if (welcomeEmailSent) {
-        console.log(`Welcome email sent to ${entry.email} successfully`);
+      // Try to send welcome email to the subscriber
+      try {
+        const welcomeEmailSent = await sendWelcomeEmail(entry);
+        if (welcomeEmailSent) {
+          console.log(`Welcome email sent to ${entry.email} successfully`);
+        }
+      } catch (err) {
+        console.error("Error sending welcome email:", err);
       }
       
-      // Send notification to admin
-      const adminNotificationSent = await sendAdminNotification(entry);
-      if (adminNotificationSent) {
-        console.log(`Admin notification sent for ${entry.email} successfully`);
+      // Try to send notification to admin
+      try {
+        const adminNotificationSent = await sendAdminNotification(entry);
+        if (adminNotificationSent) {
+          console.log(`Admin notification sent for ${entry.email} successfully`);
+        }
+      } catch (err) {
+        console.error("Error sending admin notification:", err);
       }
     } catch (error) {
-      console.error("Error processing SendGrid operations:", error);
+      console.error("Error in SendGrid processing:", error);
+      // Don't let SendGrid errors prevent the form submission
     }
   }
 }
