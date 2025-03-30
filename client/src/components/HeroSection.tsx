@@ -18,7 +18,7 @@ export default function HeroSection() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight">
-            Where <span className="bg-gradient-to-r from-primary to-[#EC4899] text-transparent bg-clip-text">AI builders</span> meet IRL
+            Where <span className="bg-gradient-to-r from-primary to-[#9333EA] text-transparent bg-clip-text">AI builders</span> meet IRL
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
             A community of product managers, designers, and engineers collaborating to build meaningful AI solutions in real life.

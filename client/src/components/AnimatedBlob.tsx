@@ -8,7 +8,7 @@ interface AnimatedBlobProps {
 export default function AnimatedBlob({ className, color }: AnimatedBlobProps) {
   const colorClasses = {
     primary: "bg-primary/10",
-    secondary: "bg-[#EC4899]/10",
+    secondary: "bg-[#9333EA]/10",
     accent: "bg-[#10B981]/10"
   };
 
