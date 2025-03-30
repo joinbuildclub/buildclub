@@ -96,7 +96,7 @@ export default function JoinSection() {
                 <p className="text-gray-600 mb-6">We've added you to our waitlist and will be in touch soon about upcoming events and community activities.</p>
                 <Button 
                   onClick={() => setFormSuccess(false)}
-                  className="bg-primary hover:bg-primary/90 text-white"
+                  className="bg-[#370B73] hover:bg-[#370B73]/90 text-white"
                 >
                   Join with another email
                 </Button>
@@ -195,7 +195,7 @@ export default function JoinSection() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-medium text-lg h-auto py-3"
+                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-3"
                     disabled={submitMutation.isPending}
                   >
                     {submitMutation.isPending ? "Submitting..." : "Join the waitlist"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
