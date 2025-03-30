@@ -1,4 +1,13 @@
-import { Check, Users, Lightbulb, Code, Sparkles, Zap, PenTool, BrainCircuit } from "lucide-react";
+import {
+  Check,
+  Users,
+  Lightbulb,
+  Code,
+  Sparkles,
+  Zap,
+  PenTool,
+  BrainCircuit,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
@@ -27,27 +36,29 @@ function InterestArea({
   title,
   description,
   topics,
-  color
+  color,
 }: InterestAreaProps) {
   return (
-    <div className={`bg-white rounded-3xl p-6 shadow-lg relative group overflow-hidden border-t-8 ${color}`}>
+    <div
+      className={`bg-white rounded-3xl p-6 shadow-lg relative group overflow-hidden border-t-8 ${color}`}
+    >
       <div className="absolute -top-6 -right-6 opacity-10 transition-all duration-500 group-hover:opacity-20 transform group-hover:scale-110">
         {shape}
       </div>
-      
+
       <div className="relative z-10">
-        <div className={`${color.replace("border", "bg")} w-14 h-14 rounded-2xl mb-5 flex items-center justify-center shadow-md`}>
+        <div
+          className={`${color.replace("border", "bg")} w-14 h-14 rounded-2xl mb-5 flex items-center justify-center shadow-md`}
+        >
           {icon}
         </div>
-        
+
         <h3 className="text-2xl font-bold mb-3 text-gray-800">{title}</h3>
         <p className="text-gray-600 mb-6">{description}</p>
-        
+
         <div className="flex flex-wrap gap-2">
           {topics.map((topic, idx) => (
-            <InterestTopic key={idx}>
-              {topic}
-            </InterestTopic>
+            <InterestTopic key={idx}>{topic}</InterestTopic>
           ))}
         </div>
       </div>
@@ -66,7 +77,7 @@ export default function RolesSection() {
       shadow={false}
     />
   );
-  
+
   // Create circle shape for Design interest
   const designShape = (
     <RoundedCircle
@@ -76,7 +87,7 @@ export default function RolesSection() {
       shadow={false}
     />
   );
-  
+
   // Create square shape for Engineering interest
   const engineeringShape = (
     <RoundedSquare
@@ -130,11 +141,12 @@ export default function RolesSection() {
             </div>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
-            What we <span className="text-[var(--color-red)]">explore</span> together
+            What we <span className="text-[var(--color-red)]">explore</span>{" "}
+            together
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Our community primarily covers these interconnected areas,
-            welcoming members from all backgrounds and skill levels.
+            Our community primarily covers these interconnected areas, welcoming
+            members from all backgrounds and skill levels.
           </p>
         </div>
 
@@ -142,14 +154,14 @@ export default function RolesSection() {
           <InterestArea
             shape={productShape}
             icon={<BrainCircuit className="h-7 w-7 text-white" />}
-            title="Product Strategy"
+            title="AI Product Strategy"
             description="We discuss how AI transforms product thinking and strategy, exploring both business opportunities and human-centered approaches."
             topics={[
               "AI Product Discovery",
               "User Research",
               "Market Validation",
               "Ethical AI Products",
-              "Go-to-market Strategy"
+              "Go-To-Market Strategy",
             ]}
             color="border-[var(--color-red)]"
           />
@@ -157,14 +169,14 @@ export default function RolesSection() {
           <InterestArea
             shape={designShape}
             icon={<PenTool className="h-7 w-7 text-white" />}
-            title="Design & UX"
+            title="AI Design & UX"
             description="We craft delightful AI experiences together, sharing techniques for making advanced technology accessible and intuitive for everyone."
             topics={[
               "AI Interface Design",
-              "Prompt Engineering",
-              "Information Design",
+              "Information Architecture",
               "Interaction Patterns",
-              "Visual Systems"
+              "Visual Systems",
+              "AI User Experience",
             ]}
             color="border-[var(--color-blue)]"
           />
@@ -172,14 +184,16 @@ export default function RolesSection() {
           <InterestArea
             shape={engineeringShape}
             icon={<Zap className="h-7 w-7 text-white" />}
-            title="Technical Building"
+            title="AI Engineering"
             description="We collaborate on implementation challenges, solving tough problems around integrating AI capabilities into meaningful applications."
             topics={[
-              "API Integration",
+              "API Integrations",
+              "AI Agents",
+              "Prompt Engineering",
               "Model Tuning",
               "RAG Systems",
               "AI Infrastructure",
-              "Data Processing"
+              "Data Processing",
             ]}
             color="border-[var(--color-yellow)]"
           />

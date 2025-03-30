@@ -54,7 +54,6 @@ export default function Footer() {
                   <a
                     key={i}
                     target="_blank"
-                    rel="noopener noreferrer"
                     href={social.url}
                     className="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition-colors"
                     style={{ boxShadow: "0 4px 0 0 rgba(0,0,0,0.1)" }}
