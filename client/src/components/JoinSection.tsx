@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Users, Square, Circle, Triangle } from "lucide-react";
+import { ArrowRight, Users, Square, Circle, Triangle, Twitter } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
@@ -28,8 +28,8 @@ const formSchema = insertWaitlistSchema.extend({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  role: z.array(z.string()).min(1, "Please select at least one interest"),
-  interests: z.string().optional(),
+  interestAreas: z.array(z.string()).min(1, "Please select at least one interest area"),
+  aiInterests: z.string().optional(),
 });
 
 export default function JoinSection() {
@@ -43,8 +43,8 @@ export default function JoinSection() {
       firstName: "",
       lastName: "",
       email: "",
-      role: [],
-      interests: "",
+      interestAreas: [],
+      aiInterests: "",
     },
   });
 
@@ -138,10 +138,10 @@ export default function JoinSection() {
                   soon about upcoming events and activities.
                 </p>
                 <Button
-                  onClick={() => setFormSuccess(false)}
+                  onClick={() => window.open("https://twitter.com/intent/tweet?text=I%20just%20joined%20the%20BuildClub%20community%20of%20AI%20builders!%20%23BuildClub%20%23AIBuilders", "_blank")}
                   className="clay-button bg-[var(--color-yellow)] text-white font-bold border-0 transition-all duration-500 hover:bg-[var(--color-yellow)]/90"
                 >
-                  Join with another email
+                  Share on Twitter <Twitter className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             ) : (
@@ -214,11 +214,11 @@ export default function JoinSection() {
 
                   <FormField
                     control={form.control}
-                    name="role"
+                    name="interestAreas"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-gray-700 font-bold mb-2">
-                          Your Interests
+                          Your Interest Areas
                         </FormLabel>
                         <FormControl>
                           <div className="flex justify-center gap-8 py-4">
@@ -395,7 +395,7 @@ export default function JoinSection() {
 
                   <FormField
                     control={form.control}
-                    name="interests"
+                    name="aiInterests"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-gray-700 font-bold mb-2">

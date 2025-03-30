@@ -97,8 +97,8 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        <li><strong>Roles:</strong> ${entry.role.join(', ')}</li>
-        ${entry.interests ? `<li><strong>Interests:</strong> ${entry.interests}</li>` : ''}
+        <li><strong>Interest Areas:</strong> ${entry.interestAreas.join(', ')}</li>
+        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ''}
       </ul>
       <p>Looking forward to building together!</p>
       <p>The BuildClub Team</p>
@@ -122,8 +122,8 @@ export async function sendAdminNotification(entry: WaitlistEntry): Promise<boole
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        <li><strong>Roles:</strong> ${entry.role.join(', ')}</li>
-        ${entry.interests ? `<li><strong>Interests:</strong> ${entry.interests}</li>` : ''}
+        <li><strong>Interest Areas:</strong> ${entry.interestAreas.join(', ')}</li>
+        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ''}
       </ul>
     </div>
   `;

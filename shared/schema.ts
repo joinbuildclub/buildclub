@@ -13,8 +13,8 @@ export const waitlistEntries = pgTable("waitlist_entries", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),
-  role: text("role").array().notNull(),
-  interests: text("interests"),
+  interestAreas: text("interest_areas").array().notNull(),
+  aiInterests: text("ai_interests"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -26,8 +26,8 @@ export const insertWaitlistSchema = createInsertSchema(waitlistEntries).pick({
   firstName: true,
   lastName: true,
   email: true,
-  role: true,
-  interests: true,
+  interestAreas: true,
+  aiInterests: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
