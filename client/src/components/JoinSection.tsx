@@ -112,7 +112,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-medium mb-2">First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your first name" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white ring-0 focus:ring-1 focus:ring-gray-300 focus:border-transparent focus:outline-none shadow-sm hover:border-gray-300" {...field} />
+                            <Input placeholder="Your first name" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white focus:outline-none focus:border-gray-300 shadow-sm" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -125,7 +125,7 @@ export default function JoinSection() {
                         <FormItem>
                           <FormLabel className="text-gray-700 font-medium mb-2">Last Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your last name" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white ring-0 focus:ring-1 focus:ring-gray-300 focus:border-transparent focus:outline-none shadow-sm hover:border-gray-300" {...field} />
+                            <Input placeholder="Your last name" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white focus:outline-none focus:border-gray-300 shadow-sm" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -140,7 +140,7 @@ export default function JoinSection() {
                       <FormItem>
                         <FormLabel className="text-gray-700 font-medium mb-2">Email Address</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="you@example.com" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white ring-0 focus:ring-1 focus:ring-gray-300 focus:border-transparent focus:outline-none shadow-sm hover:border-gray-300" {...field} />
+                          <Input type="email" placeholder="you@example.com" className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white focus:outline-none focus:border-gray-300 shadow-sm" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -158,7 +158,7 @@ export default function JoinSection() {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white ring-0 focus:ring-1 focus:ring-gray-300 focus:border-transparent focus:outline-none shadow-sm hover:border-gray-300 h-auto">
+                            <SelectTrigger className="border-gray-200 py-6 px-4 rounded-lg transition-all bg-white focus:outline-none focus:border-gray-300 shadow-sm h-auto">
                               <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
                           </FormControl>
@@ -184,7 +184,7 @@ export default function JoinSection() {
                           <Textarea 
                             placeholder="Tell us a bit about your interests..." 
                             rows={3} 
-                            className="border-gray-200 px-4 py-3 rounded-lg transition-all bg-white ring-0 focus:ring-1 focus:ring-gray-300 focus:border-transparent focus:outline-none shadow-sm hover:border-gray-300 resize-none"
+                            className="border-gray-200 px-4 py-3 rounded-lg transition-all bg-white focus:outline-none focus:border-gray-300 shadow-sm resize-none"
                             {...field} 
                           />
                         </FormControl>
@@ -195,7 +195,7 @@ export default function JoinSection() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-6 rounded-lg shadow-md transition-all ring-0 focus:ring-2 focus:ring-[#7928CA]/30 focus:outline-none"
+                    className="w-full bg-[#370B73] hover:bg-[#370B73]/90 text-white font-medium text-lg h-auto py-6 rounded-lg shadow-sm transition-all focus:outline-none focus:bg-[#370B73]/95"
                     disabled={submitMutation.isPending}
                   >
                     {submitMutation.isPending ? "Submitting..." : "Join the club"} {!submitMutation.isPending && <ArrowRight className="ml-2 h-5 w-5" />}
