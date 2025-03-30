@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, PartyPopper } from "lucide-react";
+import { MapPin, Calendar, PartyPopper, ArrowRight, Clock } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
@@ -23,39 +23,81 @@ function EventCard({
   color,
   index,
 }: EventCardProps) {
-  return (
-    <div
-      className={`clay-card ${color} text-white overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:${color.replace("bg-", "bg-")}/95 group cursor-pointer`}
-    >
-      <div className="h-48 relative overflow-hidden rounded-t-2xl">
-        <img
-          src={imageSrc}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-black/20 transition-opacity duration-500 group-hover:bg-black/10"></div>
-        <div className="absolute top-4 left-4 bg-white/20 text-white font-bold px-3 py-1 rounded-full backdrop-blur-sm transition-all duration-500 group-hover:bg-white/30">
-          {date}
-        </div>
-      </div>
-      <div className="p-6 relative">
-        <h3 className="font-bold text-2xl mb-3">{title}</h3>
-        <p className="text-white/80 mb-4">{description}</p>
-        <div className="flex items-center text-white/90 font-medium">
-          <MapPin className="w-4 h-4 mr-2 transition-transform duration-500 group-hover:scale-110" />
-          <span>{location}</span>
-        </div>
+  // Create shape component based on the index
+  const ShapeComponent = 
+    index % 3 === 0 ? RoundedTriangle : 
+    index % 3 === 1 ? RoundedCircle : 
+    RoundedSquare;
 
-        {/* Decorative elements with transitions */}
-        {index % 3 === 0 && (
-          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full transition-all duration-700 group-hover:bg-white/20"></div>
-        )}
-        {index % 3 === 1 && (
-          <div className="absolute -top-10 -right-6 w-24 h-24 bg-white/10 rounded-3xl rotate-12 transition-all duration-700 group-hover:bg-white/20"></div>
-        )}
-        {index % 3 === 2 && (
-          <div className="absolute -bottom-8 -right-8 w-28 h-28 bg-white/10 rounded-full transition-all duration-700 group-hover:bg-white/20"></div>
-        )}
+  // Get color variable based on the color class
+  const colorVar = 
+    color === "bg-[var(--color-red)]" ? "var(--color-red)" : 
+    color === "bg-[var(--color-blue)]" ? "var(--color-blue)" : 
+    "var(--color-yellow)";
+    
+  return (
+    <div className="relative group cursor-pointer transform transition-all duration-500 hover:-translate-y-2">
+      {/* Background shape with rotation for clay-like effect */}
+      <div className="absolute inset-0 bg-gray-100 rounded-3xl rotate-3 translate-x-2 translate-y-2"></div>
+      
+      {/* Main card container */}
+      <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row h-full">
+        {/* Left side with image */}
+        <div className="md:w-2/5 relative">
+          <div className="h-64 md:h-full relative overflow-hidden">
+            <img
+              src={imageSrc}
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            
+            {/* Color overlay with brand shape */}
+            <div className="absolute inset-0 bg-black/40 transition-opacity duration-500 group-hover:bg-black/20"></div>
+            
+            {/* Date badge */}
+            <div className="absolute bottom-4 left-4 bg-white py-3 px-5 rounded-xl shadow-lg flex flex-col items-center justify-center">
+              <span className="text-xl font-bold text-gray-800">{date.split(",")[0].split(" ")[1]}</span>
+              <span className="text-xs font-medium text-gray-500 uppercase">{date.split(",")[0].split(" ")[0]}</span>
+            </div>
+            
+            {/* Floating accent shape */}
+            <div className="absolute -top-10 -right-10 opacity-50 transition-all duration-500 group-hover:rotate-12">
+              <ShapeComponent
+                width="w-28"
+                height="h-28"
+                color={colorVar}
+                rotate={index % 2 === 0 ? "rotate-12" : "-rotate-12"}
+                shadow
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Right side with content */}
+        <div className="p-6 md:w-3/5 flex flex-col justify-between">
+          <div>
+            <h3 className="font-bold text-2xl mb-3 text-gray-800 group-hover:text-gray-900">{title}</h3>
+            <p className="text-gray-600 mb-6">{description}</p>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center text-gray-700">
+              <Clock className="w-5 h-5 mr-3 text-gray-400" />
+              <span>{date}</span>
+            </div>
+            <div className="flex items-center text-gray-700">
+              <MapPin className="w-5 h-5 mr-3 text-gray-400" />
+              <span>{location}</span>
+            </div>
+            
+            <div className="pt-4">
+              <Button className={`${color} text-white px-6 py-2 rounded-full h-auto transition-all duration-300 group-hover:brightness-110 flex items-center gap-2`}>
+                RSVP Now
+                <ArrowRight className="w-4 h-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
