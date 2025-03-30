@@ -22,7 +22,7 @@ export default function HeroSection() {
   return (
     <section className="relative pt-12 sm:pt-64 pb-32 overflow-hidden bg-white">
       <RoundedTriangle
-        className="sm:left-20 sm:top-1/4"
+        className="md:left-20 sm:top-10 lg:top-1/4"
         width="w-16 sm:w-56"
         height="h-16 sm:h-56"
         rotate="rotate-12"
@@ -31,7 +31,7 @@ export default function HeroSection() {
       />
 
       <RoundedCircle
-        className="top-20 right-2 sm:right-16 sm:top-1/4"
+        className="top-20 right-2 md:right-16 xl:top-1/4"
         width="w-12 sm:w-48"
         height="h-12 sm:h-48"
         animateClass="animate-floating-delayed"

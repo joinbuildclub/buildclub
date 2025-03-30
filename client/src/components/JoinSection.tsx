@@ -80,27 +80,27 @@ export default function JoinSection() {
     <section id="join" className="py-24 bg-white relative overflow-hidden">
       <div>
         <RoundedTriangle
-          className="absolute left-24"
-          width="w-48"
-          height="h-48"
+          className="top-4 sm:top-0 sm:left-24"
+          width="w-24 sm:w-48"
+          height="h-24 sm:h-48"
           rotate="-rotate-12"
           animateClass="animate-floating"
           shadow
         />
 
         <RoundedSquare
-          className="absolute right-0 top-48"
-          width="w-48"
-          height="h-48"
+          className="right-0 top-8 xl:top-48"
+          width="w-24 sm:w-48"
+          height="h-24 sm:h-48"
           rotate="rotate-12"
-          animateClass="animate-floating"
+          animateClass="animate-floating-delayed"
           shadow
         />
 
         <RoundedCircle
-          className="absolute bottom-1/4 -left-24"
-          width="w-36"
-          height="h-36"
+          className="top-48 sm:top-16 sm:bottom-1/4 sm:-left-24"
+          width="w-16 sm:w-36"
+          height="h-16 sm:h-36"
           animateClass="animate-floating-delayed"
           shadow
         />
