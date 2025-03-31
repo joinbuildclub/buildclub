@@ -142,12 +142,21 @@ function EventCard({
         className={`event-card group transition-all duration-300 ${isHackathon ? "hackathon-event" : ""} cursor-pointer transform hover:-translate-y-1 hover:shadow-xl`}
       >
         <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-row">
-          {/* Left side with date - enhanced with gradient background based on focus */}
-          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white
-                           ${focuses.includes("engineering") ? "bg-gradient-to-br from-yellow-400 to-yellow-500" :
-                             focuses.includes("design") ? "bg-gradient-to-br from-blue-400 to-blue-500" :
-                             focuses.includes("product") ? "bg-gradient-to-br from-red-400 to-red-500" : 
-                             "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
+          {/* Left side with date - special animated gradient for hackathons, otherwise based on focus */}
+          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
+                          ${isHackathon 
+                            ? "bg-gray-100" // Base color that will be covered by the animated gradient
+                            : focuses.includes("engineering") 
+                              ? "bg-gradient-to-br from-yellow-400 to-yellow-500" 
+                              : focuses.includes("design") 
+                                ? "bg-gradient-to-br from-blue-400 to-blue-500" 
+                                : focuses.includes("product") 
+                                  ? "bg-gradient-to-br from-red-400 to-red-500" 
+                                  : "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
+            {/* Animated gradient overlay for hackathons */}
+            {isHackathon && (
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
+            )}
             <div className="text-sm font-medium opacity-90">
               {shortDayOfWeek.toUpperCase()}
             </div>

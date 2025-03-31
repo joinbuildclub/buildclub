@@ -203,3 +203,27 @@
     var(--color-green) 100%
   );
 }
+
+/* Animation for hackathon event date box gradient */
+.animate-gradient-x {
+  background-size: 300% 300%;
+  animation: gradient-x 6s ease-in-out infinite;
+}
+
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 50% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 50% 50%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
