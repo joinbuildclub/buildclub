@@ -1,18 +1,18 @@
-import jwt from 'jsonwebtoken';
-import { User } from '@shared/schema';
+import jwt from "jsonwebtoken";
+import { User } from "@shared/schema";
 
 // Secret key for JWT signing and verification
 // In a production environment, this should be stored in an environment variable
-const JWT_SECRET = process.env.JWT_SECRET || 'buildclub-jwt-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || "buildclub-jwt-secret-key";
 // Ensure JWT_SECRET is always a string
 const SECRET_KEY: string = JWT_SECRET as string;
-const TOKEN_EXPIRATION = '7d'; // Token expires in 7 days
+const TOKEN_EXPIRATION = "7d"; // Token expires in 7 days
 
 export interface JwtPayload {
-  userId: number;
+  userId: string;
   username: string;
   email?: string;
-  role: 'admin' | 'ambassador' | 'member';
+  role: "admin" | "ambassador" | "member";
 }
 
 /**
@@ -23,7 +23,7 @@ export function generateToken(user: User): string {
     userId: user.id,
     username: user.username,
     email: user.email ?? undefined,
-    role: user.role ?? 'member',
+    role: user.role ?? "member",
   };
 
   return jwt.sign(payload, SECRET_KEY, {
@@ -39,7 +39,7 @@ export function verifyToken(token: string): JwtPayload | null {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return decoded;
   } catch (error) {
-    console.error('Error verifying JWT token:', error);
+    console.error("Error verifying JWT token:", error);
     return null;
   }
 }
@@ -50,7 +50,7 @@ export function verifyToken(token: string): JwtPayload | null {
 export function extractTokenFromRequest(req: any): string | null {
   // Check for token in Authorization header
   const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  if (authHeader && authHeader.startsWith("Bearer ")) {
     return authHeader.substring(7);
   }
 

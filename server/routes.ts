@@ -6,14 +6,9 @@ import {
   insertHubEventRegistrationSchema,
   User,
   Event,
-  Hub,
-  HubEvent,
-  HubEventRegistration,
-  users,
   hubEventRegistrations,
 } from "@shared/schema";
 
-import * as schema from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import passport from "passport";
@@ -24,17 +19,15 @@ import {
   JwtPayload,
 } from "./jwt";
 import { eq, desc } from "drizzle-orm";
-import { 
-  sendWelcomeEmail, 
-  sendAdminNotification, 
-  sendEventRegistrationConfirmation,
-  sendEventReminder,
-  sendRegistrationCancellation
+import {
+  sendWelcomeEmail,
+  sendAdminNotification,
+  sendRegistrationCancellation,
 } from "./sendgrid";
 
 // Middleware for role-based access control
 interface AuthUser {
-  id: number;
+  id: string;
   username: string;
   role: "admin" | "ambassador" | "member" | null;
   email?: string | null;
@@ -291,26 +284,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Get all events
       const events = await storage.getEvents();
-      
+
       // Filter in memory to avoid UUID conversion issues
       let filteredEvents = [...events];
-      
+
       // Apply published filter
       if (req.query.published === "true") {
-        filteredEvents = filteredEvents.filter(event => event.isPublished === true);
+        filteredEvents = filteredEvents.filter(
+          (event) => event.isPublished === true,
+        );
       } else if (req.query.published === "false") {
-        filteredEvents = filteredEvents.filter(event => event.isPublished === false);
+        filteredEvents = filteredEvents.filter(
+          (event) => event.isPublished === false,
+        );
       }
-      
+
       // Apply hubId filter if provided
       if (req.query.hubId) {
         const targetHubId = req.query.hubId as string;
-        filteredEvents = filteredEvents.filter(event => {
+        filteredEvents = filteredEvents.filter((event: Event) => {
           // Compare as strings to avoid type conversion issues
-          return String(event.hubId) === targetHubId;
+          return event.hubId === targetHubId;
         });
       }
-      
+
       return res.status(200).json(filteredEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -322,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/events/:id", async (req, res) => {
     try {
-      const eventId = parseInt(req.params.id);
+      const eventId = req.params.id;
       const event = await storage.getEvent(eventId);
 
       if (!event) {
@@ -370,12 +367,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Hub Event related routes
   app.get("/api/hub-events", async (req, res) => {
     try {
-      const eventId = req.query.eventId
-        ? parseInt(req.query.eventId as string)
-        : undefined;
-      const hubId = req.query.hubId
-        ? parseInt(req.query.hubId as string)
-        : undefined;
+      const eventId = req.query.eventId as string;
+      const hubId = req.query.hubId as string;
 
       let hubEvents = [];
 
@@ -462,7 +455,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Get user's event registrations
   app.get("/api/my-registrations", isAuthenticated, async (req, res) => {
     try {
@@ -470,7 +463,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      
+
       const registrations = await storage.getUserEventRegistrations(user.id);
       return res.status(200).json(registrations);
     } catch (error) {
@@ -480,89 +473,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Update registration status
-  app.patch("/api/registrations/:id/status", isAuthenticated, async (req, res) => {
-    try {
-      const registrationId = parseInt(req.params.id);
-      const { status } = req.body;
-      
-      if (!status || !["registered", "confirmed", "attended", "cancelled"].includes(status)) {
-        return res.status(400).json({ message: "Invalid status value" });
-      }
-      
-      // Make sure user owns this registration or is admin/ambassador
-      const user = await getUserInfo(req);
-      if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      
-      const registration = await storage.getHubEventRegistration(registrationId);
-      if (!registration) {
-        return res.status(404).json({ message: "Registration not found" });
-      }
-      
-      // Check if user has permission (owns registration or is admin/ambassador)
-      if (registration.userId !== user.id && user.role !== "admin" && user.role !== "ambassador") {
-        return res.status(403).json({ message: "You don't have permission to update this registration" });
-      }
-      
-      // Update status
-      const updatedRegistration = await storage.updateRegistrationStatus(
-        registrationId,
-        status as "registered" | "confirmed" | "attended" | "cancelled"
-      );
-      
-      // If cancelled, send cancellation email
-      if (status === "cancelled") {
-        try {
-          // Get the event details
-          const hubEvent = await storage.getHubEvent(registration.hubEventId);
-          if (hubEvent) {
-            const event = await storage.getEvent(hubEvent.eventId);
-            if (event) {
-              await sendRegistrationCancellation(registration, event);
-            }
-          }
-        } catch (emailError) {
-          console.error("Error sending cancellation email:", emailError);
-          // Continue with response even if email fails
+  app.patch(
+    "/api/registrations/:id/status",
+    isAuthenticated,
+    async (req, res) => {
+      try {
+        const registrationId = req.params.id as string;
+        const { status } = req.body;
+
+        if (
+          !status ||
+          !["registered", "confirmed", "attended", "cancelled"].includes(status)
+        ) {
+          return res.status(400).json({ message: "Invalid status value" });
         }
+
+        // Make sure user owns this registration or is admin/ambassador
+        const user = await getUserInfo(req);
+        if (!user) {
+          return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const registration =
+          await storage.getHubEventRegistration(registrationId);
+        if (!registration) {
+          return res.status(404).json({ message: "Registration not found" });
+        }
+
+        // Check if user has permission (owns registration or is admin/ambassador)
+        if (
+          registration.userId !== user.id &&
+          user.role !== "admin" &&
+          user.role !== "ambassador"
+        ) {
+          return res.status(403).json({
+            message: "You don't have permission to update this registration",
+          });
+        }
+
+        // Update status
+        const updatedRegistration = await storage.updateRegistrationStatus(
+          registrationId,
+          status as "registered" | "confirmed" | "attended" | "cancelled",
+        );
+
+        // If cancelled, send cancellation email
+        if (status === "cancelled") {
+          try {
+            // Get the event details
+            const hubEvent = await storage.getHubEvent(registration.hubEventId);
+            if (hubEvent) {
+              const event = await storage.getEvent(hubEvent.eventId);
+              if (event) {
+                await sendRegistrationCancellation(registration, event);
+              }
+            }
+          } catch (emailError) {
+            console.error("Error sending cancellation email:", emailError);
+            // Continue with response even if email fails
+          }
+        }
+
+        return res.status(200).json({
+          message: `Registration status updated to ${status}`,
+          registration: updatedRegistration,
+        });
+      } catch (error) {
+        console.error("Error updating registration status:", error);
+        return res.status(500).json({
+          message: "An error occurred while updating the registration status.",
+        });
       }
-      
-      return res.status(200).json({
-        message: `Registration status updated to ${status}`,
-        registration: updatedRegistration
-      });
-    } catch (error) {
-      console.error("Error updating registration status:", error);
-      return res.status(500).json({
-        message: "An error occurred while updating the registration status."
-      });
-    }
-  });
-  
+    },
+  );
+
   // Delete registration (unregister)
   app.delete("/api/registrations/:id", isAuthenticated, async (req, res) => {
     try {
-      const registrationId = parseInt(req.params.id);
-      
+      const registrationId = req.params.id as string;
+
       // Make sure user owns this registration or is admin
       const user = await getUserInfo(req);
       if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      
-      const registration = await storage.getHubEventRegistration(registrationId);
+
+      const registration =
+        await storage.getHubEventRegistration(registrationId);
       if (!registration) {
         return res.status(404).json({ message: "Registration not found" });
       }
-      
+
       // Check if user has permission (owns registration or is admin)
       if (registration.userId !== user.id && user.role !== "admin") {
-        return res.status(403).json({ message: "You don't have permission to delete this registration" });
+        return res.status(403).json({
+          message: "You don't have permission to delete this registration",
+        });
       }
-      
+
       // Send cancellation email before deleting
       try {
         const hubEvent = await storage.getHubEvent(registration.hubEventId);
@@ -573,22 +583,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       } catch (emailError) {
-        console.error("Error sending cancellation email before deletion:", emailError);
+        console.error(
+          "Error sending cancellation email before deletion:",
+          emailError,
+        );
         // Continue with deletion even if email fails
       }
-      
+
       // Delete registration
       const deleted = await storage.deleteRegistration(registrationId);
-      
+
       if (deleted) {
-        return res.status(200).json({ message: "Registration successfully deleted" });
+        return res
+          .status(200)
+          .json({ message: "Registration successfully deleted" });
       } else {
-        return res.status(500).json({ message: "Failed to delete registration" });
+        return res
+          .status(500)
+          .json({ message: "Failed to delete registration" });
       }
     } catch (error) {
       console.error("Error deleting registration:", error);
       return res.status(500).json({
-        message: "An error occurred while deleting the registration."
+        message: "An error occurred while deleting the registration.",
       });
     }
   });
@@ -619,7 +636,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Since we're using Google auth for signup, this endpoint is just a legacy
       // fallback. New users should use the Google Auth button which creates
       // proper user accounts directly.
-      
+
       // Create a user account directly instead of a waitlist entry
       const user = await storage.createUser({
         username: req.body.email, // Use email as username
@@ -627,7 +644,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         interests: req.body.interestAreas, // Map interest areas to interests
-        role: "member"
+        role: "member",
       });
 
       // Send welcome and admin notification emails - we'll use the existing email functions
@@ -638,9 +655,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastName: req.body.lastName,
           email: req.body.email,
           interestAreas: req.body.interestAreas,
-          aiInterests: req.body.aiInterests
+          aiInterests: req.body.aiInterests,
         };
-        
+
         await sendWelcomeEmail(entryFormat as any);
         await sendAdminNotification(entryFormat as any);
       } catch (emailError) {
@@ -673,30 +690,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .select()
         .from(hubEventRegistrations)
         .orderBy(desc(hubEventRegistrations.createdAt));
-      
+
       // For each registration, fetch associated event and hub data
       const enrichedRegistrations = await Promise.all(
         registrations.map(async (registration) => {
           try {
             const hubEvent = await storage.getHubEvent(registration.hubEventId);
-            
+
             if (!hubEvent) {
               return {
                 registration,
                 event: { title: "Unknown Event" },
                 hub: { name: "Unknown Hub" },
-                hubEvent: { id: registration.hubEventId }
+                hubEvent: { id: registration.hubEventId },
               };
             }
-            
+
             const event = await storage.getEvent(hubEvent.eventId);
             const hub = await storage.getHub(hubEvent.hubId);
-            
+
             return {
               registration,
               event: event || { title: "Unknown Event" },
               hub: hub || { name: "Unknown Hub" },
-              hubEvent
+              hubEvent,
             };
           } catch (err) {
             console.error("Error enriching registration data:", err);
@@ -704,12 +721,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               registration,
               event: { title: "Error loading event" },
               hub: { name: "Error loading hub" },
-              hubEvent: { id: registration.hubEventId }
+              hubEvent: { id: registration.hubEventId },
             };
           }
-        })
+        }),
       );
-      
+
       // Filter out any null values (from failed lookups)
       return res.status(200).json(enrichedRegistrations.filter(Boolean));
     } catch (error) {

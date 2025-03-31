@@ -23,7 +23,7 @@ import {
   sendAdminNotification,
   sendEventRegistrationConfirmation,
   sendEventReminder,
-  sendRegistrationCancellation
+  sendRegistrationCancellation,
 } from "./sendgrid";
 
 export interface IStorage {
@@ -45,7 +45,10 @@ export interface IStorage {
   // Event methods
   createEvent(event: InsertEvent): Promise<Event>;
   getEvent(id: string): Promise<Event | undefined>;
-  getEvents(filters?: { isPublished?: boolean; hubId?: string }): Promise<Event[]>;
+  getEvents(filters?: {
+    isPublished?: boolean;
+    hubId?: string;
+  }): Promise<Event[]>;
 
   // Hub Event methods
   createHubEvent(hubEvent: InsertHubEvent): Promise<HubEvent>;
@@ -69,7 +72,10 @@ export interface IStorage {
   ): Promise<HubEventRegistration | undefined>;
   getRegistrationsByUserId(userId: string): Promise<HubEventRegistration[]>;
   getUserEventRegistrations(userId: string): Promise<any[]>;
-  updateRegistrationStatus(id: string, status: "registered" | "confirmed" | "attended" | "cancelled"): Promise<HubEventRegistration>;
+  updateRegistrationStatus(
+    id: string,
+    status: "registered" | "confirmed" | "attended" | "cancelled",
+  ): Promise<HubEventRegistration>;
   deleteRegistration(id: string): Promise<boolean>;
 }
 
@@ -147,15 +153,15 @@ export class DatabaseStorage implements IStorage {
       .insert(users)
       .values(this.safeData(insertUser))
       .returning();
-    
+
     // If user has an email, process with SendGrid
     if (user.email) {
       await this.processUserWithSendGrid(user);
     }
-    
+
     return user;
   }
-  
+
   // Helper method to process users with SendGrid
   private async processUserWithSendGrid(user: User): Promise<void> {
     // Check if SendGrid is properly configured
@@ -164,7 +170,7 @@ export class DatabaseStorage implements IStorage {
 
     if (!isSendGridConfigured) {
       console.log(
-        "SendGrid not fully configured. Skipping email operations for user registration."
+        "SendGrid not fully configured. Skipping email operations for user registration.",
       );
       return;
     }
@@ -199,10 +205,12 @@ export class DatabaseStorage implements IStorage {
 
       // Try to send notification to admin
       try {
-        const adminNotificationSent = await sendAdminNotification(userEntry as any);
+        const adminNotificationSent = await sendAdminNotification(
+          userEntry as any,
+        );
         if (adminNotificationSent) {
           console.log(
-            `Admin notification sent for user ${user.email} successfully`
+            `Admin notification sent for user ${user.email} successfully`,
           );
         }
       } catch (err) {
@@ -259,7 +267,7 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
 
-  async getEvents(): Promise<Event[]> {
+  async getEvents() {
     // Get all events with hub data, no filters (we'll filter in memory)
     const eventsQuery = db
       .select({
@@ -291,13 +299,14 @@ export class DatabaseStorage implements IStorage {
 
     // Process and map results to Event type
     // In Drizzle join results, table fields are directly accessible
-    return joinedResults.map((row: any) => ({
+    return joinedResults.map((row) => ({
       id: row.id,
       title: row.title,
       description: row.description,
       // Include new datetime fields with fallbacks for backward compatibility
       startDateTime: row.startDateTime || new Date(row.startDate || Date.now()),
-      endDateTime: row.endDateTime || (row.endDate ? new Date(row.endDate) : null),
+      endDateTime:
+        row.endDateTime || (row.endDate ? new Date(row.endDate) : null),
       // Keep old fields for backward compatibility
       startDate: row.startDate,
       endDate: row.endDate,
@@ -386,68 +395,70 @@ export class DatabaseStorage implements IStorage {
       );
     return registration || undefined;
   }
-  
+
   // Get all registrations for a specific user by user ID
-  async getRegistrationsByUserId(userId: string): Promise<HubEventRegistration[]> {
+  async getRegistrationsByUserId(
+    userId: string,
+  ): Promise<HubEventRegistration[]> {
     return db
       .select()
       .from(hubEventRegistrations)
       .where(eq(hubEventRegistrations.userId, userId))
       .orderBy(desc(hubEventRegistrations.createdAt));
   }
-  
+
   // Get enriched registrations with event and hub details
   async getUserEventRegistrations(userId: string): Promise<any[]> {
     const registrations = await this.getRegistrationsByUserId(userId);
-    
+
     // If no registrations, return empty array
     if (registrations.length === 0) {
       return [];
     }
-    
+
     // For each registration, fetch the associated hub event, event, and hub
     const enrichedRegistrations = await Promise.all(
       registrations.map(async (registration) => {
         const hubEvent = await this.getHubEvent(registration.hubEventId);
-        
+
         if (!hubEvent) {
           return null;
         }
-        
+
         const event = await this.getEvent(hubEvent.eventId);
         const hub = await this.getHub(hubEvent.hubId);
-        
+
         if (!event || !hub) {
           return null;
         }
-        
+
         return {
           registration,
           event,
           hub,
-          hubEvent
+          hubEvent,
         };
-      })
+      }),
     );
-    
+
     // Filter out any null values (from failed lookups)
     return enrichedRegistrations.filter(Boolean);
   }
-  
+
   // Update registration status
   async updateRegistrationStatus(
-    id: string, 
-    status: "registered" | "confirmed" | "attended" | "cancelled"
+    id: string,
+    status: "registered" | "confirmed" | "attended" | "cancelled",
   ): Promise<HubEventRegistration> {
     const [registration] = await db
       .update(hubEventRegistrations)
       .set({ status })
       .where(eq(hubEventRegistrations.id, id))
       .returning();
-      
+
     return registration;
   }
-  
+
   // Delete a registration
   async deleteRegistration(id: string): Promise<boolean> {
     try {
@@ -460,8 +471,6 @@ export class DatabaseStorage implements IStorage {
       return false;
     }
   }
-
-
 
   // Helper methods
   private async getEventByTitle(title: string): Promise<Event | undefined> {
@@ -501,23 +510,32 @@ export class DatabaseStorage implements IStorage {
       // Get Hub Event, Event, and Hub info
       const hubEvent = await this.getHubEvent(entry.hubEventId);
       if (!hubEvent) {
-        console.error("Hub event not found in processWithSendGrid:", entry.hubEventId);
+        console.error(
+          "Hub event not found in processWithSendGrid:",
+          entry.hubEventId,
+        );
         return;
       }
-      
+
       const event = await this.getEvent(hubEvent.eventId);
       const hub = await this.getHub(hubEvent.hubId);
-      
+
       if (!event || !hub) {
         console.error("Event or hub not found in processWithSendGrid");
         return;
       }
-      
+
       // Send event registration confirmation email
       try {
-        const confirmationSent = await sendEventRegistrationConfirmation(entry, event, hub);
+        const confirmationSent = await sendEventRegistrationConfirmation(
+          entry,
+          event,
+          hub,
+        );
         if (confirmationSent) {
-          console.log(`Event registration confirmation email sent to ${entry.email} successfully`);
+          console.log(
+            `Event registration confirmation email sent to ${entry.email} successfully`,
+          );
         }
       } catch (err) {
         console.error("Error sending event registration confirmation:", err);
@@ -545,17 +563,25 @@ export class DatabaseStorage implements IStorage {
     // Use SQL literals for flexibility with type checking
     if (filters?.role) {
       // With role filter
-      return db.execute(sql`
+      return db
+        .execute(
+          sql`
         SELECT * FROM "user" 
         WHERE role = ${filters.role}
         ORDER BY "created_at" DESC
-      `).then(result => result.rows as User[]);
+      `,
+        )
+        .then((result) => result.rows as User[]);
     } else {
       // Without filters
-      return db.execute(sql`
+      return db
+        .execute(
+          sql`
         SELECT * FROM "user"
         ORDER BY "created_at" DESC
-      `).then(result => result.rows as User[]);
+      `,
+        )
+        .then((result) => result.rows as User[]);
     }
   }
 }

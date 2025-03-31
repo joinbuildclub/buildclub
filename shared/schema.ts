@@ -1,25 +1,59 @@
-import { pgTable, text, serial, integer, boolean, timestamp, date, pgEnum, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  integer,
+  boolean,
+  timestamp,
+  date,
+  pgEnum,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
 // Define role type with allowed values
 export const RoleEnum = z.enum(["admin", "ambassador", "member"]);
 export type Role = z.infer<typeof RoleEnum>;
 
 // Define event type enum
-export const eventTypeEnum = pgEnum("event_type", ["workshop", "meetup", "hackathon", "conference"]);
-export const EventTypeEnum = z.enum(["workshop", "meetup", "hackathon", "conference"]);
+export const eventTypeEnum = pgEnum("event_type", [
+  "workshop",
+  "meetup",
+  "hackathon",
+  "conference",
+]);
+export const EventTypeEnum = z.enum([
+  "workshop",
+  "meetup",
+  "hackathon",
+  "conference",
+]);
 export type EventType = z.infer<typeof EventTypeEnum>;
 
 // Define focus areas enum
-export const focusAreaEnum = pgEnum("focus_area", ["product", "design", "engineering", "general"]);
-export const FocusAreaEnum = z.enum(["product", "design", "engineering", "general"]);
+export const focusAreaEnum = pgEnum("focus_area", [
+  "product",
+  "design",
+  "engineering",
+  "general",
+]);
+export const FocusAreaEnum = z.enum([
+  "product",
+  "design",
+  "engineering",
+  "general",
+]);
 export type FocusArea = z.infer<typeof FocusAreaEnum>;
 
 // Define registration status enum
-export const registrationStatusEnum = z.enum(["registered", "confirmed", "attended", "cancelled"]);
+export const registrationStatusEnum = z.enum([
+  "registered",
+  "confirmed",
+  "attended",
+  "cancelled",
+]);
 export type RegistrationStatus = z.infer<typeof registrationStatusEnum>;
 
 // User table
@@ -78,34 +112,51 @@ export const events = pgTable("event", {
 });
 
 // Hub Event junction table for many-to-many relationship
-export const hubEvents = pgTable("hub_event", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  hubId: uuid("hub_id").notNull().references(() => hubs.id),
-  eventId: uuid("event_id").notNull().references(() => events.id),
-  isPrimary: boolean("is_primary").default(false),
-  capacity: integer("capacity"),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (t) => ({
-  // Ensure an event can only be linked to a hub once
-  uniqHubEvent: uniqueIndex("uniq_hub_event_idx_new").on(t.hubId, t.eventId),
-}));
+export const hubEvents = pgTable(
+  "hub_event",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    hubId: uuid("hub_id")
+      .notNull()
+      .references(() => hubs.id),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => events.id),
+    isPrimary: boolean("is_primary").default(false),
+    capacity: integer("capacity"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (t) => ({
+    // Ensure an event can only be linked to a hub once
+    uniqHubEvent: uniqueIndex("uniq_hub_event_idx_new").on(t.hubId, t.eventId),
+  }),
+);
 
-// Hub Event Registration table 
-export const hubEventRegistrations = pgTable("hub_event_registration", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  hubEventId: uuid("hub_event_id").notNull().references(() => hubEvents.id),
-  userId: uuid("user_id").references(() => users.id),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
-  interestAreas: text("interest_areas").array().notNull(),
-  aiInterests: text("ai_interests"),
-  status: text("status").default("registered").$type<RegistrationStatus>(),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (t) => ({
-  // Ensure a user can only register once for a hub event
-  uniqEventUser: uniqueIndex("uniq_hubevent_user_idx_new").on(t.hubEventId, t.email),
-}));
+// Hub Event Registration table
+export const hubEventRegistrations = pgTable(
+  "hub_event_registration",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    hubEventId: uuid("hub_event_id")
+      .notNull()
+      .references(() => hubEvents.id),
+    userId: uuid("user_id").references(() => users.id),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    email: text("email").notNull(),
+    interestAreas: text("interest_areas").array().notNull(),
+    aiInterests: text("ai_interests"),
+    status: text("status").default("registered").$type<RegistrationStatus>(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (t) => ({
+    // Ensure a user can only register once for a hub event
+    uniqEventUser: uniqueIndex("uniq_hubevent_user_idx_new").on(
+      t.hubEventId,
+      t.email,
+    ),
+  }),
+);
 
 // Define relations after all tables are declared
 export const usersRelations = relations(users, ({ many }) => ({
@@ -138,16 +189,19 @@ export const hubEventsRelations = relations(hubEvents, ({ one, many }) => ({
   registrations: many(hubEventRegistrations),
 }));
 
-export const hubEventRegistrationsRelations = relations(hubEventRegistrations, ({ one }) => ({
-  hubEvent: one(hubEvents, {
-    fields: [hubEventRegistrations.hubEventId],
-    references: [hubEvents.id],
+export const hubEventRegistrationsRelations = relations(
+  hubEventRegistrations,
+  ({ one }) => ({
+    hubEvent: one(hubEvents, {
+      fields: [hubEventRegistrations.hubEventId],
+      references: [hubEvents.id],
+    }),
+    user: one(users, {
+      fields: [hubEventRegistrations.userId],
+      references: [users.id],
+    }),
   }),
-  user: one(users, {
-    fields: [hubEventRegistrations.userId],
-    references: [users.id],
-  }),
-}));
+);
 
 // Schemas for insert operations
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -203,7 +257,9 @@ export const insertHubEventSchema = createInsertSchema(hubEvents).pick({
   capacity: true,
 });
 
-export const insertHubEventRegistrationSchema = createInsertSchema(hubEventRegistrations).pick({
+export const insertHubEventRegistrationSchema = createInsertSchema(
+  hubEventRegistrations,
+).pick({
   hubEventId: true,
   userId: true,
   firstName: true,
@@ -227,7 +283,9 @@ export type Event = typeof events.$inferSelect;
 export type InsertHubEvent = z.infer<typeof insertHubEventSchema>;
 export type HubEvent = typeof hubEvents.$inferSelect;
 
-export type InsertHubEventRegistration = z.infer<typeof insertHubEventRegistrationSchema>;
+export type InsertHubEventRegistration = z.infer<
+  typeof insertHubEventRegistrationSchema
+>;
 export type HubEventRegistration = typeof hubEventRegistrations.$inferSelect;
 
 // Legacy types for backward compatibility during migration
