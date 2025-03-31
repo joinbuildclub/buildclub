@@ -267,9 +267,9 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
 
-  async getEvents() {
-    // Get all events with hub data, no filters (we'll filter in memory)
-    const eventsQuery = db
+  async getEvents(filters?: { isPublished?: boolean; hubId?: string }) {
+    // Start building the query
+    let eventsQuery = db
       .select({
         id: events.id,
         title: events.title,
@@ -291,23 +291,31 @@ export class DatabaseStorage implements IStorage {
         hubEventId: hubEvents.id,
       })
       .from(events)
-      .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
-      .orderBy(asc(events.startDate));
+      .innerJoin(hubEvents, eq(events.id, hubEvents.eventId));
+
+    // Apply filters
+    if (filters?.isPublished !== undefined) {
+      eventsQuery = eventsQuery.where(eq(events.isPublished, filters.isPublished));
+    }
+
+    if (filters?.hubId) {
+      eventsQuery = eventsQuery.where(eq(hubEvents.hubId, filters.hubId));
+    }
+
+    // Add ordering
+    eventsQuery = eventsQuery.orderBy(asc(events.startDateTime));
 
     // Execute the query
     const joinedResults = await eventsQuery;
 
     // Process and map results to Event type
-    // In Drizzle join results, table fields are directly accessible
     return joinedResults.map((row) => ({
       id: row.id,
       title: row.title,
       description: row.description,
-      // Include new datetime fields with fallbacks for backward compatibility
       startDateTime: row.startDateTime || new Date(row.startDate || Date.now()),
       endDateTime:
         row.endDateTime || (row.endDate ? new Date(row.endDate) : null),
-      // Keep old fields for backward compatibility
       startDate: row.startDate,
       endDate: row.endDate,
       startTime: row.startTime,

@@ -282,33 +282,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Event related routes
   app.get("/api/events", async (req, res) => {
     try {
-      // Get all events
-      const events = await storage.getEvents();
+      const filters = {
+        isPublished: req.query.published === "true" ? true : 
+                    req.query.published === "false" ? false : undefined,
+        hubId: req.query.hubId as string | undefined
+      };
 
-      // Filter in memory to avoid UUID conversion issues
-      let filteredEvents = [...events];
-
-      // Apply published filter
-      if (req.query.published === "true") {
-        filteredEvents = filteredEvents.filter(
-          (event) => event.isPublished === true,
-        );
-      } else if (req.query.published === "false") {
-        filteredEvents = filteredEvents.filter(
-          (event) => event.isPublished === false,
-        );
-      }
-
-      // Apply hubId filter if provided
-      if (req.query.hubId) {
-        const targetHubId = req.query.hubId as string;
-        filteredEvents = filteredEvents.filter((event: Event) => {
-          // Compare as strings to avoid type conversion issues
-          return event.hubId === targetHubId;
-        });
-      }
-
-      return res.status(200).json(filteredEvents);
+      const events = await storage.getEvents(filters);
+      return res.status(200).json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
       return res.status(500).json({
