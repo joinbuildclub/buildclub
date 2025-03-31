@@ -159,14 +159,14 @@ export default function OnboardingPage() {
         </div>
 
         {isSuccess ? (
-          <Alert className="bg-green-50 mb-8 border-2 border-green-200 rounded-xl">
+          <Alert className="bg-green-50 mb-8 border-2 border-green-200 rounded-xl mx-auto max-w-2xl">
             <CheckCircle2 className="h-5 w-5 text-green-600" />
             <AlertDescription className="text-green-800">
               Profile updated successfully! Redirecting to dashboard...
             </AlertDescription>
           </Alert>
         ) : onboardingMutation.isError ? (
-          <Alert variant="destructive" className="mb-8 rounded-xl">
+          <Alert variant="destructive" className="mb-8 rounded-xl mx-auto max-w-2xl">
             <AlertCircle className="h-5 w-5" />
             <AlertDescription>
               {onboardingMutation.error.message}
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
           </Alert>
         ) : null}
 
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8 mb-8">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8 mb-8 mx-auto max-w-2xl">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -268,7 +268,7 @@ export default function OnboardingPage() {
                         Select the AI topics you're most interested in
                       </FormDescription>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {interestOptions.map((interest) => (
                         <FormField
                           key={interest.id}
