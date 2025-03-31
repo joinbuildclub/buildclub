@@ -254,8 +254,11 @@ export default function EventsSection() {
   
   // Fetch events from the API, filtering for published events from the Providence Hub (ID: 1)
   const { data: events = [], isLoading, error } = useQuery<Event[]>({
-    queryKey: ['/api/events'],
-    queryFn: () => fetch('/api/events?hubId=1&published=true').then(res => res.json()),
+    queryKey: ['/api/events', 'providence-hub'],
+    queryFn: getQueryFn(`/api/events?hubId=1&published=true`),
+    staleTime: 10000, // 10 seconds
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   // We're now using our utility functions from dateUtils.ts instead

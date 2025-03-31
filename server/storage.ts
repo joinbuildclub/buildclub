@@ -259,126 +259,32 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
 
-  async getEvents(filters?: {
-    isPublished?: boolean;
-    hubId?: string;
-  }): Promise<Event[]> {
-    // Handle different filter combinations with separate queries for type safety
-    let eventsQuery;
-
-    if (filters?.isPublished !== undefined && filters?.hubId !== undefined) {
-      // Both filters
-      eventsQuery = db
-        .select({
-          id: events.id,
-          title: events.title,
-          description: events.description,
-          startDateTime: events.startDateTime,
-          endDateTime: events.endDateTime,
-          startDate: events.startDate,
-          endDate: events.endDate,
-          startTime: events.startTime,
-          endTime: events.endTime,
-          eventType: events.eventType,
-          focusAreas: events.focusAreas,
-          capacity: events.capacity,
-          isPublished: events.isPublished,
-          createdAt: events.createdAt,
-          createdById: events.createdById,
-          // Hub event data
-          hubId: hubEvents.hubId,
-          hubEventId: hubEvents.id,
-        })
-        .from(events)
-        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
-        .where(
-          and(
-            eq(events.isPublished, filters.isPublished),
-            eq(hubEvents.hubId, filters.hubId),
-          ),
-        )
-        .orderBy(asc(events.startDate));
-    } else if (filters?.isPublished !== undefined) {
-      // Only published filter
-      eventsQuery = db
-        .select({
-          id: events.id,
-          title: events.title,
-          description: events.description,
-          startDateTime: events.startDateTime,
-          endDateTime: events.endDateTime,
-          startDate: events.startDate,
-          endDate: events.endDate,
-          startTime: events.startTime,
-          endTime: events.endTime,
-          eventType: events.eventType,
-          focusAreas: events.focusAreas,
-          capacity: events.capacity,
-          isPublished: events.isPublished,
-          createdAt: events.createdAt,
-          createdById: events.createdById,
-          // Hub event data
-          hubId: hubEvents.hubId,
-          hubEventId: hubEvents.id,
-        })
-        .from(events)
-        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
-        .where(eq(events.isPublished, filters.isPublished))
-        .orderBy(asc(events.startDate));
-    } else if (filters?.hubId !== undefined) {
-      // Only hubId filter
-      eventsQuery = db
-        .select({
-          id: events.id,
-          title: events.title,
-          description: events.description,
-          startDateTime: events.startDateTime,
-          endDateTime: events.endDateTime,
-          startDate: events.startDate,
-          endDate: events.endDate,
-          startTime: events.startTime,
-          endTime: events.endTime,
-          eventType: events.eventType,
-          focusAreas: events.focusAreas,
-          capacity: events.capacity,
-          isPublished: events.isPublished,
-          createdAt: events.createdAt,
-          createdById: events.createdById,
-          // Hub event data
-          hubId: hubEvents.hubId,
-          hubEventId: hubEvents.id,
-        })
-        .from(events)
-        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
-        .where(eq(hubEvents.hubId, filters.hubId))
-        .orderBy(asc(events.startDate));
-    } else {
-      // No filters
-      eventsQuery = db
-        .select({
-          id: events.id,
-          title: events.title,
-          description: events.description,
-          startDateTime: events.startDateTime,
-          endDateTime: events.endDateTime,
-          startDate: events.startDate,
-          endDate: events.endDate,
-          startTime: events.startTime,
-          endTime: events.endTime,
-          eventType: events.eventType,
-          focusAreas: events.focusAreas,
-          capacity: events.capacity,
-          isPublished: events.isPublished,
-          createdAt: events.createdAt,
-          createdById: events.createdById,
-          // Hub event data
-          hubId: hubEvents.hubId,
-          hubEventId: hubEvents.id,
-        })
-        .from(events)
-        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
-        .orderBy(asc(events.startDate));
-    }
+  async getEvents(): Promise<Event[]> {
+    // Get all events with hub data, no filters (we'll filter in memory)
+    const eventsQuery = db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        startDateTime: events.startDateTime,
+        endDateTime: events.endDateTime,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        startTime: events.startTime,
+        endTime: events.endTime,
+        eventType: events.eventType,
+        focusAreas: events.focusAreas,
+        capacity: events.capacity,
+        isPublished: events.isPublished,
+        createdAt: events.createdAt,
+        createdById: events.createdById,
+        // Hub event data
+        hubId: hubEvents.hubId,
+        hubEventId: hubEvents.id,
+      })
+      .from(events)
+      .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
+      .orderBy(asc(events.startDate));
 
     // Execute the query
     const joinedResults = await eventsQuery;
