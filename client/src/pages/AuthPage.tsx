@@ -34,7 +34,6 @@ export default function AuthPage() {
   });
 
   const [registerData, setRegisterData] = useState({
-    username: "",
     password: "",
     email: "",
     firstName: "",
@@ -208,14 +207,15 @@ export default function AuthPage() {
               <form onSubmit={(e) => {
                 e.preventDefault();
                 // Use the register mutation to create a new account
-                if (registerData.username && registerData.email && registerData.password) {
+                if (registerData.email && registerData.password) {
+                  // Create registration credentials - username is optional in the API now
+                  // The server will auto-generate a username from email if not provided
                   registerMutation.mutate({
-                    username: registerData.username,
                     email: registerData.email,
                     password: registerData.password,
+                    firstName: registerData.firstName || undefined,
+                    lastName: registerData.lastName || undefined,
                     role: "member", // Default role for new users
-                    firstName: registerData.firstName,
-                    lastName: registerData.lastName,
                   });
                 } else {
                   // Show toast error if fields are missing
@@ -227,31 +227,7 @@ export default function AuthPage() {
                 }
               }}>
               <CardContent className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="reg-username"
-                    className="flex items-center gap-1.5"
-                  >
-                    <User className="h-4 w-4 text-[--color-green]" />
-                    Username
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="reg-username"
-                      type="text"
-                      placeholder="Choose a username"
-                      value={registerData.username}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          username: e.target.value,
-                        })
-                      }
-                      required
-                      className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                    />
-                  </div>
-                </div>
+
                 <div className="space-y-2">
                   <Label
                     htmlFor="reg-email"
