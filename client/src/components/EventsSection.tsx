@@ -128,16 +128,6 @@ function EventCard({
 }: EventCardProps) {
   const { user } = useAuth();
 
-  // Get icon based on primary focus
-  const Icon =
-    focuses && Array.isArray(focuses) && focuses.includes("product")
-      ? Briefcase
-      : focuses && Array.isArray(focuses) && focuses.includes("design")
-        ? Palette
-        : focuses && Array.isArray(focuses) && focuses.includes("engineering")
-          ? Code
-          : Calendar;
-
   // Use the provided date components or extract them from the date string
   const { day, month, dayOfWeek } =
     dateComponents || extractDateComponents(date);
@@ -148,101 +138,58 @@ function EventCard({
     onRegisterClick(eventId, hubEventId);
   };
 
+  // Get shortened day of week (Mon, Tue, etc.)
+  const shortDayOfWeek = dayOfWeek?.substring(0, 3) || '';
+
   return (
     <div
-      className={`event-card group transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? "hackathon-event" : ""}`}
+      className={`event-card group transition-all duration-200 ${isHackathon ? "hackathon-event" : ""}`}
     >
-      <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-col sm:flex-row">
-        {/* Left side with date and decorative element */}
-        <div className="sm:w-28 bg-gray-50 p-3 sm:p-4 flex flex-row justify-between sm:flex-col sm:items-center sm:justify-between border-b sm:border-b-0 sm:border-r border-gray-100">
-          <div className="flex flex-row sm:flex-col items-center sm:text-center">
-            <div className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase sm:mb-1 mr-2 sm:mr-0 tracking-wider">
-              {dayOfWeek}
-            </div>
-            <div className="text-xl sm:text-2xl font-bold text-gray-800 mr-2 sm:mr-0 leading-none">
-              {day}
-            </div>
-            <div className="text-[10px] sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-              {month}
-            </div>
+      <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-200 flex flex-row">
+        {/* Left side with date */}
+        <div className="w-20 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-200">
+          <div className="text-sm font-medium text-gray-700">
+            {shortDayOfWeek}
+          </div>
+          <div className="text-3xl font-bold text-gray-900 leading-none mt-1 mb-1">{day}</div>
+          <div className="text-sm font-medium text-gray-700">
+            {month}
           </div>
         </div>
 
-        {/* Main content */}
-        <div className="flex-1 p-4 sm:p-5">
-          <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">
+        {/* Middle content */}
+        <div className="flex-1 p-4 flex flex-col justify-center">
+          <div className="mb-1 flex items-center text-gray-500 text-sm">
+            <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
+            <span>{time || "Time TBD"}</span>
+          </div>
+          
+          <h3 className="font-semibold text-lg text-gray-900 mb-1">
             {title}
           </h3>
-          <p className="text-gray-600 text-sm mb-4">{description}</p>
+          
+          <div className="mb-2 flex items-center text-gray-500 text-sm">
+            <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+            <span>{location}</span>
+          </div>
 
           {/* Focus area tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5">
             {focuses &&
               Array.isArray(focuses) &&
               focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
           </div>
-
-          {/* Event details */}
-          <div className="flex items-center text-gray-600 mb-3 text-xs">
-            <Clock className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span>{time || "Time TBD"}</span>
-          </div>
-
-          <div className="flex items-center text-gray-600 text-xs">
-            <MapPin className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-            <span>{location}</span>
-          </div>
         </div>
 
-        {/* Right side with action buttons */}
-        <div className="hidden sm:flex w-32 flex-col items-center justify-center p-5 gap-5 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full text-gray-600 hover:text-[var(--color-red)] border border-gray-200 hover:bg-gray-50 flex items-center justify-center gap-1.5 h-8 rounded-md transition-all duration-200"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/events/${eventId}`;
-            }}
-          >
-            <span className="text-xs font-medium">Details</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Button>
-
+        {/* Right side with register button */}
+        <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-200">
           <Button
             variant="default"
             size="sm"
-            className="w-full clay-button bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-b-2 border-[var(--color-green-dark)] px-2 flex items-center justify-center gap-1.5 h-9 rounded-md transition-all duration-200 shadow-sm hover:shadow"
+            className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md"
             onClick={handleRegisterClick}
           >
-            <UserPlus className="w-4 h-4" />
-            <span className="text-xs font-medium">Register</span>
-          </Button>
-        </div>
-
-        {/* Mobile buttons */}
-        <div className="sm:hidden flex justify-between items-center border-t border-gray-100 p-4 bg-gray-50">
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-gray-600 hover:text-[var(--color-red)] border border-gray-200 hover:bg-gray-50 px-3 flex items-center gap-1.5 h-8 rounded-md transition-all duration-200"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/events/${eventId}`;
-            }}
-          >
-            <span className="text-xs font-medium">Details</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Button>
-
-          <Button
-            variant="default"
-            size="sm"
-            className="clay-button bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-b-2 border-[var(--color-green-dark)] px-4 flex items-center gap-1.5 h-9 rounded-md transition-all duration-200 shadow-sm hover:shadow"
-            onClick={handleRegisterClick}
-          >
-            <UserPlus className="w-4 h-4" />
-            <span className="text-xs font-medium">Register</span>
+            Register
           </Button>
         </div>
       </div>
@@ -518,24 +465,6 @@ export default function EventsSection() {
       {/* Event Registration Dialog */}
       <Dialog open={isRegistrationOpen} onOpenChange={setIsRegistrationOpen}>
         <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-6">
-            <DialogTitle className="text-2xl">Register for Event</DialogTitle>
-            {!user && (
-              <DialogDescription>
-                <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
-                  <p className="text-sm">
-                    <span className="font-semibold">Note:</span> You're
-                    registering as a guest. Consider{" "}
-                    <Link href="/auth" className="underline font-medium">
-                      signing up for an account
-                    </Link>{" "}
-                    to track your registrations and receive event updates.
-                  </p>
-                </div>
-              </DialogDescription>
-            )}
-          </DialogHeader>
-
           {selectedEvent && hubEventId !== null && (
             <EventRegistrationForm
               eventId={selectedEvent.id}

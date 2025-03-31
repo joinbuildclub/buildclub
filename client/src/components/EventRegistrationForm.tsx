@@ -21,6 +21,14 @@ import { useAuth } from "@/hooks/use-auth";
 import RoundedCircle from "./shapes/RoundedCircle";
 import RoundedTriangle from "./shapes/RoundedTriangle";
 import RoundedSquare from "./shapes/RoundedSquare";
+import { Link } from "wouter";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // The form validation schema
 const formSchema = z.object({
@@ -49,7 +57,7 @@ export default function EventRegistrationForm({
   hubEventId,
   eventTitle,
   onSuccess,
-  onCancel
+  onCancel,
 }: EventRegistrationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -86,10 +94,10 @@ export default function EventRegistrationForm({
         description: "You've been registered for the event.",
         variant: "default",
       });
-      
+
       // Invalidate queries to refresh event data
       queryClient.invalidateQueries({ queryKey: ["/api/my-registrations"] });
-      
+
       // Call onSuccess callback if provided
       if (onSuccess) {
         onSuccess();
@@ -98,7 +106,10 @@ export default function EventRegistrationForm({
       console.error("Registration error:", error);
       toast({
         title: "Registration failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -110,16 +121,52 @@ export default function EventRegistrationForm({
     <div className="relative bg-white border border-gray-100 rounded-xl p-6 shadow-md">
       {/* Decorative shapes */}
       <div className="absolute -top-8 -left-8 z-10 opacity-60">
-        <RoundedTriangle width="w-16" height="h-16" shadow rotate="rotate-12" animateClass="animate-floating" />
+        <RoundedTriangle
+          width="w-16"
+          height="h-16"
+          shadow
+          rotate="rotate-12"
+          animateClass="animate-floating"
+        />
       </div>
       <div className="absolute -bottom-6 -right-6 z-10 opacity-60">
-        <RoundedCircle width="w-12" height="h-12" shadow rotate="-rotate-12" animateClass="animate-floating-delayed" />
+        <RoundedCircle
+          width="w-12"
+          height="h-12"
+          shadow
+          rotate="-rotate-12"
+          animateClass="animate-floating-delayed"
+        />
       </div>
       <div className="absolute top-1/2 -right-10 z-10 opacity-60">
-        <RoundedSquare width="w-14" height="h-14" shadow rotate="rotate-45" animateClass="animate-floating" />
+        <RoundedSquare
+          width="w-14"
+          height="h-14"
+          shadow
+          rotate="rotate-45"
+          animateClass="animate-floating"
+        />
       </div>
-      
-      <h2 className="text-2xl font-bold mb-6 text-center">Register for {eventTitle}</h2>
+
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Register for {eventTitle}
+      </h2>
+
+      {!user && (
+        <DialogDescription>
+          <div className="my-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+            <p className="text-sm">
+              <span className="font-semibold">Note:</span> You're registering as
+              a guest. Consider{" "}
+              <Link href="/auth" className="underline font-medium">
+                signing up for an account
+              </Link>{" "}
+              to track your registrations and receive event updates.
+            </p>
+          </div>
+        </DialogDescription>
+      )}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -191,8 +238,8 @@ export default function EventRegistrationForm({
                                   ? field.onChange([...field.value, "product"])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value) => value !== "product"
-                                      )
+                                        (value) => value !== "product",
+                                      ),
                                     );
                               }}
                             />
@@ -218,8 +265,8 @@ export default function EventRegistrationForm({
                                   ? field.onChange([...field.value, "design"])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value) => value !== "design"
-                                      )
+                                        (value) => value !== "design",
+                                      ),
                                     );
                               }}
                             />
@@ -242,11 +289,14 @@ export default function EventRegistrationForm({
                               checked={field.value?.includes("engineering")}
                               onCheckedChange={(checked) => {
                                 return checked
-                                  ? field.onChange([...field.value, "engineering"])
+                                  ? field.onChange([
+                                      ...field.value,
+                                      "engineering",
+                                    ])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value) => value !== "engineering"
-                                      )
+                                        (value) => value !== "engineering",
+                                      ),
                                     );
                               }}
                             />
@@ -293,7 +343,7 @@ export default function EventRegistrationForm({
             </Button>
             <Button
               type="submit"
-              className="clay-button bg-[var(--color-green)] hover:bg-[var(--color-green)]/90"
+              className="bg-gray-900 text-white hover:bg-gray-800 font-medium"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
