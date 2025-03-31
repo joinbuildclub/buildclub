@@ -53,6 +53,12 @@ interface Event {
   location?: string;
   isPublished: boolean;
   hubEventId?: string;
+  // Hub information
+  hub?: {
+    id: string;
+    name: string;
+    location?: string;
+  };
 }
 
 // Shape component for focus areas
@@ -285,8 +291,17 @@ export default function EventDetailPage() {
           ) : event ? (
             <div>
               {/* Event header section */}
-              <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 mb-8">
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">
                 <div className="p-6 md:p-8">
+                  {/* Hub info badge */}
+                  {event.hub && (
+                    <div className="mb-4">
+                      <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100">
+                        Hosted by {event.hub.name}
+                      </Badge>
+                    </div>
+                  )}
+                  
                   {/* Event type and focus area badges */}
                   <div className="flex flex-wrap items-center gap-2 mb-4">
                     {event.focusAreas.map((focus, idx) => (
@@ -331,7 +346,7 @@ export default function EventDetailPage() {
                       <MapPin className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />
                       <div>
                         <div className="font-medium">Location</div>
-                        <div>Providence, RI</div>
+                        <div>{event.hub?.location || "TBD"}</div>
                       </div>
                     </div>
                   </div>
@@ -355,7 +370,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Event details section */}
-              <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 mb-8">
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">
                 <div className="p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-4">
                     About This Event
@@ -370,7 +385,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Related events (could be added in the future) */}
-              <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 mb-8">
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">
                 <div className="p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">
                     Other Events You Might Like
@@ -392,7 +407,7 @@ export default function EventDetailPage() {
               </div>
               
               {/* Final CTA */}
-              <div className="bg-gray-50 rounded-xl overflow-hidden shadow-md border border-gray-200 p-8 text-center">
+              <div className="bg-gray-50 rounded-xl overflow-hidden border border-gray-200 p-8 text-center">
                 <h2 className="text-2xl font-bold mb-4">Ready to join us?</h2>
                 <p className="text-gray-600 mb-6 max-w-xl mx-auto">
                   Secure your spot for {event.title} today and connect with other AI builders in your community!

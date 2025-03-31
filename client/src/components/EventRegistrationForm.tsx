@@ -88,89 +88,96 @@ export default function EventRegistrationForm({
   };
 
   return (
-    <div className="p-6">
-      <DialogHeader>
-        <DialogTitle>Register for {eventTitle}</DialogTitle>
-      </DialogHeader>
+    <div className="p-0">
+      <div className="bg-gray-900 text-white p-6">
+        <DialogHeader>
+          <DialogTitle className="text-white text-xl">Register for {eventTitle}</DialogTitle>
+          <p className="text-gray-300 mt-2 text-sm">
+            Join us for this exciting event and connect with fellow AI builders
+          </p>
+        </DialogHeader>
+      </div>
 
-      {!user && (
-        <div className="my-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
-          <span className="text-sm">
-            <span className="font-semibold">Note:</span> You're registering as a
-            guest. Consider{" "}
-            <a href="/auth" className="underline font-medium">
-              signing up for an account
-            </a>{" "}
-            to track your registrations and receive event updates.
-          </span>
-        </div>
-      )}
-
-      <form
-        onSubmit={
-          !user
-            ? guestForm.handleSubmit(onSubmit)
-            : userForm.handleSubmit(onSubmit)
-        }
-        className="space-y-4 mt-4"
-      >
+      <div className="p-6">
         {!user && (
-          <>
-            <div className="space-y-2">
-              <Input
-                placeholder="First Name"
-                {...guestForm.register("firstName")}
-              />
-              {guestForm.formState.errors.firstName && (
-                <span className="text-sm text-red-500">
-                  {guestForm.formState.errors.firstName.message}
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Input
-                placeholder="Last Name"
-                {...guestForm.register("lastName")}
-              />
-              {guestForm.formState.errors.lastName && (
-                <span className="text-sm text-red-500">
-                  {guestForm.formState.errors.lastName.message}
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Input
-                type="email"
-                placeholder="Email"
-                {...guestForm.register("email")}
-              />
-              {guestForm.formState.errors.email && (
-                <span className="text-sm text-red-500">
-                  {guestForm.formState.errors.email.message}
-                </span>
-              )}
-            </div>
-          </>
+          <div className="mb-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+            <span className="text-sm">
+              <span className="font-semibold">Note:</span> You're registering as a
+              guest. Consider{" "}
+              <a href="/auth" className="underline font-medium">
+                signing up for an account
+              </a>{" "}
+              to track your registrations and receive event updates.
+            </span>
+          </div>
         )}
 
-        <div className="space-y-2">
-          <Textarea
-            placeholder="Any notes or questions? (Optional)"
-            {...(user
-              ? userForm.register("notes")
-              : guestForm.register("notes"))}
-          />
-        </div>
+        <form
+          onSubmit={
+            !user
+              ? guestForm.handleSubmit(onSubmit)
+              : userForm.handleSubmit(onSubmit)
+          }
+          className="space-y-4 mt-4"
+        >
+          {!user && (
+            <>
+              <div className="space-y-2">
+                <Input
+                  placeholder="First Name"
+                  {...guestForm.register("firstName")}
+                />
+                {guestForm.formState.errors.firstName && (
+                  <span className="text-sm text-red-500">
+                    {guestForm.formState.errors.firstName.message}
+                  </span>
+                )}
+              </div>
 
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="outline" type="button" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit">Register</Button>
-        </div>
-      </form>
+              <div className="space-y-2">
+                <Input
+                  placeholder="Last Name"
+                  {...guestForm.register("lastName")}
+                />
+                {guestForm.formState.errors.lastName && (
+                  <span className="text-sm text-red-500">
+                    {guestForm.formState.errors.lastName.message}
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  {...guestForm.register("email")}
+                />
+                {guestForm.formState.errors.email && (
+                  <span className="text-sm text-red-500">
+                    {guestForm.formState.errors.email.message}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Any notes or questions? (Optional)"
+              {...(user
+                ? userForm.register("notes")
+                : guestForm.register("notes"))}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" type="button" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit">Register</Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -309,7 +309,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      return res.status(200).json(event);
+      // Get the hub events for this event
+      const hubEvents = await storage.getHubEventsByEventId(eventId);
+      
+      // Get hub information if available
+      let hub = null;
+      let hubEventId = null;
+      
+      if (hubEvents.length > 0) {
+        // Get the primary hub event or the first one if no primary
+        const primaryHubEvent = hubEvents.find(he => he.isPrimary) || hubEvents[0];
+        hubEventId = primaryHubEvent.id;
+        
+        // Get the hub information
+        const hubInfo = await storage.getHub(primaryHubEvent.hubId);
+        if (hubInfo) {
+          hub = {
+            id: hubInfo.id,
+            name: hubInfo.name,
+            location: hubInfo.city, // Use city as location
+          };
+        }
+      }
+
+      return res.status(200).json({
+        ...event,
+        hubEventId,
+        hub
+      });
     } catch (error) {
       console.error("Error fetching event:", error);
       return res.status(500).json({
