@@ -25,10 +25,14 @@ interface Event {
   id: number;
   title: string;
   description: string;
-  startDate: string;
+  // New datetime fields
+  startDateTime: string;
+  endDateTime?: string;
+  // Legacy fields for backward compatibility
+  startDate?: string;
   endDate?: string;
-  startTime: string;
-  endTime: string;
+  startTime?: string;
+  endTime?: string;
   eventType: string;
   focusAreas: Focus[];
   location?: string; 
@@ -178,15 +182,37 @@ export default function EventsSection() {
 
   // Process events for display, using our utility functions
   const processedEvents = events.map(event => {
-    // Get the timestamp strings
-    const startDateStr = event.startDate;
-    const startTimeStr = event.startTime;
-    const endTimeStr = event.endTime;
+    // Prioritize the new datetime fields if available, fall back to the old fields
+    const dateForFormatting = event.startDateTime || event.startDate || '';
+    const startDate = event.startDateTime ? new Date(event.startDateTime) : null;
+    const endDate = event.endDateTime ? new Date(event.endDateTime) : null;
+    
+    let timeDisplay;
+    if (startDate && endDate) {
+      // Format time directly from the datetime objects
+      timeDisplay = `${startDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })} - ${endDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })}`;
+    } else {
+      // Fallback to the old time fields if datetime fields aren't populated
+      // Use a default format that doesn't trigger parsing errors
+      const startTimeStr = event.startTime || "";
+      const endTimeStr = event.endTime || "";
+      timeDisplay = (startTimeStr && endTimeStr) 
+        ? `${startTimeStr} - ${endTimeStr}` 
+        : startTimeStr || "Time TBD";
+    }
     
     return {
       id: event.id,
-      date: formatDisplayDate(startDateStr), // Format the date for display using our utility
-      time: formatTimeRange(startTimeStr, endTimeStr),
+      date: formatDisplayDate(dateForFormatting), // Format the date for display using our utility
+      time: timeDisplay,
       title: event.title,
       description: event.description,
       location: "Providence, RI", // Default location since it's not in our model

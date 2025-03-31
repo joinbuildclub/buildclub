@@ -50,7 +50,12 @@ export function utcToLocalTime(isoStr: string): string {
  * @param dateStr ISO date string or YYYY-MM-DD date string
  * @returns Formatted date string (e.g., "Mar 15, 2025")
  */
-export function formatDisplayDate(dateStr: string): string {
+export function formatDisplayDate(dateStr: string | undefined): string {
+  // Check if dateStr is undefined or empty
+  if (!dateStr) {
+    return 'Date TBD';
+  }
+  
   // Handle potentially invalid date by adding a default time if needed
   let date: Date;
   
@@ -155,7 +160,16 @@ export function getDayOfWeek(dateStr: string): string {
  * @param dateStr ISO date string or YYYY-MM-DD date string
  * @returns Object with day, month, and dayOfWeek
  */
-export function extractDateComponents(dateStr: string): { day: string; month: string; dayOfWeek: string } {
+export function extractDateComponents(dateStr: string | undefined): { day: string; month: string; dayOfWeek: string } {
+  // Check if dateStr is undefined or empty
+  if (!dateStr) {
+    return {
+      day: '--',
+      month: '---',
+      dayOfWeek: '------'
+    };
+  }
+  
   // Handle potentially invalid date by adding a default time if needed
   let date: Date;
   

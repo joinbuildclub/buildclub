@@ -60,7 +60,11 @@ export const events = pgTable("event", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
-  startDate: date("start_date").notNull(),
+  // Using full timestamp with timezone for proper datetime handling
+  startDateTime: timestamp("start_datetime", { withTimezone: true }).notNull(),
+  endDateTime: timestamp("end_datetime", { withTimezone: true }),
+  // Keep the old fields for backward compatibility during migration
+  startDate: date("start_date"),
   endDate: date("end_date"),
   startTime: text("start_time"),
   endTime: text("end_time"),
@@ -176,6 +180,10 @@ export const insertHubSchema = createInsertSchema(hubs).pick({
 export const insertEventSchema = createInsertSchema(events).pick({
   title: true,
   description: true,
+  // New datetime fields
+  startDateTime: true,
+  endDateTime: true,
+  // Legacy fields for backward compatibility
   startDate: true,
   endDate: true,
   startTime: true,
