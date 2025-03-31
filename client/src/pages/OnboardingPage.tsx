@@ -147,7 +147,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-white via-gray-50 to-gray-100 min-h-screen pb-20 relative overflow-hidden">
+    <div className="bg-gradient-to-b from-white via-gray-50 to-gray-100 min-h-screen pb-20 relative overflow-hidden page-content">
       {/* Decorative shapes */}
       <div className="absolute w-full h-full overflow-hidden opacity-30 pointer-events-none">
         <RoundedTriangle
