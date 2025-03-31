@@ -37,7 +37,7 @@ type Focus = "product" | "design" | "engineering";
 
 // Define event types from the API
 interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   // New datetime fields
@@ -52,7 +52,7 @@ interface Event {
   focusAreas: Focus[];
   location?: string;
   isPublished: boolean;
-  hubEventId?: number;
+  hubEventId?: string;
 }
 
 // Shape component for focus areas
@@ -337,16 +337,16 @@ export default function EventDetailPage() {
                   </div>
 
                   {/* Action buttons */}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3 items-center">
                     <Button
                       onClick={handleRegister}
-                      className="bg-[var(--color-green)] hover:bg-[var(--color-green)]/90 text-white border-0 rounded-md"
+                      className="bg-gray-900 hover:bg-gray-800 text-white border-0 rounded-md py-6 px-8 text-lg font-semibold shadow-md"
+                      size="lg"
                     >
-                      <UserPlus className="w-4 h-4 mr-2" />
                       Register Now
                     </Button>
 
-                    <Button variant="outline" onClick={handleShare}>
+                    <Button variant="outline" onClick={handleShare} className="h-10">
                       <Share2 className="w-4 h-4 mr-2" />
                       Share Event
                     </Button>
@@ -370,7 +370,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Related events (could be added in the future) */}
-              <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100">
+              <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 mb-8">
                 <div className="p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6">
                     Other Events You Might Like
@@ -390,6 +390,21 @@ export default function EventDetailPage() {
                   </div>
                 </div>
               </div>
+              
+              {/* Final CTA */}
+              <div className="bg-gray-50 rounded-xl overflow-hidden shadow-md border border-gray-200 p-8 text-center">
+                <h2 className="text-2xl font-bold mb-4">Ready to join us?</h2>
+                <p className="text-gray-600 mb-6 max-w-xl mx-auto">
+                  Secure your spot for {event.title} today and connect with other AI builders in your community!
+                </p>
+                <Button 
+                  onClick={handleRegister}
+                  className="bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-md px-10 py-6 text-lg shadow-md"
+                  size="lg"
+                >
+                  Register Now
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>
@@ -403,7 +418,7 @@ export default function EventDetailPage() {
           {event && (
             <EventRegistrationForm
               eventId={event.id}
-              hubEventId={event.hubEventId || 1}
+              hubEventId={event.hubEventId || "1"}
               eventTitle={event.title}
               onSuccess={() => {
                 setIsRegistrationOpen(false);

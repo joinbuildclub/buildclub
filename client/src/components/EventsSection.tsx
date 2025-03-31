@@ -132,68 +132,63 @@ function EventCard({
   const { day, month, dayOfWeek } =
     dateComponents || extractDateComponents(date);
 
-  // Handle registration click
-  const handleRegisterClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onRegisterClick(eventId, hubEventId);
-  };
-
   // Get shortened day of week (Mon, Tue, etc.)
   const shortDayOfWeek = dayOfWeek?.substring(0, 3) || '';
 
   return (
-    <div
-      className={`event-card group transition-all duration-200 ${isHackathon ? "hackathon-event" : ""}`}
-    >
-      <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-200 flex flex-row">
-        {/* Left side with date */}
-        <div className="w-20 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-200">
-          <div className="text-sm font-medium text-gray-700">
-            {shortDayOfWeek}
-          </div>
-          <div className="text-3xl font-bold text-gray-900 leading-none mt-1 mb-1">{day}</div>
-          <div className="text-sm font-medium text-gray-700">
-            {month}
-          </div>
-        </div>
-
-        {/* Middle content */}
-        <div className="flex-1 p-4 flex flex-col justify-center">
-          <div className="mb-1 flex items-center text-gray-500 text-sm">
-            <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
-            <span>{time || "Time TBD"}</span>
-          </div>
-          
-          <h3 className="font-semibold text-lg text-gray-900 mb-1">
-            {title}
-          </h3>
-          
-          <div className="mb-2 flex items-center text-gray-500 text-sm">
-            <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
-            <span>{location}</span>
+    <Link href={`/events/${eventId}`}>
+      <div
+        className={`event-card group transition-all duration-200 ${isHackathon ? "hackathon-event" : ""} cursor-pointer hover:shadow-md`}
+      >
+        <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-200 flex flex-row">
+          {/* Left side with date */}
+          <div className="w-20 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-200">
+            <div className="text-sm font-medium text-gray-700">
+              {shortDayOfWeek}
+            </div>
+            <div className="text-3xl font-bold text-gray-900 leading-none mt-1 mb-1">{day}</div>
+            <div className="text-sm font-medium text-gray-700">
+              {month}
+            </div>
           </div>
 
-          {/* Focus area tags */}
-          <div className="flex flex-wrap gap-1.5">
-            {focuses &&
-              Array.isArray(focuses) &&
-              focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
-          </div>
-        </div>
+          {/* Middle content */}
+          <div className="flex-1 p-4 flex flex-col justify-center">
+            <div className="mb-1 flex items-center text-gray-500 text-sm">
+              <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
+              <span>{time || "Time TBD"}</span>
+            </div>
+            
+            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+              {title}
+            </h3>
+            
+            <div className="mb-2 flex items-center text-gray-500 text-sm">
+              <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+              <span>{location}</span>
+            </div>
 
-        {/* Right side with register button */}
-        <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-200">
-          <Button
-            variant="default"
-            size="sm"
-            className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md"
-            onClick={handleRegisterClick}
-          >
-            Register
-          </Button>
+            {/* Focus area tags */}
+            <div className="flex flex-wrap gap-1.5">
+              {focuses &&
+                Array.isArray(focuses) &&
+                focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
+            </div>
+          </div>
+
+          {/* Right side with view details text */}
+          <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-200">
+            <Button
+              variant="default"
+              size="sm"
+              className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md"
+            >
+              View Details
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
