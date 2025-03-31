@@ -234,10 +234,13 @@ export class DatabaseStorage implements IStorage {
     // Find or create a default event for the waitlist
     let defaultEvent = await this.getEventByTitle("BuildClub Waitlist");
     if (!defaultEvent) {
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0]; // Convert to YYYY-MM-DD string format
+      
       defaultEvent = await this.createEvent({
         title: "BuildClub Waitlist",
         description: "Default event for BuildClub waitlist entries",
-        startDate: new Date(), // safeData will handle the conversion to string
+        startDate: formattedDate,
         eventType: "meetup",
         isPublished: false,
       });
