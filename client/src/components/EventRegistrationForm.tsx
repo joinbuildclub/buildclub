@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,13 +22,13 @@ const userSchema = z.object({
 type GuestFormData = z.infer<typeof guestSchema>;
 type UserFormData = z.infer<typeof userSchema>;
 
-export default function EventRegistrationForm({ 
+export default function EventRegistrationForm({
   eventId,
   hubEventId,
   eventTitle,
   onSuccess,
-  onCancel
-}: { 
+  onCancel,
+}: {
   eventId: string;
   hubEventId: string;
   eventTitle: string;
@@ -53,16 +53,18 @@ export default function EventRegistrationForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           hubEventId,
-          ...(!user ? {
-            firstName: (data as GuestFormData).firstName,
-            lastName: (data as GuestFormData).lastName,
-            email: (data as GuestFormData).email,
-            interestAreas: [],
-          } : {
-            firstName: user.firstName || "",
-            lastName: user.lastName || "",
-            email: user.email || "",
-          }),
+          ...(!user
+            ? {
+                firstName: (data as GuestFormData).firstName,
+                lastName: (data as GuestFormData).lastName,
+                email: (data as GuestFormData).email,
+                interestAreas: [],
+              }
+            : {
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                email: user.email || "",
+              }),
           notes: data.notes,
         }),
       });
@@ -94,8 +96,8 @@ export default function EventRegistrationForm({
       {!user && (
         <div className="my-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
           <span className="text-sm">
-            <span className="font-semibold">Note:</span> You're registering as
-            a guest. Consider{" "}
+            <span className="font-semibold">Note:</span> You're registering as a
+            guest. Consider{" "}
             <a href="/auth" className="underline font-medium">
               signing up for an account
             </a>{" "}
@@ -104,7 +106,14 @@ export default function EventRegistrationForm({
         </div>
       )}
 
-      <form onSubmit={!user ? guestForm.handleSubmit(onSubmit) : userForm.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+      <form
+        onSubmit={
+          !user
+            ? guestForm.handleSubmit(onSubmit)
+            : userForm.handleSubmit(onSubmit)
+        }
+        className="space-y-4 mt-4"
+      >
         {!user && (
           <>
             <div className="space-y-2">
@@ -149,7 +158,9 @@ export default function EventRegistrationForm({
         <div className="space-y-2">
           <Textarea
             placeholder="Any notes or questions? (Optional)"
-            {...(user ? userForm.register("notes") : guestForm.register("notes"))}
+            {...(user
+              ? userForm.register("notes")
+              : guestForm.register("notes"))}
           />
         </div>
 
@@ -157,9 +168,7 @@ export default function EventRegistrationForm({
           <Button variant="outline" type="button" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">
-            Register
-          </Button>
+          <Button type="submit">Register</Button>
         </div>
       </form>
     </div>

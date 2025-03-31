@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +29,8 @@ export default function AdminDashboard() {
   } = useQuery<any[]>({
     queryKey: ["/api/registrations"],
     enabled: user?.role === "admin" || user?.role === "ambassador",
+    // Don't retry too many times to avoid re-render issues
+    retry: 1,
   });
   
   // Fetch events
@@ -39,6 +41,8 @@ export default function AdminDashboard() {
   } = useQuery<SchemaEvent[]>({
     queryKey: ["/api/events"],
     enabled: user?.role === "admin" || user?.role === "ambassador",
+    // Don't retry too many times to avoid re-render issues
+    retry: 1,
   });
   
   // Fetch hubs
@@ -49,32 +53,40 @@ export default function AdminDashboard() {
   } = useQuery<SchemaHub[]>({
     queryKey: ["/api/hubs"],
     enabled: user?.role === "admin",
+    // Don't retry too many times to avoid re-render issues
+    retry: 1,
   });
   
-  // Handle errors
-  if (registrationsError) {
-    toast({
-      title: "Error loading registrations",
-      description: (registrationsError as Error).message,
-      variant: "destructive",
-    });
-  }
+  // Handle errors with useEffect hooks to prevent infinite renders
+  useEffect(() => {
+    if (registrationsError) {
+      toast({
+        title: "Error loading registrations",
+        description: (registrationsError as Error).message,
+        variant: "destructive",
+      });
+    }
+  }, [registrationsError, toast]);
   
-  if (eventsError) {
-    toast({
-      title: "Error loading events",
-      description: (eventsError as Error).message,
-      variant: "destructive",
-    });
-  }
+  useEffect(() => {
+    if (eventsError) {
+      toast({
+        title: "Error loading events",
+        description: (eventsError as Error).message,
+        variant: "destructive",
+      });
+    }
+  }, [eventsError, toast]);
   
-  if (hubsError) {
-    toast({
-      title: "Error loading hubs",
-      description: (hubsError as Error).message,
-      variant: "destructive",
-    });
-  }
+  useEffect(() => {
+    if (hubsError) {
+      toast({
+        title: "Error loading hubs",
+        description: (hubsError as Error).message,
+        variant: "destructive",
+      });
+    }
+  }, [hubsError, toast]);
   
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">

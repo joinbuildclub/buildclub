@@ -680,8 +680,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/registrations", isAdmin, async (req, res) => {
     try {
       // Get all registrations from hubEventRegistrations table
+      // Use a specific column selection to avoid errors with missing columns
       const registrations = await db
-        .select()
+        .select({
+          id: hubEventRegistrations.id,
+          hubEventId: hubEventRegistrations.hubEventId,
+          userId: hubEventRegistrations.userId,
+          firstName: hubEventRegistrations.firstName,
+          lastName: hubEventRegistrations.lastName,
+          email: hubEventRegistrations.email,
+          interestAreas: hubEventRegistrations.interestAreas,
+          aiInterests: hubEventRegistrations.aiInterests,
+          status: hubEventRegistrations.status,
+          createdAt: hubEventRegistrations.createdAt
+          // Removed the notes column since it doesn't exist
+        })
         .from(hubEventRegistrations)
         .orderBy(desc(hubEventRegistrations.createdAt));
 

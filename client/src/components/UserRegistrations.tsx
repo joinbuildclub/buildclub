@@ -81,6 +81,7 @@ export default function UserRegistrations() {
   } = useQuery<UserRegistration[]>({
     queryKey: ["/api/my-registrations"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: 1, // Limit retries to avoid potential infinite loops
   });
 
   // Mutation for cancelling registration
