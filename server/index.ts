@@ -28,7 +28,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      secure: process.env.NODE_ENV === 'production'
+      secure: false, // Allow HTTP for local development, but configure proxy to handle HTTPS in production
+      sameSite: 'lax'
     }
   })
 );
