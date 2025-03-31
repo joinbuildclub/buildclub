@@ -1,23 +1,23 @@
 import { Link } from "wouter";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
-import logoImage from "../assets/buildclub-logo.png";
+import logoImage from "@/assets/logo.png";
 
 export default function DashboardHeader() {
   const { user, logoutMutation } = useAuth();
-  
+
   const handleLogout = () => {
     logoutMutation.mutate();
   };
-  
+
   // Get user initials for avatar fallback
   const getInitials = () => {
     if (user?.firstName && user?.lastName) {
@@ -39,19 +39,22 @@ export default function DashboardHeader() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/">
-              <img 
-                src={logoImage} 
-                alt="BuildClub Logo" 
+              <img
+                src={logoImage}
+                alt="BuildClub Logo"
                 className="h-10 cursor-pointer"
               />
             </Link>
           </div>
-          
+
           {/* User Avatar and Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none">
               <Avatar className="h-10 w-10 border border-gray-200">
-                <AvatarImage src={user?.profilePicture || undefined} alt={user?.username || "User"} />
+                <AvatarImage
+                  src={user?.profilePicture || undefined}
+                  alt={user?.username || "User"}
+                />
                 <AvatarFallback className="bg-[--color-green]/10 text-[--color-green] font-medium">
                   {getInitials()}
                 </AvatarFallback>
@@ -59,27 +62,27 @@ export default function DashboardHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-1">
               <DropdownMenuLabel className="px-4 py-2 text-sm font-medium">
-                <div>{user?.firstName} {user?.lastName}</div>
-                <div className="text-xs font-normal text-gray-500 mt-1">{user?.email}</div>
+                <div>
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div className="text-xs font-normal text-gray-500 mt-1">
+                  {user?.email}
+                </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              
+
               <DropdownMenuItem className="px-4 py-2 text-sm" asChild>
-                <Link href="/profile">
-                  Profile Settings
-                </Link>
+                <Link href="/profile">Profile Settings</Link>
               </DropdownMenuItem>
-              
+
               {user?.role === "admin" && (
                 <DropdownMenuItem className="px-4 py-2 text-sm" asChild>
-                  <Link href="/admin">
-                    Admin Settings
-                  </Link>
+                  <Link href="/admin">Admin Settings</Link>
                 </DropdownMenuItem>
               )}
-              
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="px-4 py-2 text-sm text-red-600 focus:text-red-700 focus:bg-red-50"
                 onClick={handleLogout}
               >

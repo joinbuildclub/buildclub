@@ -2,9 +2,6 @@ import {
   users,
   type User,
   type InsertUser,
-  waitlistEntries,
-  type WaitlistEntry,
-  type InsertWaitlistEntry,
   hubs,
   type Hub,
   type InsertHub,
@@ -67,11 +64,6 @@ export interface IStorage {
     hubEventId: number,
     email: string,
   ): Promise<HubEventRegistration | undefined>;
-
-  // Legacy waitlist methods for backwards compatibility
-  createWaitlistEntry(entry: InsertWaitlistEntry): Promise<WaitlistEntry>;
-  getWaitlistEntries(): Promise<WaitlistEntry[]>;
-  getWaitlistEntryByEmail(email: string): Promise<WaitlistEntry | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -148,7 +140,70 @@ export class DatabaseStorage implements IStorage {
       .insert(users)
       .values(this.safeData(insertUser))
       .returning();
+    
+    // If user has an email, process with SendGrid
+    if (user.email) {
+      await this.processUserWithSendGrid(user);
+    }
+    
     return user;
+  }
+  
+  // Helper method to process users with SendGrid
+  private async processUserWithSendGrid(user: User): Promise<void> {
+    // Check if SendGrid is properly configured
+    const isSendGridConfigured =
+      !!process.env.SENDGRID_API_KEY && !!process.env.ADMIN_EMAIL;
+
+    if (!isSendGridConfigured) {
+      console.log(
+        "SendGrid not fully configured. Skipping email operations for user registration."
+      );
+      return;
+    }
+
+    try {
+      const userEntry = {
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        interestAreas: user.interests || [],
+      };
+
+      // Try to add contact to SendGrid mailing list
+      try {
+        const contactAdded = await addContactToSendGrid(userEntry as any);
+        if (contactAdded) {
+          console.log(`User ${user.email} added to SendGrid successfully`);
+        }
+      } catch (err) {
+        console.error("Error adding user to SendGrid:", err);
+      }
+
+      // Try to send welcome email to the user
+      try {
+        const welcomeEmailSent = await sendWelcomeEmail(userEntry as any);
+        if (welcomeEmailSent) {
+          console.log(`Welcome email sent to user ${user.email} successfully`);
+        }
+      } catch (err) {
+        console.error("Error sending welcome email to user:", err);
+      }
+
+      // Try to send notification to admin
+      try {
+        const adminNotificationSent = await sendAdminNotification(userEntry as any);
+        if (adminNotificationSent) {
+          console.log(
+            `Admin notification sent for user ${user.email} successfully`
+          );
+        }
+      } catch (err) {
+        console.error("Error sending admin notification for user:", err);
+      }
+    } catch (error) {
+      console.error("Error in SendGrid processing for user:", error);
+    }
   }
 
   async updateUser(id: number, userData: Partial<User>): Promise<User> {
@@ -419,155 +474,7 @@ export class DatabaseStorage implements IStorage {
     return registration || undefined;
   }
 
-  // Legacy waitlist methods for backwards compatibility
-  async createWaitlistEntry(
-    insertEntry: InsertWaitlistEntry,
-  ): Promise<WaitlistEntry> {
-    // Find or create a default event for the waitlist
-    let defaultEvent = await this.getEventByTitle("BuildClub Waitlist");
-    if (!defaultEvent) {
-      const today = new Date();
-      const formattedDate = today.toISOString().split("T")[0]; // Convert to YYYY-MM-DD string format
 
-      defaultEvent = await this.createEvent({
-        title: "BuildClub Waitlist",
-        description: "Default event for BuildClub waitlist entries",
-        startDateTime: new Date(), // Use current date and time
-        eventType: "meetup",
-        isPublished: false,
-      });
-    }
-
-    // Find or create a default hub for the waitlist
-    let defaultHub = await this.getHubByName("BuildClub Global");
-    if (!defaultHub) {
-      defaultHub = await this.createHub({
-        name: "BuildClub Global",
-        city: "Global",
-        country: "Global",
-      });
-    }
-
-    // Find or create a default hub-event for the waitlist
-    let defaultHubEvent;
-    const hubEvents = await this.getHubEventsByEventId(defaultEvent.id);
-    if (hubEvents.length > 0) {
-      defaultHubEvent = hubEvents[0];
-    } else {
-      defaultHubEvent = await this.createHubEvent({
-        hubId: defaultHub.id,
-        eventId: defaultEvent.id,
-        isPrimary: true,
-      });
-    }
-
-    // Create the hub event registration
-    const registration = await this.createHubEventRegistration({
-      hubEventId: defaultHubEvent.id,
-      firstName: insertEntry.firstName,
-      lastName: insertEntry.lastName,
-      email: insertEntry.email,
-      interestAreas: insertEntry.interestAreas,
-      aiInterests: insertEntry.aiInterests,
-    });
-
-    // Return the registration as a WaitlistEntry for backwards compatibility
-    return registration;
-  }
-
-  async getWaitlistEntries(): Promise<WaitlistEntry[]> {
-    try {
-      // Check if waitlist_entry table exists
-      const tableExists = await db.execute<{ exists: boolean }>(sql`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'waitlist_entry'
-        );
-      `);
-
-      if (tableExists.rows[0]?.exists) {
-        // Use the waitlist_entry table if it exists
-        const entries = await db.select().from(waitlistEntries);
-        return entries as unknown as WaitlistEntry[];
-      } else {
-        // Otherwise, fetch from hub_event_registration with filtering for "waitlist" entries
-        // This is a fallback implementation
-        const defaultHubEvent = await this.getDefaultWaitlistHubEvent();
-        if (!defaultHubEvent) {
-          return [];
-        }
-
-        const registrations = await db
-          .select()
-          .from(hubEventRegistrations)
-          .where(eq(hubEventRegistrations.hubEventId, defaultHubEvent.id));
-        return registrations as unknown as WaitlistEntry[];
-      }
-    } catch (error) {
-      console.error("Error checking or fetching waitlist entries:", error);
-      // Return empty array as fallback
-      return [];
-    }
-  }
-
-  async getWaitlistEntryByEmail(
-    email: string,
-  ): Promise<WaitlistEntry | undefined> {
-    try {
-      // Check if waitlist_entry table exists
-      const tableExists = await db.execute<{ exists: boolean }>(sql`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'waitlist_entry'
-        );
-      `);
-
-      if (tableExists.rows[0]?.exists) {
-        // Use the waitlist_entry table if it exists
-        const [entry] = await db
-          .select()
-          .from(waitlistEntries)
-          .where(eq(waitlistEntries.email, email));
-        return (entry || undefined) as unknown as WaitlistEntry | undefined;
-      } else {
-        // Otherwise, fetch from hub_event_registration
-        const defaultHubEvent = await this.getDefaultWaitlistHubEvent();
-        if (!defaultHubEvent) {
-          return undefined;
-        }
-
-        const [registration] = await db
-          .select()
-          .from(hubEventRegistrations)
-          .where(
-            and(
-              eq(hubEventRegistrations.hubEventId, defaultHubEvent.id),
-              eq(hubEventRegistrations.email, email),
-            ),
-          );
-        return (registration || undefined) as unknown as
-          | WaitlistEntry
-          | undefined;
-      }
-    } catch (error) {
-      console.error(
-        "Error checking or fetching waitlist entry by email:",
-        error,
-      );
-      return undefined;
-    }
-  }
-
-  // Helper method to get default hub event for waitlist
-  private async getDefaultWaitlistHubEvent(): Promise<HubEvent | undefined> {
-    const defaultEvent = await this.getEventByTitle("BuildClub Waitlist");
-    if (!defaultEvent) {
-      return undefined;
-    }
-
-    const hubEvents = await this.getHubEventsByEventId(defaultEvent.id);
-    return hubEvents[0] || undefined;
-  }
 
   // Helper methods
   private async getEventByTitle(title: string): Promise<Event | undefined> {
@@ -579,7 +486,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   private async processWithSendGrid(
-    entry: HubEventRegistration | WaitlistEntry,
+    entry: HubEventRegistration,
   ): Promise<void> {
     // Check if SendGrid is properly configured
     const isSendGridConfigured =
@@ -639,13 +546,13 @@ export class DatabaseStorage implements IStorage {
       return db.execute(sql`
         SELECT * FROM "user" 
         WHERE role = ${filters.role}
-        ORDER BY "created_at" DESC
+        ORDER BY "createdAt" DESC
       `).then(result => result.rows as User[]);
     } else {
       // Without filters
       return db.execute(sql`
         SELECT * FROM "user"
-        ORDER BY "created_at" DESC
+        ORDER BY "createdAt" DESC
       `).then(result => result.rows as User[]);
     }
   }

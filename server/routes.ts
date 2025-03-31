@@ -536,7 +536,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName: user.lastName || "",
         email: user.email || "",
         interestAreas: user.interests || [],
-        createdAt: user.created_at ? new Date(user.created_at).toISOString() : new Date().toISOString()
+        createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString()
       }));
       
       return res.status(200).json(entries);
