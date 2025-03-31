@@ -1,30 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
     <title>BuildClub - Where AI builders meet IRL</title>
-    <meta name="description" content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!" />
+    <meta
+      name="description"
+      content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!"
+    />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    
+
     <!-- OpenGraph Meta Tags -->
-    <meta property="og:title" content="BuildClub - Where AI builders meet IRL" />
-    <meta property="og:description" content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!" />
+    <meta
+      property="og:title"
+      content="BuildClub - Where AI builders meet IRL"
+    />
+    <meta
+      property="og:description"
+      content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!"
+    />
     <meta property="og:image" content="/buildclub-og.jpg" />
     <meta property="og:url" content="https://buildclub.io" />
     <meta property="og:type" content="website" />
-    
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BuildClub - Where AI builders meet IRL" />
-    <meta name="twitter:description" content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!" />
+    <meta
+      name="twitter:title"
+      content="BuildClub - Where AI builders meet IRL"
+    />
+    <meta
+      name="twitter:description"
+      content="Join the BuildClub community - a fun group of AI builders creating cool stuff together in real life!"
+    />
     <meta name="twitter:image" content="/buildclub-og.jpg" />
-    
+
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-W4K514KJD7"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-W4K514KJD7");
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
