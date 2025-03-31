@@ -33,7 +33,7 @@ export default function DashboardHeader() {
   };
 
   return (
-    <div className="bg-white border-b border-gray-200 shadow-sm">
+    <div className="bg-white border-b border-gray-200 shadow-sm dashboard-font">
       <div className="container max-w-7xl mx-auto py-4 px-4 sm:px-6 md:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}

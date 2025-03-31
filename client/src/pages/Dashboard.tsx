@@ -78,13 +78,13 @@ export default function Dashboard() {
   }, [registrationsError, eventsError, hubsError, toast]);
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dashboard-font">
       <DashboardHeader />
       
       <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">Dashboard</h1>
         <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 bg-white border border-gray-200 shadow-sm">
+          <TabsList className="mb-6 bg-white border border-gray-200 shadow-sm dashboard-font">
             <TabsTrigger 
               value="registrations" 
               className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
@@ -110,7 +110,7 @@ export default function Dashboard() {
           <TabsContent value="registrations">
             <Card className="border border-gray-200 shadow-md overflow-hidden">
               <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle>Event Registration Management</CardTitle>
+                <CardTitle className="dashboard-heading">Event Registration Management</CardTitle>
                 <CardDescription>
                   View and manage people who have registered for BuildClub events.
                 </CardDescription>
@@ -136,7 +136,7 @@ export default function Dashboard() {
           <TabsContent value="events">
             <Card className="border border-gray-200 shadow-md overflow-hidden">
               <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle>Event Management</CardTitle>
+                <CardTitle className="dashboard-heading">Event Management</CardTitle>
                 <CardDescription>
                   Create and manage BuildClub events across all locations.
                 </CardDescription>
@@ -162,7 +162,7 @@ export default function Dashboard() {
           <TabsContent value="hubs">
             <Card className="border border-gray-200 shadow-md overflow-hidden">
               <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle>Hub Management</CardTitle>
+                <CardTitle className="dashboard-heading">Hub Management</CardTitle>
                 <CardDescription>
                   Manage BuildClub locations around the world.
                 </CardDescription>
