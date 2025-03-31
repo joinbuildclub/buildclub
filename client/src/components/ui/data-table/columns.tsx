@@ -1,18 +1,18 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreHorizontal, Edit, Trash } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { 
-  Hub as SchemaHub, 
-  Event as SchemaEvent, 
-  Registration as SchemaRegistration 
+import type {
+  Hub as SchemaHub,
+  Event as SchemaEvent,
+  Registration as SchemaRegistration,
 } from "@shared/schema";
 
 // Definition of columns for events table
@@ -36,21 +36,33 @@ export const eventColumns: ColumnDef<SchemaEvent>[] = [
   {
     accessorKey: "eventType",
     header: "Type",
-    cell: ({ row }) => <div className="capitalize">{row.original.eventType}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.original.eventType}</div>
+    ),
   },
   {
     accessorKey: "startDate",
     header: "Date",
     cell: ({ row }) => {
       const startDate = row.original.startDate;
-      return <div>{startDate ? new Date(startDate as string).toLocaleDateString() : 'N/A'}</div>;
+      return (
+        <div>
+          {startDate
+            ? new Date(startDate as string).toLocaleDateString()
+            : "N/A"}
+        </div>
+      );
     },
   },
   {
     accessorKey: "isPublished",
     header: "Status",
     cell: ({ row }) => (
-      <div className={row.original.isPublished ? "text-green-600" : "text-amber-600"}>
+      <div
+        className={
+          row.original.isPublished ? "text-green-600" : "text-amber-600"
+        }
+      >
         {row.original.isPublished ? "Published" : "Draft"}
       </div>
     ),
@@ -116,7 +128,9 @@ export const hubColumns: ColumnDef<SchemaHub>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="truncate max-w-[200px]">{row.original.description || "N/A"}</div>
+      <div className="truncate max-w-[200px]">
+        {row.original.description || "N/A"}
+      </div>
     ),
   },
   {
@@ -181,7 +195,9 @@ export const registrationColumns: ColumnDef<any>[] = [
   {
     accessorKey: "event.title",
     header: "Event",
-    cell: ({ row }) => <div className="font-medium">{row.original.event.title}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium">{row.original.event.title}</div>
+    ),
   },
   {
     accessorKey: "hub.name",
@@ -193,9 +209,9 @@ export const registrationColumns: ColumnDef<any>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.registration.status;
-      let statusClasses = "px-2 py-1 rounded text-xs font-medium";
-      
-      switch(status) {
+      let statusClasses = "px-2 py-1 rounded text-xs font-medium max-w-fit";
+
+      switch (status) {
         case "registered":
           statusClasses += " bg-amber-100 text-amber-800";
           break;
@@ -211,10 +227,12 @@ export const registrationColumns: ColumnDef<any>[] = [
         default:
           statusClasses += " bg-gray-100 text-gray-800";
       }
-      
+
       return (
         <div className={statusClasses}>
-          {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Registered"}
+          {status
+            ? status.charAt(0).toUpperCase() + status.slice(1)
+            : "Registered"}
         </div>
       );
     },

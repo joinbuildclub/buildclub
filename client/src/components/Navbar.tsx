@@ -12,14 +12,25 @@ export default function Navbar() {
 
   const handleNavigation = (href: string) => {
     setOpen(false);
-    // Smooth scroll to section
-    const element = document.querySelector(href);
-    if (element) {
-      window.scrollTo({
-        top: element.getBoundingClientRect().top + window.scrollY - 80,
-        behavior: "smooth",
-      });
+    
+    // Check if we're on the homepage and trying to scroll to a section
+    if (window.location.pathname === "/" && href.startsWith("#")) {
+      // Remove the slash from "/#section" to get just "#section"
+      const sectionId = href.replace(/\//g, "");
+      
+      // Use the correct selector for ID
+      const element = document.querySelector(sectionId);
+      if (element) {
+        window.scrollTo({
+          top: element.getBoundingClientRect().top + window.scrollY - 80,
+          behavior: "smooth",
+        });
+        return;
+      }
     }
+    
+    // If not on homepage or section not found, navigate to the href
+    window.location.href = href.startsWith("/") ? href : `/${href}`;
   };
 
   return (
