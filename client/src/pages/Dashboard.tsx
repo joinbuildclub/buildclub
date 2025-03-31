@@ -77,99 +77,120 @@ export default function Dashboard() {
   }, [registrationsError, eventsError, hubsError, toast]);
   
   return (
-    <div className="container max-w-7xl mx-auto py-10 px-4 sm:px-6 md:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back, {user?.firstName || user?.username || "there"}!
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">
+            Welcome back, {user?.firstName || user?.username || "there"}!
+          </p>
+        </div>
       </div>
       
-      <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-6 bg-gray-100">
-          <TabsTrigger value="registrations">Registrations</TabsTrigger>
-          <TabsTrigger value="events">Events</TabsTrigger>
-          {user?.role === "admin" && <TabsTrigger value="hubs">Hubs</TabsTrigger>}
-        </TabsList>
-        
-        <TabsContent value="registrations">
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Registration Management</CardTitle>
-              <CardDescription>
-                View and manage people who have registered for BuildClub events.
-              </CardDescription>
-            </CardHeader>
-            <Separator />
-            <CardContent className="pt-6">
-              {isLoadingRegistrations ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                </div>
-              ) : (
-                <DataTable
-                  columns={registrationColumns}
-                  data={registrations}
-                  searchColumn="email"
-                  searchPlaceholder="Search by email..."
-                />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="events">
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Management</CardTitle>
-              <CardDescription>
-                Create and manage BuildClub events across all locations.
-              </CardDescription>
-            </CardHeader>
-            <Separator />
-            <CardContent className="pt-6">
-              {isLoadingEvents ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                </div>
-              ) : (
-                <DataTable
-                  columns={eventColumns}
-                  data={events}
-                  searchColumn="title"
-                  searchPlaceholder="Search events..."
-                />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="hubs">
-          <Card>
-            <CardHeader>
-              <CardTitle>Hub Management</CardTitle>
-              <CardDescription>
-                Manage BuildClub locations around the world.
-              </CardDescription>
-            </CardHeader>
-            <Separator />
-            <CardContent className="pt-6">
-              {isLoadingHubs ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                </div>
-              ) : (
-                <DataTable
-                  columns={hubColumns}
-                  data={hubs}
-                  searchColumn="name"
-                  searchPlaceholder="Search hubs..."
-                />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
+        <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6 bg-white border border-gray-200 shadow-sm">
+            <TabsTrigger 
+              value="registrations" 
+              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
+            >
+              Registrations
+            </TabsTrigger>
+            <TabsTrigger 
+              value="events" 
+              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
+            >
+              Events
+            </TabsTrigger>
+            {user?.role === "admin" && (
+              <TabsTrigger 
+                value="hubs" 
+                className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
+              >
+                Hubs
+              </TabsTrigger>
+            )}
+          </TabsList>
+          
+          <TabsContent value="registrations">
+            <Card className="border border-gray-200 shadow-md overflow-hidden">
+              <CardHeader className="bg-white border-b border-gray-100">
+                <CardTitle>Event Registration Management</CardTitle>
+                <CardDescription>
+                  View and manage people who have registered for BuildClub events.
+                </CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className="pt-6">
+                {isLoadingRegistrations ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={registrationColumns}
+                    data={registrations}
+                    searchColumn="email"
+                    searchPlaceholder="Search by email..."
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="events">
+            <Card className="border border-gray-200 shadow-md overflow-hidden">
+              <CardHeader className="bg-white border-b border-gray-100">
+                <CardTitle>Event Management</CardTitle>
+                <CardDescription>
+                  Create and manage BuildClub events across all locations.
+                </CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className="pt-6">
+                {isLoadingEvents ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={eventColumns}
+                    data={events}
+                    searchColumn="title"
+                    searchPlaceholder="Search events..."
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="hubs">
+            <Card className="border border-gray-200 shadow-md overflow-hidden">
+              <CardHeader className="bg-white border-b border-gray-100">
+                <CardTitle>Hub Management</CardTitle>
+                <CardDescription>
+                  Manage BuildClub locations around the world.
+                </CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className="pt-6">
+                {isLoadingHubs ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={hubColumns}
+                    data={hubs}
+                    searchColumn="name"
+                    searchPlaceholder="Search hubs..."
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
