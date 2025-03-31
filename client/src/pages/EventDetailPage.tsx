@@ -290,99 +290,86 @@ export default function EventDetailPage() {
             </div>
           ) : event ? (
             <div>
-              {/* Event header section */}
+              {/* Event header section - redesigned to match the event card style */}
               <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">
-                <div className="p-6 md:p-8">
-                  {/* Hub info badge */}
-                  {event.hub && (
-                    <div className="mb-4">
-                      <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100">
-                        Hosted by {event.hub.name}
-                      </Badge>
+                <div className="p-0">
+                  <div className="flex flex-col md:flex-row">
+                    {/* Left column with date box */}
+                    <div className="bg-gray-50 p-6 text-center md:w-48 flex flex-col justify-center items-center">
+                      <div className="uppercase text-sm text-gray-500 font-medium mb-1">
+                        {dateComponents?.dayOfWeek?.substring(0, 3) || ""}
+                      </div>
+                      <div className="text-4xl font-bold text-gray-900 mb-1">
+                        {dateComponents?.day || ""}
+                      </div>
+                      <div className="uppercase text-sm text-gray-500 font-medium">
+                        {dateComponents?.month || ""}
+                      </div>
                     </div>
-                  )}
-                  
-                  {/* Event type and focus area badges */}
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
-                    {event.focusAreas.map((focus, idx) => (
-                      <FocusBadge key={idx} focus={focus} />
-                    ))}
-
-                    <Badge
-                      variant="outline"
-                      className="bg-gray-50 text-gray-600 border-gray-100"
-                    >
-                      {event.eventType.charAt(0).toUpperCase() +
-                        event.eventType.slice(1)}
-                    </Badge>
-                  </div>
-
-                  {/* Event title */}
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    {event.title}
-                  </h1>
-
-                  {/* Event meta info */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="flex items-center text-gray-700">
-                      <Calendar className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />
-                      <div>
-                        <div className="font-medium">
-                          {dateComponents?.dayOfWeek}
+                    
+                    {/* Right column with event details */}
+                    <div className="p-6 md:p-8 md:flex-1">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {event.focusAreas.map((focus, idx) => (
+                          <FocusBadge key={idx} focus={focus} />
+                        ))}
+                        
+                        <Badge
+                          variant="outline"
+                          className="bg-gray-50 text-gray-600 border-gray-100"
+                        >
+                          {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+                        </Badge>
+                      </div>
+                      
+                      {/* Event title */}
+                      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                        {event.title}
+                      </h1>
+                      
+                      {/* Description */}
+                      <p className="text-gray-600 mb-4">
+                        {event.description}
+                      </p>
+                      
+                      {/* Meta info with hub badge */}
+                      <div className="space-y-2 mb-5">
+                        <div className="flex items-center text-gray-600">
+                          <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                          <span>{timeDisplay}</span>
                         </div>
-                        <div>{dateDisplay}</div>
+                        
+                        <div className="flex items-center text-gray-600">
+                          <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                          <span>{event.hub?.location || "Providence, RI"}</span>
+                        </div>
+                        
+                        {event.hub && (
+                          <div className="flex items-center text-gray-600">
+                            <Users className="w-4 h-4 mr-2 text-gray-400" />
+                            <span>Hosted by <span className="font-medium text-green-600">{event.hub.name}</span></span>
+                          </div>
+                        )}
                       </div>
+                      
+                      {/* Register button */}
+                      <Button
+                        onClick={handleRegister}
+                        className="bg-gray-900 hover:bg-gray-800 text-white border-0 rounded-md h-10 px-6"
+                      >
+                        Register
+                      </Button>
+                      
+                      <Button variant="outline" onClick={handleShare} className="h-10 ml-3">
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Share
+                      </Button>
                     </div>
-
-                    <div className="flex items-center text-gray-700">
-                      <Clock className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />
-                      <div>
-                        <div className="font-medium">Time</div>
-                        <div>{timeDisplay}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center text-gray-700">
-                      <MapPin className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />
-                      <div>
-                        <div className="font-medium">Location</div>
-                        <div>{event.hub?.location || "TBD"}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action buttons */}
-                  <div className="flex flex-wrap gap-3 items-center">
-                    <Button
-                      onClick={handleRegister}
-                      className="bg-gray-900 hover:bg-gray-800 text-white border-0 rounded-md py-6 px-8 text-lg font-semibold shadow-md"
-                      size="lg"
-                    >
-                      Register Now
-                    </Button>
-
-                    <Button variant="outline" onClick={handleShare} className="h-10">
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Share Event
-                    </Button>
                   </div>
                 </div>
               </div>
 
-              {/* Event details section */}
-              <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">
-                <div className="p-6 md:p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                    About This Event
-                  </h2>
-
-                  <div className="prose max-w-none">
-                    <p className="text-gray-700 whitespace-pre-line">
-                      {event.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {/* More event details could be added here in the future */}
 
               {/* Related events (could be added in the future) */}
               <div className="bg-white rounded-xl overflow-hidden border border-gray-100 mb-8">

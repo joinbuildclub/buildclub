@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const guestSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -37,6 +39,12 @@ export default function EventRegistrationForm({
 }) {
   const { user } = useAuth();
   const { toast } = useToast();
+  
+  // Fetch event details to display in the form
+  const { data: event } = useQuery({
+    queryKey: [`/api/events/${eventId}`],
+    enabled: !!eventId,
+  });
 
   const guestForm = useForm<GuestFormData>({
     resolver: zodResolver(guestSchema),
@@ -59,11 +67,13 @@ export default function EventRegistrationForm({
                 lastName: (data as GuestFormData).lastName,
                 email: (data as GuestFormData).email,
                 interestAreas: [],
+                is_guest: true,
               }
             : {
                 firstName: user.firstName || "",
                 lastName: user.lastName || "",
                 email: user.email || "",
+                userId: user.id,
               }),
           notes: data.notes,
         }),
@@ -87,6 +97,28 @@ export default function EventRegistrationForm({
     }
   };
 
+  // Format date and time
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date);
+  };
+  
+  const formatTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat('en-US', { 
+      hour: 'numeric', 
+      minute: 'numeric',
+      hour12: true 
+    }).format(date);
+  };
+
   return (
     <div className="p-0">
       <div className="bg-gray-900 text-white p-6">
@@ -97,6 +129,34 @@ export default function EventRegistrationForm({
           </p>
         </DialogHeader>
       </div>
+
+      {event && (
+        <div className="border-b border-gray-200 bg-gray-50 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center text-gray-600">
+              <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+              <span>{formatDate(event.startDateTime)}</span>
+            </div>
+            
+            <div className="flex items-center text-gray-600">
+              <Clock className="w-4 h-4 mr-2 text-gray-400" />
+              <span>{formatTime(event.startDateTime)} - {formatTime(event.endDateTime)}</span>
+            </div>
+            
+            <div className="flex items-center text-gray-600">
+              <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+              <span>{event.hub?.location || "Providence, RI"}</span>
+            </div>
+            
+            {event.hub && (
+              <div className="flex items-center text-gray-600">
+                <Users className="w-4 h-4 mr-2 text-gray-400" />
+                <span>Hosted by <span className="font-medium text-green-600">{event.hub.name}</span></span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="p-6">
         {!user && (
@@ -120,36 +180,50 @@ export default function EventRegistrationForm({
           }
           className="space-y-4 mt-4"
         >
-          {!user && (
+          {!user ? (
             <>
-              <div className="space-y-2">
-                <Input
-                  placeholder="First Name"
-                  {...guestForm.register("firstName")}
-                />
-                {guestForm.formState.errors.firstName && (
-                  <span className="text-sm text-red-500">
-                    {guestForm.formState.errors.firstName.message}
-                  </span>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                    First Name
+                  </label>
+                  <Input
+                    id="firstName"
+                    placeholder="First Name"
+                    {...guestForm.register("firstName")}
+                  />
+                  {guestForm.formState.errors.firstName && (
+                    <span className="text-sm text-red-500">
+                      {guestForm.formState.errors.firstName.message}
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                    Last Name
+                  </label>
+                  <Input
+                    id="lastName"
+                    placeholder="Last Name"
+                    {...guestForm.register("lastName")}
+                  />
+                  {guestForm.formState.errors.lastName && (
+                    <span className="text-sm text-red-500">
+                      {guestForm.formState.errors.lastName.message}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email Address
+                </label>
                 <Input
-                  placeholder="Last Name"
-                  {...guestForm.register("lastName")}
-                />
-                {guestForm.formState.errors.lastName && (
-                  <span className="text-sm text-red-500">
-                    {guestForm.formState.errors.lastName.message}
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Input
+                  id="email"
                   type="email"
-                  placeholder="Email"
+                  placeholder="you@example.com"
                   {...guestForm.register("email")}
                 />
                 {guestForm.formState.errors.email && (
@@ -159,22 +233,41 @@ export default function EventRegistrationForm({
                 )}
               </div>
             </>
+          ) : (
+            <div className="p-3 bg-gray-50 border border-gray-200 rounded-md mb-4">
+              <div className="text-sm text-gray-600">
+                <span className="font-medium text-gray-700">Registering as:</span> {user.firstName} {user.lastName}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">
+                <span className="font-medium text-gray-700">Email:</span> {user.email}
+              </div>
+            </div>
           )}
 
           <div className="space-y-2">
+            <label htmlFor="notes" className="text-sm font-medium text-gray-700">
+              Additional Notes (Optional)
+            </label>
             <Textarea
-              placeholder="Any notes or questions? (Optional)"
+              id="notes"
+              placeholder="Any dietary restrictions, accessibility needs, or questions?"
+              className="h-24"
               {...(user
                 ? userForm.register("notes")
                 : guestForm.register("notes"))}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              These notes will be shared with the event organizers.
+            </p>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-6">
             <Button variant="outline" type="button" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit">Register</Button>
+            <Button className="bg-gray-900 hover:bg-gray-800" type="submit">
+              Complete Registration
+            </Button>
           </div>
         </form>
       </div>
