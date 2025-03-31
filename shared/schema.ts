@@ -1,7 +1,8 @@
-import { pgTable, text, serial, integer, boolean, timestamp, date, pgEnum, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, date, pgEnum, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 // Define role type with allowed values
 export const RoleEnum = z.enum(["admin", "ambassador", "member"]);
@@ -23,7 +24,7 @@ export type RegistrationStatus = z.infer<typeof registrationStatusEnum>;
 
 // User table
 export const users = pgTable("user", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   username: text("username").notNull().unique(),
   password: text("password"),
   email: text("email").unique(),
@@ -43,7 +44,7 @@ export const users = pgTable("user", {
 
 // Hub (physical location) table
 export const hubs = pgTable("hub", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   description: text("description"),
   city: text("city").notNull(),
@@ -57,7 +58,7 @@ export const hubs = pgTable("hub", {
 
 // Event table
 export const events = pgTable("event", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
   description: text("description"),
   // Using full timestamp with timezone for proper datetime handling
@@ -73,27 +74,27 @@ export const events = pgTable("event", {
   capacity: integer("capacity"),
   isPublished: boolean("is_published").default(false),
   createdAt: timestamp("created_at").defaultNow(),
-  createdById: integer("created_by_id").references(() => users.id),
+  createdById: uuid("created_by_id").references(() => users.id),
 });
 
 // Hub Event junction table for many-to-many relationship
 export const hubEvents = pgTable("hub_event", {
-  id: serial("id").primaryKey(),
-  hubId: integer("hub_id").notNull().references(() => hubs.id),
-  eventId: integer("event_id").notNull().references(() => events.id),
+  id: uuid("id").primaryKey().defaultRandom(),
+  hubId: uuid("hub_id").notNull().references(() => hubs.id),
+  eventId: uuid("event_id").notNull().references(() => events.id),
   isPrimary: boolean("is_primary").default(false),
   capacity: integer("capacity"),
   createdAt: timestamp("created_at").defaultNow(),
 }, (t) => ({
   // Ensure an event can only be linked to a hub once
-  uniqHubEvent: uniqueIndex("uniq_hub_event_idx").on(t.hubId, t.eventId),
+  uniqHubEvent: uniqueIndex("uniq_hub_event_idx_new").on(t.hubId, t.eventId),
 }));
 
 // Hub Event Registration table 
 export const hubEventRegistrations = pgTable("hub_event_registration", {
-  id: serial("id").primaryKey(),
-  hubEventId: integer("hub_event_id").notNull().references(() => hubEvents.id),
-  userId: integer("user_id").references(() => users.id),
+  id: uuid("id").primaryKey().defaultRandom(),
+  hubEventId: uuid("hub_event_id").notNull().references(() => hubEvents.id),
+  userId: uuid("user_id").references(() => users.id),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
@@ -103,7 +104,7 @@ export const hubEventRegistrations = pgTable("hub_event_registration", {
   createdAt: timestamp("created_at").defaultNow(),
 }, (t) => ({
   // Ensure a user can only register once for a hub event
-  uniqEventUser: uniqueIndex("uniq_hubevent_user_idx").on(t.hubEventId, t.email),
+  uniqEventUser: uniqueIndex("uniq_hubevent_user_idx_new").on(t.hubEventId, t.email),
 }));
 
 // Define relations after all tables are declared
@@ -243,7 +244,7 @@ export const insertEventRegistrationSchema = insertHubEventRegistrationSchema;
 
 // The original waitlist entry table for reference before dropping it
 export const waitlistEntries = pgTable("waitlist_entry", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull().unique(),

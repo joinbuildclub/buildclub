@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard";
 import AuthPage from "@/pages/AuthPage";
 import OnboardingPage from "@/pages/OnboardingPage";
 import EventsPage from "@/pages/EventsPage";
+import EventDetailPage from "@/pages/EventDetailPage";
 import { AuthProvider } from "@/hooks/use-auth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -17,6 +18,7 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={Home} />
       <Route path="/events" component={EventsPage} />
+      <Route path="/events/:id" component={EventDetailPage} />
       <Route path="/auth" component={AuthPage} />
       
       {/* Protected routes */}

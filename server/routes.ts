@@ -290,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req, res) => {
     try {
       // Set up filters based on query parameters
-      const filters: { isPublished?: boolean; hubId?: number } = {};
+      const filters: { isPublished?: boolean; hubId?: string } = {};
       
       // Only apply isPublished filter if explicitly set to true or false
       // This way, requesting /api/events without a published param returns all events
@@ -302,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Add hubId filter if provided
       if (req.query.hubId) {
-        filters.hubId = parseInt(req.query.hubId as string);
+        filters.hubId = req.query.hubId as string;
       }
       
       const events = await storage.getEvents(filters);

@@ -28,49 +28,49 @@ import {
 
 export interface IStorage {
   // User methods
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   getUsers(filters?: { role?: string }): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, userData: Partial<User>): Promise<User>;
+  updateUser(id: string, userData: Partial<User>): Promise<User>;
 
   // Hub methods
   createHub(hub: InsertHub): Promise<Hub>;
-  getHub(id: number): Promise<Hub | undefined>;
+  getHub(id: string): Promise<Hub | undefined>;
   getHubByName(name: string): Promise<Hub | undefined>;
   getHubs(): Promise<Hub[]>;
 
   // Event methods
   createEvent(event: InsertEvent): Promise<Event>;
-  getEvent(id: number): Promise<Event | undefined>;
-  getEvents(filters?: { isPublished?: boolean }): Promise<Event[]>;
+  getEvent(id: string): Promise<Event | undefined>;
+  getEvents(filters?: { isPublished?: boolean; hubId?: string }): Promise<Event[]>;
 
   // Hub Event methods
   createHubEvent(hubEvent: InsertHubEvent): Promise<HubEvent>;
-  getHubEvent(id: number): Promise<HubEvent | undefined>;
-  getHubEventsByEventId(eventId: number): Promise<HubEvent[]>;
-  getHubEventsByHubId(hubId: number): Promise<HubEvent[]>;
+  getHubEvent(id: string): Promise<HubEvent | undefined>;
+  getHubEventsByEventId(eventId: string): Promise<HubEvent[]>;
+  getHubEventsByHubId(hubId: string): Promise<HubEvent[]>;
 
   // Hub Event Registration methods
   createHubEventRegistration(
     registration: InsertHubEventRegistration,
   ): Promise<HubEventRegistration>;
   getHubEventRegistration(
-    id: number,
+    id: string,
   ): Promise<HubEventRegistration | undefined>;
   getHubEventRegistrationsByHubEventId(
-    hubEventId: number,
+    hubEventId: string,
   ): Promise<HubEventRegistration[]>;
   getHubEventRegistrationByEmail(
-    hubEventId: number,
+    hubEventId: string,
     email: string,
   ): Promise<HubEventRegistration | undefined>;
-  getRegistrationsByUserId(userId: number): Promise<HubEventRegistration[]>;
-  getUserEventRegistrations(userId: number): Promise<any[]>;
-  updateRegistrationStatus(id: number, status: "registered" | "confirmed" | "attended" | "cancelled"): Promise<HubEventRegistration>;
-  deleteRegistration(id: number): Promise<boolean>;
+  getRegistrationsByUserId(userId: string): Promise<HubEventRegistration[]>;
+  getUserEventRegistrations(userId: string): Promise<any[]>;
+  updateRegistrationStatus(id: string, status: "registered" | "confirmed" | "attended" | "cancelled"): Promise<HubEventRegistration>;
+  deleteRegistration(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -116,7 +116,7 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
   // User methods
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
@@ -213,7 +213,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async updateUser(id: number, userData: Partial<User>): Promise<User> {
+  async updateUser(id: string, userData: Partial<User>): Promise<User> {
     const [updatedUser] = await db
       .update(users)
       .set(this.safeData(userData))
@@ -231,7 +231,7 @@ export class DatabaseStorage implements IStorage {
     return hub;
   }
 
-  async getHub(id: number): Promise<Hub | undefined> {
+  async getHub(id: string): Promise<Hub | undefined> {
     const [hub] = await db.select().from(hubs).where(eq(hubs.id, id));
     return hub || undefined;
   }
@@ -254,14 +254,14 @@ export class DatabaseStorage implements IStorage {
     return event;
   }
 
-  async getEvent(id: number): Promise<Event | undefined> {
+  async getEvent(id: string): Promise<Event | undefined> {
     const [event] = await db.select().from(events).where(eq(events.id, id));
     return event || undefined;
   }
 
   async getEvents(filters?: {
     isPublished?: boolean;
-    hubId?: number;
+    hubId?: string;
   }): Promise<Event[]> {
     // Handle different filter combinations with separate queries for type safety
     let eventsQuery;
@@ -415,7 +415,7 @@ export class DatabaseStorage implements IStorage {
     return hubEvent;
   }
 
-  async getHubEvent(id: number): Promise<HubEvent | undefined> {
+  async getHubEvent(id: string): Promise<HubEvent | undefined> {
     const [hubEvent] = await db
       .select()
       .from(hubEvents)
@@ -423,11 +423,11 @@ export class DatabaseStorage implements IStorage {
     return hubEvent || undefined;
   }
 
-  async getHubEventsByEventId(eventId: number): Promise<HubEvent[]> {
+  async getHubEventsByEventId(eventId: string): Promise<HubEvent[]> {
     return db.select().from(hubEvents).where(eq(hubEvents.eventId, eventId));
   }
 
-  async getHubEventsByHubId(hubId: number): Promise<HubEvent[]> {
+  async getHubEventsByHubId(hubId: string): Promise<HubEvent[]> {
     return db.select().from(hubEvents).where(eq(hubEvents.hubId, hubId));
   }
 
@@ -447,7 +447,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHubEventRegistration(
-    id: number,
+    id: string,
   ): Promise<HubEventRegistration | undefined> {
     const [registration] = await db
       .select()
@@ -457,7 +457,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHubEventRegistrationsByHubEventId(
-    hubEventId: number,
+    hubEventId: string,
   ): Promise<HubEventRegistration[]> {
     return db
       .select()
@@ -466,7 +466,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHubEventRegistrationByEmail(
-    hubEventId: number,
+    hubEventId: string,
     email: string,
   ): Promise<HubEventRegistration | undefined> {
     const [registration] = await db
@@ -482,7 +482,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Get all registrations for a specific user by user ID
-  async getRegistrationsByUserId(userId: number): Promise<HubEventRegistration[]> {
+  async getRegistrationsByUserId(userId: string): Promise<HubEventRegistration[]> {
     return db
       .select()
       .from(hubEventRegistrations)
@@ -491,7 +491,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Get enriched registrations with event and hub details
-  async getUserEventRegistrations(userId: number): Promise<any[]> {
+  async getUserEventRegistrations(userId: string): Promise<any[]> {
     const registrations = await this.getRegistrationsByUserId(userId);
     
     // If no registrations, return empty array
@@ -530,7 +530,7 @@ export class DatabaseStorage implements IStorage {
   
   // Update registration status
   async updateRegistrationStatus(
-    id: number, 
+    id: string, 
     status: "registered" | "confirmed" | "attended" | "cancelled"
   ): Promise<HubEventRegistration> {
     const [registration] = await db
@@ -543,7 +543,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Delete a registration
-  async deleteRegistration(id: number): Promise<boolean> {
+  async deleteRegistration(id: string): Promise<boolean> {
     try {
       await db
         .delete(hubEventRegistrations)

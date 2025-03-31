@@ -34,7 +34,7 @@ type Focus = "product" | "design" | "engineering";
 
 // Define event types from the API
 interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   // New datetime fields
@@ -108,9 +108,9 @@ interface EventCardProps {
     month: string;
     dayOfWeek: string;
   };
-  eventId: number;
-  hubEventId: number;
-  onRegisterClick: (eventId: number, hubEventId: number) => void;
+  eventId: string;
+  hubEventId: string;
+  onRegisterClick: (eventId: string, hubEventId: string) => void;
 }
 
 function EventCard({
@@ -248,7 +248,7 @@ function EventCard({
 
 export default function EventsSection() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [hubEventId, setHubEventId] = useState<number | null>(null);
+  const [hubEventId, setHubEventId] = useState<string | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const { user } = useAuth();
   
@@ -260,8 +260,11 @@ export default function EventsSection() {
 
   // We're now using our utility functions from dateUtils.ts instead
 
+  // Add some debugging
+  console.log("Events data:", events);
+  
   // Process events for display, using our utility functions
-  const processedEvents = events.map(event => {
+  const processedEvents = Array.isArray(events) ? events.map(event => {
     let startDate: Date | null = null;
     let endDate: Date | null = null;
     let dateForDisplay: string = '';
@@ -353,10 +356,10 @@ export default function EventsSection() {
       focuses: event.focusAreas,
       isHackathon: event.eventType === 'hackathon'
     };
-  });
+  }) : [];
 
   // Handle event registration button click
-  const handleRegisterClick = (eventId: number, hubEventId: number) => {
+  const handleRegisterClick = (eventId: string, hubEventId: string) => {
     // If user is not logged in, we'll still show the form but with a notice
     // The form will prefill with user data if available
     
@@ -447,11 +450,11 @@ export default function EventsSection() {
               <p className="text-gray-600">No upcoming events at the moment. Check back soon!</p>
             </div>
           ) : (
-            processedEvents.map((event, idx) => {
+            processedEvents.map((event: any, idx: number) => {
               // Find the hubEvent ID for this event (assuming we're showing Providence Hub events)
-              const eventData = events.find(e => e.id === event.id);
+              const eventData = Array.isArray(events) ? events.find(e => e.id === event.id) : null;
               // The hubEventId should be available in the events data, cast as any to access it
-              const hubEventId = (eventData as any)?.hubEventId || 1;
+              const hubEventId = (eventData as any)?.hubEventId || "1";
               
               return (
                 <EventCard

@@ -37,8 +37,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface EventRegistrationFormProps {
-  eventId: number;
-  hubEventId: number;
+  eventId: string;
+  hubEventId: string;
   eventTitle: string;
   onSuccess?: () => void;
   onCancel?: () => void;
@@ -64,7 +64,7 @@ export default function EventRegistrationForm({
       email: user?.email || "",
       interestAreas: [],
       aiInterests: "",
-      hubEventId: hubEventId,
+      hubEventId: hubEventId as any, // Cast to any to avoid type errors during migration to string IDs
     },
   });
 

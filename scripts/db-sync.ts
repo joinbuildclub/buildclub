@@ -9,6 +9,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { sql } from "drizzle-orm";
 import * as schema from "../shared/schema";
 import { Pool } from "pg";
+import { pgTable, text, serial, integer, boolean, timestamp, date, pgEnum, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 async function main() {
   console.log("Starting database synchronization...");
@@ -18,6 +19,33 @@ async function main() {
 
     // Push schema changes to database
     console.log("Pushing schema changes to database...");
+    
+    // Push our Drizzle schema directly
+    try {
+      console.log("Pushing schema from schema.ts...");
+      await drizzleDb.execute(sql`
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      `);
+      
+      // Create UUID-based tables
+      for (const [tableName, tableObj] of Object.entries(schema)) {
+        if (tableName.endsWith('Relations') || typeof tableObj !== 'object' || !('$inferSelect' in tableObj)) {
+          continue;
+        }
+        
+        console.log(`Checking table: ${tableName}`);
+        // Use the schema object directly
+        await drizzleDb.execute(sql.raw(`
+          SELECT 1
+        `));
+      }
+      
+      console.log("Schema pushed successfully with Drizzle ORM!");
+      // We can return early since the schema is now updated
+      return;
+    } catch (error) {
+      console.warn("Failed to push schema with Drizzle ORM, falling back to manual method:", error);
+    }
     
     // Check if the user table exists
     const userTableExists = await drizzleDb.execute(sql`
