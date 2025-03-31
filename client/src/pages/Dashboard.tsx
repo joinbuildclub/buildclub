@@ -51,10 +51,10 @@ function AdminDashboard({ user }: { user: User }) {
 
   return (
     <div className="space-y-4">
-      <Card className="border-primary/20">
+      <Card className="border-[--color-green]/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="text-primary" size={20} />
+            <ShieldCheck className="text-[--color-green]" size={20} />
             Admin Controls
           </CardTitle>
           <CardDescription>
@@ -91,7 +91,11 @@ function AdminDashboard({ user }: { user: User }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="default" size="sm" className="gap-2">
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="gap-2 bg-[--color-green] hover:bg-[--color-green]/90"
+          >
             <MailPlus size={16} />
             Send Batch Invitation
           </Button>
@@ -105,10 +109,10 @@ function AdminDashboard({ user }: { user: User }) {
 function AmbassadorDashboard({ user }: { user: User }) {
   return (
     <div className="space-y-4">
-      <Card className="border-primary/20">
+      <Card className="border-[--color-green]/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UserCheck className="text-primary" size={20} />
+            <UserCheck className="text-[--color-green]" size={20} />
             Ambassador Tools
           </CardTitle>
           <CardDescription>
@@ -129,7 +133,11 @@ function AmbassadorDashboard({ user }: { user: User }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="default" size="sm" className="gap-2">
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="gap-2 bg-[--color-green] hover:bg-[--color-green]/90"
+          >
             <MailPlus size={16} />
             Send Invites
           </Button>
@@ -143,10 +151,10 @@ function AmbassadorDashboard({ user }: { user: User }) {
 function MemberDashboard({ user }: { user: User }) {
   return (
     <div className="space-y-4">
-      <Card className="border-primary/20">
+      <Card className="border-[--color-green]/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="text-primary" size={20} />
+            <Users className="text-[--color-green]" size={20} />
             Member Dashboard
           </CardTitle>
           <CardDescription>
@@ -165,16 +173,44 @@ function MemberDashboard({ user }: { user: User }) {
             <div>
               <h3 className="text-md font-medium mb-2">Community Resources</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="justify-start">Discord Community</Button>
-                <Button variant="outline" size="sm" className="justify-start">Learning Materials</Button>
-                <Button variant="outline" size="sm" className="justify-start">Project Showcase</Button>
-                <Button variant="outline" size="sm" className="justify-start">Member Directory</Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="justify-start border-[--color-green]/40 text-[--color-green] hover:bg-[--color-green]/5"
+                >
+                  Discord Community
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="justify-start border-[--color-green]/40 text-[--color-green] hover:bg-[--color-green]/5"
+                >
+                  Learning Materials
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="justify-start border-[--color-green]/40 text-[--color-green] hover:bg-[--color-green]/5"
+                >
+                  Project Showcase
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="justify-start border-[--color-green]/40 text-[--color-green] hover:bg-[--color-green]/5"
+                >
+                  Member Directory
+                </Button>
               </div>
             </div>
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2 border-[--color-green] text-[--color-green] hover:bg-[--color-green]/10"
+          >
             <ListChecks size={16} />
             My Preferences
           </Button>
@@ -225,14 +261,14 @@ export default function Dashboard() {
     <div className="container mx-auto py-6 px-4 md:px-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-[--color-green]">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome back, {user.firstName || user.username}!
           </p>
         </div>
         <Button 
           variant="outline" 
-          className="mt-4 md:mt-0 gap-2"
+          className="mt-4 md:mt-0 gap-2 border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
           onClick={handleSignOut}
         >
           <LogOut size={16} />
@@ -241,10 +277,29 @@ export default function Dashboard() {
       </div>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          {showAmbassadorPanel && <TabsTrigger value="ambassador">Ambassador</TabsTrigger>}
-          {showAdminPanel && <TabsTrigger value="admin">Admin</TabsTrigger>}
+        <TabsList className="border-[--color-green]/20">
+          <TabsTrigger 
+            value="profile" 
+            className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:shadow-none"
+          >
+            Profile
+          </TabsTrigger>
+          {showAmbassadorPanel && 
+            <TabsTrigger 
+              value="ambassador"
+              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:shadow-none"
+            >
+              Ambassador
+            </TabsTrigger>
+          }
+          {showAdminPanel && 
+            <TabsTrigger 
+              value="admin"
+              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:shadow-none" 
+            >
+              Admin
+            </TabsTrigger>
+          }
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4">
