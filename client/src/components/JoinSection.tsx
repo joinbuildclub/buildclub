@@ -100,8 +100,8 @@ export default function JoinSection() {
 
         <RoundedSquare
           className="right-0 top-8 xl:top-48"
-          width="w-24 sm:w-48"
-          height="h-24 sm:h-48"
+          width="w-24 md:w-48"
+          height="h-24 md:h-48"
           rotate="rotate-12"
           animateClass="animate-floating-delayed"
           shadow
@@ -120,7 +120,7 @@ export default function JoinSection() {
         <div className="max-w-3xl mx-auto">
           <div className="mb-12 text-center">
             <div className="inline-block mb-6">
-              <div className="clay-shape bg-[var(--color-blue)] px-5 py-2">
+              <div className="clay-shape bg-gray-700 px-5 py-2">
                 <span className="text-xl font-bold text-white flex items-center">
                   <Users className="w-5 h-5 mr-2" /> Join Us
                 </span>

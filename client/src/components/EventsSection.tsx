@@ -185,30 +185,27 @@ export default function EventsSection() {
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
       <RoundedTriangle
-        className="absolute left-20 top-1/4"
-        width="w-36"
-        height="h-36"
-        color="var(--color-red)"
+        className="sm:left-20 sm:top-1/4"
+        width="w-20 sm:w-36"
+        height="h-20 sm:h-36"
         rotate="rotate-45"
         animateClass="animate-floating"
         shadow
       />
 
       <RoundedSquare
-        className="absolute right-16 top-20"
-        width="w-36"
-        height="h-36"
-        color="var(--color-yellow)"
+        className="right-16 top-20"
+        width="w-20 sm:w-36"
+        height="h-20 sm:h-36"
         rotate="-rotate-12"
         animateClass="animate-floating-delayed"
         shadow
       />
 
       <RoundedCircle
-        className="absolute left-1/3 top-10"
+        className="left-1/3 top-10"
         width="w-20"
         height="h-20"
-        color="var(--color-blue)"
         rotate="-rotate-12"
         animateClass="animate-floating"
         shadow
@@ -217,7 +214,7 @@ export default function EventsSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16">
           <div className="inline-block mb-6">
-            <div className="clay-shape bg-[var(--color-red)] px-5 py-2">
+            <div className="clay-shape bg-gray-700 px-5 py-2">
               <span className="text-xl font-bold text-white flex items-center">
                 <Calendar className="w-5 h-5 mr-2" /> Events
               </span>

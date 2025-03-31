@@ -12,29 +12,32 @@ interface FeatureProps {
 }
 
 function Feature({ icon, title, description, color, delay = 0 }: FeatureProps) {
-  const colorClass = color === 'bg-[var(--color-red)]' ? 'from-red-500 to-red-600' : 
-                     color === 'bg-[var(--color-blue)]' ? 'from-blue-500 to-blue-600' : 
-                     'from-yellow-400 to-yellow-500';
-  
+  const colorClass =
+    color === "bg-[var(--color-red)]"
+      ? "from-red-500 to-red-600"
+      : color === "bg-[var(--color-blue)]"
+        ? "from-blue-500 to-blue-600"
+        : "from-yellow-400 to-yellow-500";
+
   return (
     <div
       className="relative group transition-all duration-500 flex flex-col h-full"
-      style={{ 
-        transitionDelay: `${delay}ms`
+      style={{
+        transitionDelay: `${delay}ms`,
       }}
     >
       {/* Clay-like shape in the background */}
       <div className="absolute w-full h-full bg-white rounded-[2.5rem] rotate-3 top-3 left-2 opacity-70"></div>
-      
+
       {/* Main content container */}
       <div className="relative z-10 bg-white p-8 pt-12 rounded-[2rem] flex flex-col h-full border border-gray-100 shadow-xl transform group-hover:-rotate-1 group-hover:translate-x-1 transition-all duration-500">
         {/* Floating icon */}
-        <div className={`absolute -top-10 left-10 w-20 h-20 rounded-2xl bg-gradient-to-br ${colorClass} flex items-center justify-center shadow-lg transform -rotate-3 group-hover:rotate-3 transition-all duration-500`}>
-          <div className="text-white">
-            {icon}
-          </div>
+        <div
+          className={`absolute -top-10 left-10 w-20 h-20 rounded-2xl bg-gradient-to-br ${colorClass} flex items-center justify-center shadow-lg transform -rotate-3 group-hover:rotate-3 transition-all duration-500`}
+        >
+          <div className="text-white">{icon}</div>
         </div>
-        
+
         <div className="mt-12 flex-1 flex flex-col">
           <h3 className="text-2xl font-bold mb-4 text-gray-800">{title}</h3>
           <p className="text-gray-600 flex-grow">{description}</p>
@@ -53,21 +56,20 @@ export default function AboutSection() {
         <div className="absolute top-1/3 -right-20 w-80 h-80 rounded-full bg-blue-200"></div>
         <div className="absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-yellow-200"></div>
       </div>
-      
+
       <RoundedTriangle
-        className="left-48 top-10 z-10"
-        width="w-36"
-        height="h-36"
-        color="var(--color-red)"
+        className="left-12 sm:left-48 top-6 z-10"
+        width="w-20 sm:w-36"
+        height="h-20 sm:h-36"
         rotate="-rotate-12"
         animateClass="animate-floating"
         shadow
       />
 
       <RoundedSquare
-        className="right-0 top-48 z-10"
-        width="w-36"
-        height="h-36"
+        className="sm:right-0 sm:top-48 top-6 right-0 z-10"
+        width="w-20 sm:w-36"
+        height="h-20 sm:h-36"
         color="var(--color-yellow)"
         rotate="rotate-12"
         animateClass="animate-floating"
@@ -75,9 +77,9 @@ export default function AboutSection() {
       />
 
       <RoundedCircle
-        className="bottom-1/4 left-10 z-10"
-        width="w-24"
-        height="h-24"
+        className="sm:bottom-1/4 sm:left-10 z-10"
+        width="w-20 sm:w-24"
+        height="h-20 sm:h-24"
         color="var(--color-blue)"
         animateClass="animate-floating-delayed"
         shadow
@@ -97,7 +99,8 @@ export default function AboutSection() {
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             We're a playful community of builders making AI come to life through
-            hands-on collaboration and experimentation in real-world environments.
+            hands-on collaboration and experimentation in real-world
+            environments.
           </p>
         </div>
 

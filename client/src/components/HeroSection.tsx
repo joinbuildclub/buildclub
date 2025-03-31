@@ -5,15 +5,15 @@ import {
   RoundedSquare,
   RoundedCircle,
 } from "@/components/shapes";
-import { 
-  SiOpenai, 
-  SiAnthropic, 
-  SiGoogle, 
-  SiMeta, 
-  SiAmazon, 
-  SiHuggingface, 
-  SiVercel, 
-  SiReplit
+import {
+  SiOpenai,
+  SiAnthropic,
+  SiGoogle,
+  SiMeta,
+  SiAmazon,
+  SiHuggingface,
+  SiVercel,
+  SiReplit,
 } from "react-icons/si";
 import logoPath from "../assets/logo.png";
 
@@ -100,53 +100,70 @@ export default function HeroSection() {
           <div className="text-center mb-8">
             <div className="inline-block mb-6">
               <div className="clay-shape bg-gray-700 px-5 py-2">
-                <span className="text-xl font-bold text-white flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2" /> Build with leading AI technologies
+                <span className="text-lg sm:text-xl font-bold text-white flex items-center">
+                  <Sparkles className="w-5 h-5 mr-2" /> Build with leading AI
+                  technologies
                 </span>
               </div>
             </div>
           </div>
-          
+
           <div className="clay-card bg-white border border-gray-200 p-8">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 items-center justify-items-center">
               <div className="flex flex-col items-center justify-center group">
                 <SiOpenai className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">OpenAI</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  OpenAI
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiAnthropic className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Anthropic</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Anthropic
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiGoogle className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Google</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Google
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiMeta className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Meta</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Meta
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiAmazon className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">AWS</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  AWS
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiHuggingface className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Hugging Face</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Hugging Face
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiVercel className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Vercel</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Vercel
+                </span>
               </div>
-              
+
               <div className="flex flex-col items-center justify-center group">
                 <SiReplit className="h-12 w-12 text-gray-500 transition-all duration-300 group-hover:text-gray-700" />
-                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">Replit</span>
+                <span className="mt-2 text-gray-500 font-medium text-sm group-hover:text-gray-700">
+                  Replit
+                </span>
               </div>
             </div>
           </div>
