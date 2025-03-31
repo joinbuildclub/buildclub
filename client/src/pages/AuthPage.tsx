@@ -11,6 +11,7 @@ import { Loader2, User, LogIn, Mail, Key, UserPlus } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
+// No need to import the logo, we'll reference it directly
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -76,19 +77,24 @@ export default function AuthPage() {
       {/* Left side - Auth forms */}
       <div className="flex-1 flex items-center justify-center p-6 z-10">
         <Card className="w-full max-w-md shadow-lg bg-white rounded-3xl border border-gray-200 shadow-sm">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold tracking-tight">Welcome to BuildClub</CardTitle>
-            <CardDescription>
-              Sign in to access your account or create a new one
-            </CardDescription>
+          <CardHeader className="space-y-4">
+            <div className="flex justify-center">
+              <h1 className="text-3xl font-bold text-[--color-green]">BuildClub</h1>
+            </div>
+            <div className="text-center">
+              <CardTitle className="text-2xl font-bold tracking-tight">Welcome Back</CardTitle>
+              <CardDescription>
+                Sign in to access your account or create a new one
+              </CardDescription>
+            </div>
           </CardHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 p-1 bg-gray-100 rounded-lg">
-              <TabsTrigger value="login" className="rounded-md flex items-center gap-2">
+              <TabsTrigger value="login" className="rounded-md flex items-center justify-center gap-2 px-6 py-2">
                 <LogIn className="h-4 w-4" /> Login
               </TabsTrigger>
-              <TabsTrigger value="register" className="rounded-md flex items-center gap-2">
+              <TabsTrigger value="register" className="rounded-md flex items-center justify-center gap-2 px-6 py-2">
                 <UserPlus className="h-4 w-4" /> Register
               </TabsTrigger>
             </TabsList>
