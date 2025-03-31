@@ -26,6 +26,15 @@ type User = {
   interests?: string[] | null;
 };
 
+type RegisterCredentials = {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string; // Make username optional, will be generated from email if not provided
+  role?: "admin" | "ambassador" | "member" | null; // Make role optional, defaults to "member"
+};
+
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -33,10 +42,11 @@ type AuthContextType = {
   isAuthenticated: boolean;
   loginMutation: UseMutationResult<any, Error, LoginCredentials>;
   logoutMutation: UseMutationResult<void, Error, void>;
+  registerMutation: UseMutationResult<any, Error, RegisterCredentials>;
 };
 
 type LoginCredentials = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -100,6 +110,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
   });
+  
+  const registerMutation = useMutation({
+    mutationFn: async (credentials: RegisterCredentials) => {
+      const res = await apiRequest("POST", "/api/auth/register", credentials);
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["/api/user"], { 
+        user: data.user,
+        isAuthenticated: true 
+      });
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Registration failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const user = authData?.user || null;
   const isAuthenticated = authData?.isAuthenticated || false;
@@ -113,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         loginMutation,
         logoutMutation,
+        registerMutation,
       }}
     >
       {children}

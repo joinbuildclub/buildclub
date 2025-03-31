@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, Redirect } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,11 +24,12 @@ import Logo from "@/assets/logo.png";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { user, isAuthenticated, isLoading, loginMutation } = useAuth();
+  const { user, isAuthenticated, isLoading, loginMutation, registerMutation } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("login");
 
   const [loginData, setLoginData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -95,15 +97,11 @@ export default function AuthPage() {
                 : "Get started by creating an account"}
             </p>
           </CardHeader>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="">
+            <TabsList className="flex justify-center mx-6">
               <TabsTrigger
                 value="login"
-                className="rounded-md flex items-center w-full gap-2"
+                className="rounded-md flex items-center justify-center gap-2 w-full"
               >
                 <LogIn className="h-4 w-4" /> Login
               </TabsTrigger>
@@ -120,22 +118,22 @@ export default function AuthPage() {
                 <CardContent className="space-y-4 pt-4">
                   <div className="space-y-2">
                     <Label
-                      htmlFor="username"
+                      htmlFor="email"
                       className="flex items-center gap-1.5"
                     >
-                      <User className="h-4 w-4 text-[--color-green]" />
-                      Username
+                      <Mail className="h-4 w-4 text-[--color-green]" />
+                      Email
                     </Label>
                     <div className="relative">
                       <Input
-                        id="username"
-                        type="text"
-                        placeholder="Enter your username"
-                        value={loginData.username}
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={loginData.email}
                         onChange={(e) =>
                           setLoginData({
                             ...loginData,
-                            username: e.target.value,
+                            email: e.target.value,
                           })
                         }
                         required
@@ -207,6 +205,27 @@ export default function AuthPage() {
             </TabsContent>
 
             <TabsContent value="register">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                // Use the register mutation to create a new account
+                if (registerData.username && registerData.email && registerData.password) {
+                  registerMutation.mutate({
+                    username: registerData.username,
+                    email: registerData.email,
+                    password: registerData.password,
+                    role: "member", // Default role for new users
+                    firstName: registerData.firstName,
+                    lastName: registerData.lastName,
+                  });
+                } else {
+                  // Show toast error if fields are missing
+                  toast({
+                    title: "Missing required fields",
+                    description: "Please fill out all required fields.",
+                    variant: "destructive",
+                  });
+                }
+              }}>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <Label
@@ -331,14 +350,18 @@ export default function AuthPage() {
 
               <CardFooter className="flex flex-col space-y-4">
                 <Button
-                  type="button"
+                  type="submit"
                   className="w-full bg-[--color-green] hover:bg-[--color-green]/90 text-white h-11 font-medium"
-                  onClick={() => {
-                    // In a real app, we would handle registration here
-                    setActiveTab("login");
-                  }}
+                  disabled={registerMutation.isPending}
                 >
-                  Join the club
+                  {registerMutation.isPending ? (
+                    <span className="flex items-center">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </span>
+                  ) : (
+                    "Join the club"
+                  )}
                 </Button>
 
                 <div className="relative w-full">
@@ -362,6 +385,7 @@ export default function AuthPage() {
                   Sign up with Google
                 </Button>
               </CardFooter>
+              </form>
             </TabsContent>
           </Tabs>
         </Card>

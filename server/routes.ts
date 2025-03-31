@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { db } from "./db";
 import {
   insertHubEventRegistrationSchema,
+  insertUserSchema,
   User,
   Event,
   hubEventRegistrations,
@@ -24,6 +25,7 @@ import {
   sendAdminNotification,
   sendRegistrationCancellation,
 } from "./sendgrid";
+import { hashPassword } from "./auth";
 
 // Middleware for role-based access control
 interface AuthUser {
@@ -179,12 +181,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // LOGIN endpoint - Generate JWT token
-  app.post("/api/auth/login", (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
+  // REGISTER endpoint - Create a new user with email/password
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      // Validate user data
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if email already exists
+      if (userData.email) {
+        const existingUser = await storage.getUserByEmail(userData.email);
+        if (existingUser) {
+          return res.status(409).json({ message: "Email is already registered" });
+        }
+      }
+      
+      // Hash password
+      if (userData.password) {
+        userData.password = await hashPassword(userData.password);
+      }
+      
+      // Create user with default role of "member" if not specified
+      if (!userData.role) {
+        userData.role = "member";
+      }
+      
+      // Create the user
+      const newUser = await storage.createUser(userData);
+      
+      // Automatically log in the user by creating a session
+      req.login(newUser, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Error during login", error: err.message });
+        }
+        
+        // Generate JWT token
+        const token = generateToken(newUser);
+        
+        // Set JWT token as cookie
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+        
+        // Return user data (excluding password)
+        const { password, ...userWithoutPassword } = newUser;
+        return res.status(201).json({
+          message: "User registered successfully",
+          user: userWithoutPassword,
+          token
+        });
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error during registration:", error);
+      return res.status(500).json({ 
+        message: "An error occurred during registration",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
+  });
 
+  // LOGIN endpoint - Generate JWT token
+  app.post("/api/auth/login", passport.authenticate('local', { session: true }), (req, res) => {
+    // If we get here, authentication was successful
     const token = generateToken(req.user as User);
 
     // Set JWT token as cookie

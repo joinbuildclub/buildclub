@@ -1,13 +1,57 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as LocalStrategy } from 'passport-local';
 import { users } from '@shared/schema';
 import { storage } from './storage';
 import { eq } from 'drizzle-orm';
 import { db } from './db';
 import { log } from './vite';
+import bcrypt from 'bcrypt';
 
 // Configure passport for Google OAuth
+// Helper function to hash password
+export async function hashPassword(password: string): Promise<string> {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+}
+
+// Helper function to compare password with hashed password
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
 export function setupPassport() {
+  // Setup Local Strategy for email/password login
+  passport.use(new LocalStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password'
+    },
+    async (email, password, done) => {
+      try {
+        // Find the user by email
+        const user = await storage.getUserByEmail(email);
+        
+        // If user not found or no password (Google auth user), return error
+        if (!user || !user.password) {
+          return done(null, false, { message: 'Invalid email or password' });
+        }
+        
+        // Compare password with stored hash
+        const isMatch = await comparePassword(password, user.password);
+        if (!isMatch) {
+          return done(null, false, { message: 'Invalid email or password' });
+        }
+        
+        // Success - return the user
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  ));
+
+  // Setup Google OAuth Strategy
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
     log('Warning: Missing Google OAuth credentials. OAuth authentication will not work.', 'auth');
     return;
