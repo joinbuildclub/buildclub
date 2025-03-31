@@ -45,12 +45,6 @@ export default function DashboardHeader() {
                 className="h-10 cursor-pointer"
               />
             </Link>
-            <div className="ml-4 flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-gray-900">Dashboard</span>
-              <span className="text-sm text-gray-600">
-                Welcome back, {user?.firstName || user?.username || "there"}!
-              </span>
-            </div>
           </div>
           
           {/* User Avatar and Dropdown */}

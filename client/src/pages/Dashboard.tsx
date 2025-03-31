@@ -82,6 +82,7 @@ export default function Dashboard() {
       <DashboardHeader />
       
       <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">Dashboard</h1>
         <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 bg-white border border-gray-200 shadow-sm">
             <TabsTrigger 
