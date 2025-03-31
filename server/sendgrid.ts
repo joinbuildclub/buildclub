@@ -86,11 +86,11 @@ export async function addContactToSendGrid(entry: WaitlistEntry): Promise<boolea
   }
 }
 
-// Function to send welcome email to new waitlist subscriber
+// Function to send welcome email to new BuildClub members
 export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2>Thanks for joining the BuildClub waitlist!</h2>
+      <h2>Welcome to BuildClub!</h2>
       <p>Hi ${entry.firstName},</p>
       <p>We're excited to have you join our community of builders. We'll keep you updated on upcoming events and opportunities.</p>
       <p>Here's a summary of what you shared with us:</p>
@@ -105,10 +105,10 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
     </div>
   `;
 
-  return sendEmail(entry.email, "Welcome to BuildClub Waitlist!", htmlContent);
+  return sendEmail(entry.email, "Welcome to BuildClub!", htmlContent);
 }
 
-// Function to send admin notification of new subscriber
+// Function to send admin notification of new community member
 export async function sendAdminNotification(entry: WaitlistEntry): Promise<boolean> {
   if (!process.env.ADMIN_EMAIL) {
     console.warn("ADMIN_EMAIL not set. Admin notification not sent.");
@@ -117,8 +117,8 @@ export async function sendAdminNotification(entry: WaitlistEntry): Promise<boole
 
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2>New BuildClub Waitlist Submission</h2>
-      <p>A new user has joined the BuildClub waitlist:</p>
+      <h2>New BuildClub Member</h2>
+      <p>A new user has joined BuildClub:</p>
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
@@ -129,5 +129,5 @@ export async function sendAdminNotification(entry: WaitlistEntry): Promise<boole
   `;
 
   const adminEmail = process.env.ADMIN_EMAIL as string;
-  return sendEmail(adminEmail, "New BuildClub Waitlist Submission", htmlContent);
+  return sendEmail(adminEmail, "New BuildClub Member Joined", htmlContent);
 }
