@@ -10,9 +10,13 @@ import OnboardingPage from "@/pages/OnboardingPage";
 import EventsPage from "@/pages/EventsPage";
 import EventDetailPage from "@/pages/EventDetailPage";
 import { AuthProvider } from "@/hooks/use-auth";
+import { useScrollReset } from "@/hooks/use-scroll-reset";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 function Router() {
+  // Use the scroll reset hook to reset scroll position on route changes
+  useScrollReset();
+  
   return (
     <Switch>
       {/* Public routes */}

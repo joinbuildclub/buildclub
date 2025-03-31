@@ -66,7 +66,7 @@ function InterestArea({
   );
 }
 
-export default function RolesSection() {
+export default function ExploreSection() {
   // Create triangle shape for Product interest
   const productShape = (
     <RoundedTriangle
@@ -100,7 +100,10 @@ export default function RolesSection() {
   );
 
   return (
-    <section id="roles" className="py-24 bg-gray-50 relative overflow-hidden">
+    <section
+      id="expectations"
+      className="py-24 bg-gray-50 relative overflow-hidden"
+    >
       <RoundedSquare
         className="-left-12 top-48 sm:bottom-1/4 hidden sm:block"
         width="w-20 sm:w-36"

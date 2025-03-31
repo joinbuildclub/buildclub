@@ -40,16 +40,16 @@ export default function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-8">
               <button
-                onClick={() => handleNavigation("#about")}
+                onClick={() => handleNavigation("/#about")}
                 className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
               >
                 About
               </button>
               <button
-                onClick={() => handleNavigation("#roles")}
+                onClick={() => handleNavigation("/#explore")}
                 className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
               >
-                Roles
+                Explore
               </button>
               <Link
                 href="/events"
@@ -91,16 +91,16 @@ export default function Navbar() {
               <SheetContent side="right" className="w-[80%] sm:w-[385px]">
                 <div className="flex flex-col gap-6 pt-6">
                   <button
-                    onClick={() => handleNavigation("#about")}
+                    onClick={() => handleNavigation("/#about")}
                     className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
                     About
                   </button>
                   <button
-                    onClick={() => handleNavigation("#roles")}
+                    onClick={() => handleNavigation("/#explore")}
                     className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
                   >
-                    Roles
+                    Explore
                   </button>
                   <Link
                     href="/events"

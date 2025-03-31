@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
-import RolesSection from "@/components/RolesSection";
+import ExploreSection from "@/components/ExploreSection";
 import EventsSection from "@/components/EventsSection";
 import JoinSection from "@/components/JoinSection";
 import Footer from "@/components/Footer";
@@ -13,7 +13,7 @@ export default function Home() {
       <div className="main-content">
         <HeroSection />
         <AboutSection />
-        <RolesSection />
+        <ExploreSection />
         <EventsSection />
         <JoinSection />
       </div>
