@@ -1,10 +1,40 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupPassport, passportMiddleware, passportSession } from "./auth";
+import session from "express-session";
+import pg from "pg";
+import connectPgSimple from "connect-pg-simple";
+
+const { Pool } = pg;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Set up session middleware
+const PgSession = connectPgSimple(session);
+app.use(
+  session({
+    store: new PgSession({
+      pool: new Pool({ connectionString: process.env.DATABASE_URL }),
+      tableName: 'session', // This table will be created automatically
+      createTableIfMissing: true
+    }),
+    secret: process.env.SESSION_SECRET || 'buildclub-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      secure: process.env.NODE_ENV === 'production'
+    }
+  })
+);
+
+// Set up passport
+setupPassport();
+app.use(passportMiddleware);
+app.use(passportSession);
 
 app.use((req, res, next) => {
   const start = Date.now();

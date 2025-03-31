@@ -5,7 +5,12 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  password: text("password"),
+  email: text("email").unique(),
+  googleId: text("google_id").unique(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  profilePicture: text("profile_picture"),
 });
 
 export const waitlistEntries = pgTable("waitlist_entries", {
@@ -20,6 +25,11 @@ export const waitlistEntries = pgTable("waitlist_entries", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  email: true,
+  googleId: true,
+  firstName: true,
+  lastName: true,
+  profilePicture: true,
 });
 
 export const insertWaitlistSchema = createInsertSchema(waitlistEntries).pick({

@@ -1,11 +1,53 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertWaitlistSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import passport from "passport";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+
+  // Google OAuth routes
+  app.get(
+    '/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+  );
+
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { 
+      failureRedirect: '/?error=auth-failed' 
+    }),
+    (req, res) => {
+      // Successful authentication
+      res.redirect('/?success=google-auth');
+    }
+  );
+
+  app.get('/auth/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        console.error('Error during logout:', err);
+      }
+      res.redirect('/');
+    });
+  });
+
+  app.get('/api/user', (req, res) => {
+    if (req.isAuthenticated()) {
+      res.json({ 
+        user: req.user,
+        isAuthenticated: true 
+      });
+    } else {
+      res.json({ 
+        user: null,
+        isAuthenticated: false 
+      });
+    }
+  });
+
   // put application routes here
   // prefix all routes with /api
 
