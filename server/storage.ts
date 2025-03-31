@@ -284,18 +284,81 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getWaitlistEntries(): Promise<WaitlistEntry[]> {
-    // For backward compatibility, use the existing waitlist table
-    // Later this can be migrated to query from hub_event_registrations
-    // Using type assertion to handle compatibility issues
-    const entries = await db.select().from(waitlistEntries);
-    return entries as unknown as WaitlistEntry[];
+    try {
+      // Check if waitlist_entry table exists
+      const tableExists = await db.execute<{exists: boolean}>(sql`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'waitlist_entry'
+        );
+      `);
+      
+      if (tableExists.rows[0]?.exists) {
+        // Use the waitlist_entry table if it exists
+        const entries = await db.select().from(waitlistEntries);
+        return entries as unknown as WaitlistEntry[];
+      } else {
+        // Otherwise, fetch from hub_event_registration with filtering for "waitlist" entries
+        // This is a fallback implementation
+        const defaultHubEvent = await this.getDefaultWaitlistHubEvent();
+        if (!defaultHubEvent) {
+          return [];
+        }
+        
+        const registrations = await db.select().from(hubEventRegistrations)
+          .where(eq(hubEventRegistrations.hubEventId, defaultHubEvent.id));
+        return registrations as unknown as WaitlistEntry[];
+      }
+    } catch (error) {
+      console.error("Error checking or fetching waitlist entries:", error);
+      // Return empty array as fallback
+      return [];
+    }
   }
 
   async getWaitlistEntryByEmail(email: string): Promise<WaitlistEntry | undefined> {
-    // For backward compatibility, use the existing waitlist table
-    // Later this can be migrated to query from hub_event_registrations
-    const [entry] = await db.select().from(waitlistEntries).where(eq(waitlistEntries.email, email));
-    return (entry || undefined) as unknown as WaitlistEntry | undefined;
+    try {
+      // Check if waitlist_entry table exists
+      const tableExists = await db.execute<{exists: boolean}>(sql`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'waitlist_entry'
+        );
+      `);
+      
+      if (tableExists.rows[0]?.exists) {
+        // Use the waitlist_entry table if it exists
+        const [entry] = await db.select().from(waitlistEntries).where(eq(waitlistEntries.email, email));
+        return (entry || undefined) as unknown as WaitlistEntry | undefined;
+      } else {
+        // Otherwise, fetch from hub_event_registration
+        const defaultHubEvent = await this.getDefaultWaitlistHubEvent();
+        if (!defaultHubEvent) {
+          return undefined;
+        }
+        
+        const [registration] = await db.select().from(hubEventRegistrations)
+          .where(and(
+            eq(hubEventRegistrations.hubEventId, defaultHubEvent.id),
+            eq(hubEventRegistrations.email, email)
+          ));
+        return (registration || undefined) as unknown as WaitlistEntry | undefined;
+      }
+    } catch (error) {
+      console.error("Error checking or fetching waitlist entry by email:", error);
+      return undefined;
+    }
+  }
+  
+  // Helper method to get default hub event for waitlist
+  private async getDefaultWaitlistHubEvent(): Promise<HubEvent | undefined> {
+    const defaultEvent = await this.getEventByTitle("BuildClub Waitlist");
+    if (!defaultEvent) {
+      return undefined;
+    }
+    
+    const hubEvents = await this.getHubEventsByEventId(defaultEvent.id);
+    return hubEvents[0] || undefined;
   }
   
   // Helper methods
