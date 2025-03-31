@@ -37,8 +37,8 @@ import {
 } from "@/components/ui/dialog";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
 
-// Import the types and components from EventsSection
-import { Focus, Event, FocusBadge, EventCard as EventCardComponent, EventCardProps } from "@/components/EventsSection";
+// Import the types from shared EventCard
+import { type Focus, Event, EventCardWrapper, EventCardWithProcessedEventProps } from "@/components/shared/EventCard";
 
 interface ProcessedEvent {
   id: string;
@@ -58,11 +58,7 @@ interface ProcessedEvent {
   hubEventId?: string;
 }
 
-interface EventCardProps {
-  event: ProcessedEvent;
-  onClick: () => void;
-  onRegisterClick?: (event: ProcessedEvent) => void;
-}
+// Using the interface from the shared component instead
 
 // We're using the shared EventCardComponent imported from EventsSection
 
@@ -188,7 +184,8 @@ export default function EventsPage() {
       focuses: event.focusAreas,
       isHackathon: event.eventType === "hackathon",
       eventType: event.eventType,
-      hubEventId: event.hubEventId, // Pass along the hubEventId
+      // Fix for type safety - use null coalescing here to get hubEventId from event's relations
+      hubEventId: (event as any).hubEventId || "unknown",
     };
   });
 
@@ -403,14 +400,14 @@ export default function EventsPage() {
 
               <div className="grid grid-cols-1 gap-6">
                 {sortedEvents.map((event) => (
-                  <EventCard
+                  <EventCardWrapper
                     key={event.id}
                     event={event}
                     onClick={() => {
                       // For now, we'll just log. Later we can implement event details page
                       console.log("Clicked event:", event.id);
                     }}
-                    onRegisterClick={(processedEvent) => {
+                    onRegisterClick={(processedEvent: ProcessedEvent) => {
                       // Find the original event in our dataset
                       const eventData = events.find(
                         (e) => e.id === processedEvent.id,
