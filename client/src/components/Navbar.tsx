@@ -51,13 +51,15 @@ export default function Navbar() {
               >
                 Roles
               </button>
-              <Link href="/events" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
+              <Link
+                href="/events"
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              >
                 Events
               </Link>
               {isAuthenticated ? (
                 <Link href="/dashboard">
                   <Button variant="default" className="gap-2">
-                    <User size={16} />
                     Dashboard
                   </Button>
                 </Link>
@@ -100,13 +102,15 @@ export default function Navbar() {
                   >
                     Roles
                   </button>
-                  <Link href="/events" className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors block">
+                  <Link
+                    href="/events"
+                    className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors block"
+                  >
                     Events
                   </Link>
                   {isAuthenticated ? (
                     <Link href="/dashboard">
                       <Button variant="default" className="gap-2 w-full">
-                        <User size={16} />
                         Dashboard
                       </Button>
                     </Link>
