@@ -134,7 +134,7 @@ function EventCard({
     dateComponents || extractDateComponents(date);
 
   // Get shortened day of week (Mon, Tue, etc.)
-  const shortDayOfWeek = dayOfWeek?.substring(0, 3) || '';
+  const shortDayOfWeek = dayOfWeek?.substring(0, 3) || "";
 
   return (
     <Link href={`/events/${eventId}`}>
@@ -143,16 +143,20 @@ function EventCard({
       >
         <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-row">
           {/* Left side with date - special animated gradient for hackathons, otherwise based on focus */}
-          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
-                          ${isHackathon 
-                            ? "bg-gray-100" // Base color that will be covered by the animated gradient
-                            : focuses.includes("engineering") 
-                              ? "bg-gradient-to-br from-yellow-400 to-yellow-500" 
-                              : focuses.includes("design") 
-                                ? "bg-gradient-to-br from-blue-400 to-blue-500" 
-                                : focuses.includes("product") 
-                                  ? "bg-gradient-to-br from-red-400 to-red-500" 
-                                  : "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
+          <div
+            className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
+                          ${
+                            isHackathon
+                              ? "bg-gray-100" // Base color that will be covered by the animated gradient
+                              : focuses.includes("engineering")
+                                ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
+                                : focuses.includes("design")
+                                  ? "bg-gradient-to-br from-blue-400 to-blue-500"
+                                  : focuses.includes("product")
+                                    ? "bg-gradient-to-br from-red-400 to-red-500"
+                                    : "bg-gradient-to-br from-purple-400 to-purple-500"
+                          }`}
+          >
             {/* Animated gradient overlay for hackathons */}
             {isHackathon && (
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
@@ -162,7 +166,9 @@ function EventCard({
               <div className="text-sm font-medium opacity-90">
                 {shortDayOfWeek.toUpperCase()}
               </div>
-              <div className="text-4xl font-bold leading-none mt-1 mb-1">{day}</div>
+              <div className="text-4xl font-bold leading-none mt-1 mb-1">
+                {day}
+              </div>
               <div className="text-sm font-medium opacity-90">
                 {month.toUpperCase()}
               </div>
@@ -175,7 +181,7 @@ function EventCard({
               {focuses &&
                 Array.isArray(focuses) &&
                 focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
-              
+
               <Badge
                 variant="outline"
                 className="bg-gray-50 text-gray-600 border-gray-100"
@@ -183,21 +189,21 @@ function EventCard({
                 {isHackathon ? "Hackathon" : "Workshop"}
               </Badge>
             </div>
-            
+
             <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-[var(--color-blue)] transition-colors">
               {title}
             </h3>
-            
+
             <p className="text-gray-600 mb-3 line-clamp-2 text-sm">
               {description}
             </p>
-            
+
             <div className="flex flex-wrap gap-4 text-gray-500 text-sm">
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
                 <span>{time || "Time TBD"}</span>
               </div>
-              
+
               <div className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
                 <span>{location}</span>
@@ -206,16 +212,9 @@ function EventCard({
           </div>
 
           {/* Right side with register button - enhanced with animated hover effect */}
-          <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-100">
-            <div className="relative overflow-hidden rounded-md w-full">
-              <Button
-                variant="default"
-                size="sm"
-                className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md relative z-10 transition-all duration-300 group-hover:shadow-md"
-              >
-                Register
-              </Button>
-              <div className="absolute inset-0 bg-gray-800 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 z-0"></div>
+          <div className="flex flex-col items-center justify-center p-8">
+            <div className="relative overflow-hidden w-full items-center">
+              <ArrowRight className="w-8 h-8 text-gray-400" />
             </div>
           </div>
         </div>

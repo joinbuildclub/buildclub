@@ -42,7 +42,7 @@ type Focus = "product" | "design" | "engineering";
 
 // Define event types from the API
 interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   // New datetime fields
@@ -57,6 +57,7 @@ interface Event {
   focusAreas: Focus[];
   location?: string;
   isPublished: boolean;
+  hubEventId?: string;
 }
 
 // Shape component for focus areas
@@ -98,7 +99,7 @@ function FocusBadge({ focus }: { focus: Focus }) {
 }
 
 interface ProcessedEvent {
-  id: number;
+  id: string;
   date: string;
   time: string;
   dateComponents?: {
@@ -112,6 +113,7 @@ interface ProcessedEvent {
   focuses: Focus[];
   isHackathon: boolean;
   eventType: string;
+  hubEventId?: string;
 }
 
 interface EventCardProps {
@@ -125,16 +127,34 @@ function EventCard({ event, onClick, onRegisterClick }: EventCardProps) {
     <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
       <div className="flex flex-col h-full">
         <div className="flex flex-grow" onClick={onClick}>
-          {/* Date column */}
-          <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-100">
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {event.dateComponents?.dayOfWeek.substring(0, 3)}
-            </div>
-            <div className="text-2xl font-bold text-gray-800 my-1">
-              {event.dateComponents?.day}
-            </div>
-            <div className="text-sm font-medium text-gray-500 uppercase">
-              {event.dateComponents?.month}
+          {/* Date column - special gradient based on focus area */}
+          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
+                ${event.isHackathon
+                  ? "bg-gray-100" // Base color for hackathons covered by gradient
+                  : event.focuses.includes("engineering")
+                    ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
+                    : event.focuses.includes("design")
+                      ? "bg-gradient-to-br from-blue-400 to-blue-500"
+                      : event.focuses.includes("product")
+                        ? "bg-gradient-to-br from-red-400 to-red-500"
+                        : "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
+            
+            {/* Animated gradient overlay for hackathons */}
+            {event.isHackathon && (
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
+            )}
+            
+            {/* Date content with z-index to ensure it appears above the gradient */}
+            <div className="relative z-10">
+              <div className="text-sm font-medium opacity-90 uppercase">
+                {event.dateComponents?.dayOfWeek.substring(0, 3)}
+              </div>
+              <div className="text-3xl font-bold leading-none mt-1 mb-1">
+                {event.dateComponents?.day}
+              </div>
+              <div className="text-sm font-medium opacity-90 uppercase">
+                {event.dateComponents?.month}
+              </div>
             </div>
           </div>
 
@@ -201,7 +221,7 @@ export default function EventsPage() {
   const [selectedFocus, setSelectedFocus] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [hubEventId, setHubEventId] = useState<number | null>(null);
+  const [hubEventId, setHubEventId] = useState<string | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const { user } = useAuth();
 
@@ -317,6 +337,7 @@ export default function EventsPage() {
       focuses: event.focusAreas,
       isHackathon: event.eventType === "hackathon",
       eventType: event.eventType,
+      hubEventId: event.hubEventId, // Pass along the hubEventId
     };
   });
 
@@ -546,8 +567,8 @@ export default function EventsPage() {
 
                       if (eventData) {
                         setSelectedEvent(eventData);
-                        // The hubEventId should be available in the events data, cast as any to access it
-                        setHubEventId((eventData as any)?.hubEventId || 1);
+                        // Use the hubEventId from the processed event
+                        setHubEventId(processedEvent.hubEventId || null);
                         setIsRegistrationOpen(true);
                       }
                     }}

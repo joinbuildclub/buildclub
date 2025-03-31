@@ -30,7 +30,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-12 sm:pt-64 pb-32 overflow-hidden bg-white">
+    <section className="relative pt-12 sm:pt-36 pb-32 overflow-hidden bg-white">
       <RoundedTriangle
         className="md:left-20 sm:top-10 lg:top-1/4"
         width="w-16 sm:w-56"
@@ -49,7 +49,7 @@ export default function HeroSection() {
       />
 
       <RoundedSquare
-        className="top-80 sm:left-1/3 sm:top-10"
+        className="top-80 sm:left-1/3 sm:-top-20"
         width="w-12 sm:w-48"
         height="h-12 sm:h-48"
         rotate="-rotate-12"
@@ -58,13 +58,13 @@ export default function HeroSection() {
       />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex w-full justify-center items-center py-8">
+        {/* <div className="flex w-full justify-center items-center py-8">
           <img
             src={logoPath}
             alt="BuildClub Logo"
             className="hidden sm:block h-24 w-auto"
           />
-        </div>
+        </div> */}
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-gray-800">
             Where <span className="text-[var(--color-red)]">AI</span> builders
