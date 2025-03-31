@@ -91,6 +91,14 @@
   animation: floating 6s ease-in-out 1s infinite;
 }
 
+.animate-floating-slow {
+  animation: floating 8s ease-in-out infinite;
+}
+
+.animate-floating-delayed-slow {
+  animation: floating 8s ease-in-out 2s infinite;
+}
+
 /* Hackathon gradient border animation */
 .hackathon-event {
   position: relative;
