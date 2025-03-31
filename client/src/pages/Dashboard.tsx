@@ -6,10 +6,10 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { DataTable } from "@/components/ui/data-table/data-table";
-import { waitlistColumns, eventColumns, hubColumns } from "@/components/ui/data-table/columns";
+import { registrationColumns, eventColumns, hubColumns } from "@/components/ui/data-table/columns";
 import { Loader2 } from "lucide-react";
 import type { 
-  HubEventRegistration as SchemaWaitlistEntry,
+  Registration as SchemaRegistration,
   Event as SchemaEvent, 
   Hub as SchemaHub 
 } from "@shared/schema";
@@ -17,15 +17,15 @@ import type {
 export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("waitlist");
+  const [activeTab, setActiveTab] = useState("registrations");
   
-  // Fetch waitlist entries
+  // Fetch registrations (previously waitlist entries)
   const {
-    data: waitlistEntries = [] as SchemaWaitlistEntry[],
-    isLoading: isLoadingWaitlist,
-    error: waitlistError,
-  } = useQuery<SchemaWaitlistEntry[]>({
-    queryKey: ["/api/waitlist"],
+    data: registrations = [] as SchemaRegistration[],
+    isLoading: isLoadingRegistrations,
+    error: registrationsError,
+  } = useQuery<SchemaRegistration[]>({
+    queryKey: ["/api/registrations"],
     enabled: user?.role === "admin" || user?.role === "ambassador",
   });
   
@@ -51,10 +51,10 @@ export default function Dashboard() {
   
   useEffect(() => {
     // Show errors as toasts
-    if (waitlistError) {
+    if (registrationsError) {
       toast({
-        title: "Error loading waitlist",
-        description: (waitlistError as Error).message,
+        title: "Error loading registrations",
+        description: (registrationsError as Error).message,
         variant: "destructive",
       });
     }
@@ -74,10 +74,10 @@ export default function Dashboard() {
         variant: "destructive", 
       });
     }
-  }, [waitlistError, eventsError, hubsError, toast]);
+  }, [registrationsError, eventsError, hubsError, toast]);
   
   return (
-    <div className="container py-10">
+    <div className="container max-w-7xl mx-auto py-10 px-4 sm:px-6 md:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
@@ -85,31 +85,31 @@ export default function Dashboard() {
         </p>
       </div>
       
-      <Tabs defaultValue="waitlist" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6 bg-gray-100">
-          <TabsTrigger value="waitlist">Waitlist</TabsTrigger>
+          <TabsTrigger value="registrations">Registrations</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           {user?.role === "admin" && <TabsTrigger value="hubs">Hubs</TabsTrigger>}
         </TabsList>
         
-        <TabsContent value="waitlist">
+        <TabsContent value="registrations">
           <Card>
             <CardHeader>
-              <CardTitle>Waitlist Management</CardTitle>
+              <CardTitle>Event Registration Management</CardTitle>
               <CardDescription>
-                View and manage people who have signed up for the BuildClub waitlist.
+                View and manage people who have registered for BuildClub events.
               </CardDescription>
             </CardHeader>
             <Separator />
             <CardContent className="pt-6">
-              {isLoadingWaitlist ? (
+              {isLoadingRegistrations ? (
                 <div className="flex justify-center py-8">
                   <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
                 </div>
               ) : (
                 <DataTable
-                  columns={waitlistColumns}
-                  data={waitlistEntries}
+                  columns={registrationColumns}
+                  data={registrations}
                   searchColumn="email"
                   searchPlaceholder="Search by email..."
                 />

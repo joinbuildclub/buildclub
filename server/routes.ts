@@ -421,12 +421,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Legacy API endpoint to handle the waitlist form submission for backward compatibility
-  app.post("/api/waitlist", async (req, res) => {
+  // Registration API endpoints (renamed from waitlist)
+  app.post("/api/registrations", async (req, res) => {
     try {
       // We don't need to provide hubEventId - the createWaitlistEntry method
       // will create a default event and hub for us internally
-      const waitlistEntry = await storage.createWaitlistEntry({
+      const registration = await storage.createWaitlistEntry({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -435,8 +435,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } as any); // Use 'as any' to bypass TypeScript check since the method does the right thing
       
       return res.status(201).json({ 
-        message: "Successfully joined the waitlist!",
-        entry: waitlistEntry 
+        message: "Successfully registered!",
+        entry: registration 
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -444,24 +444,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: validationError.message });
       }
       
-      console.error("Error submitting waitlist entry:", error);
+      console.error("Error submitting registration:", error);
       return res.status(500).json({ 
         message: "An error occurred while processing your request." 
       });
     }
   });
 
-  // Legacy API endpoint to get all waitlist entries (admin-only) for backward compatibility
-  app.get("/api/waitlist", isAdmin, async (req, res) => {
+  // Get all registrations (admin-only)
+  app.get("/api/registrations", isAdmin, async (req, res) => {
     try {
       const entries = await storage.getWaitlistEntries();
       return res.status(200).json(entries);
     } catch (error) {
-      console.error("Error fetching waitlist entries:", error);
+      console.error("Error fetching registrations:", error);
       return res.status(500).json({ 
-        message: "An error occurred while fetching the waitlist entries." 
+        message: "An error occurred while fetching the registrations." 
       });
     }
+  });
+  
+  // Legacy API endpoints for backward compatibility
+  app.post("/api/waitlist", async (req, res) => {
+    return res.redirect(307, '/api/registrations');
+  });
+  
+  app.get("/api/waitlist", isAdmin, async (req, res) => {
+    return res.redirect(307, '/api/registrations');
   });
 
   const httpServer = createServer(app);

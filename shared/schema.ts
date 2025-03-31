@@ -214,6 +214,8 @@ export type InsertWaitlistEntry = InsertHubEventRegistration;
 export type WaitlistEntry = HubEventRegistration;
 export type InsertEventRegistration = InsertHubEventRegistration;
 export type EventRegistration = HubEventRegistration;
+export type Registration = HubEventRegistration;
+export type InsertRegistration = InsertHubEventRegistration;
 
 // Legacy schemas for backward compatibility
 export const insertWaitlistSchema = insertHubEventRegistrationSchema;

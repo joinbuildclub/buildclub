@@ -12,7 +12,7 @@ import {
 import type { 
   Hub as SchemaHub, 
   Event as SchemaEvent, 
-  HubEventRegistration as SchemaWaitlistEntry 
+  Registration as SchemaRegistration 
 } from "@shared/schema";
 
 // Definition of columns for events table
@@ -149,8 +149,8 @@ export const hubColumns: ColumnDef<SchemaHub>[] = [
   },
 ];
 
-// Definition of columns for waitlist entries table
-export const waitlistColumns: ColumnDef<SchemaWaitlistEntry>[] = [
+// Definition of columns for event registrations table
+export const registrationColumns: ColumnDef<SchemaRegistration>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => {
