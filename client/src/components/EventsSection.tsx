@@ -206,9 +206,9 @@ function EventCard({
           </Button>
           
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
-            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-2 flex items-center gap-1"
+            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-2 flex items-center gap-1 rounded-md"
             onClick={handleRegisterClick}
           >
             <UserPlus className="w-3 h-3" />
@@ -232,9 +232,9 @@ function EventCard({
           </Button>
           
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
-            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-3 flex items-center gap-1"
+            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-3 flex items-center gap-1 rounded-md"
             onClick={handleRegisterClick}
           >
             <UserPlus className="w-3 h-3" />

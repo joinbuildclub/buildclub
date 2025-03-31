@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Calendar, Filter, MapPin, Search, X } from "lucide-react";
+import { Loader2, Calendar, Filter, MapPin, Search, X, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { 
   Select, 
@@ -18,6 +18,16 @@ import {
   formatTimeRange, 
   extractDateComponents 
 } from "@/lib/dateUtils";
+import { useAuth } from "@/hooks/use-auth";
+import { Link } from "wouter";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription 
+} from "@/components/ui/dialog";
+import EventRegistrationForm from "@/components/EventRegistrationForm";
 
 // Focus type for the different areas
 type Focus = "product" | "design" | "engineering";
@@ -90,64 +100,85 @@ interface ProcessedEvent {
 interface EventCardProps {
   event: ProcessedEvent;
   onClick: () => void;
+  onRegisterClick?: (event: ProcessedEvent) => void;
 }
 
-function EventCard({ event, onClick }: EventCardProps) {
+function EventCard({ event, onClick, onRegisterClick }: EventCardProps) {
   return (
-    <div 
-      className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-      onClick={onClick}
-    >
-      <div className="flex">
-        {/* Date column */}
-        <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-100">
-          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            {event.dateComponents?.dayOfWeek.substring(0, 3)}
+    <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+      <div className="flex flex-col h-full">
+        <div className="flex flex-grow" onClick={onClick}>
+          {/* Date column */}
+          <div className="w-24 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-100">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {event.dateComponents?.dayOfWeek.substring(0, 3)}
+            </div>
+            <div className="text-2xl font-bold text-gray-800 my-1">
+              {event.dateComponents?.day}
+            </div>
+            <div className="text-sm font-medium text-gray-500 uppercase">
+              {event.dateComponents?.month}
+            </div>
           </div>
-          <div className="text-2xl font-bold text-gray-800 my-1">
-            {event.dateComponents?.day}
-          </div>
-          <div className="text-sm font-medium text-gray-500 uppercase">
-            {event.dateComponents?.month}
+          
+          {/* Content column */}
+          <div className="flex-1 p-4">
+            <div className="flex items-center mb-2 flex-wrap gap-2">
+              {event.focuses.map((focus, idx) => (
+                <FocusBadge key={idx} focus={focus} />
+              ))}
+              
+              <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-100">
+                {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+              </Badge>
+            </div>
+            
+            <h3 className="text-lg font-bold text-gray-800 mb-1">{event.title}</h3>
+            <p className="text-gray-600 text-sm line-clamp-2 mb-4">{event.description}</p>
+            
+            <div className="flex flex-col gap-1 text-sm text-gray-500">
+              <div className="flex items-center">
+                <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                <span>{event.time}</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                <span>{event.location}</span>
+              </div>
+            </div>
           </div>
         </div>
         
-        {/* Content column */}
-        <div className="flex-1 p-4">
-          <div className="flex items-center mb-2 flex-wrap gap-2">
-            {event.focuses.map((focus, idx) => (
-              <FocusBadge key={idx} focus={focus} />
-            ))}
-            
-            <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-100">
-              {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
-            </Badge>
+        {/* Buttons section */}
+        {onRegisterClick && (
+          <div className="flex justify-end border-t border-gray-100 p-3 bg-gray-50">
+            <Button
+              variant="default"
+              size="sm"
+              className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 rounded-md"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRegisterClick(event);
+              }}
+            >
+              Register
+            </Button>
           </div>
-          
-          <h3 className="text-lg font-bold text-gray-800 mb-1">{event.title}</h3>
-          <p className="text-gray-600 text-sm line-clamp-2 mb-4">{event.description}</p>
-          
-          <div className="flex flex-col gap-1 text-sm text-gray-500">
-            <div className="flex items-center">
-              <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-              <span>{event.time}</span>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-              <span>{event.location}</span>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 export default function EventsPage() {
-  // State for filters
+  // State for filters and registration
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFocus, setSelectedFocus] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [hubEventId, setHubEventId] = useState<number | null>(null);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const { user } = useAuth();
   
   // Fetch all published events
   const { data: events = [], isLoading, error } = useQuery<Event[]>({
@@ -445,7 +476,18 @@ export default function EventsPage() {
                     onClick={() => {
                       // For now, we'll just log. Later we can implement event details page
                       console.log("Clicked event:", event.id);
-                    }} 
+                    }}
+                    onRegisterClick={(processedEvent) => {
+                      // Find the original event in our dataset
+                      const eventData = events.find(e => e.id === processedEvent.id);
+                      
+                      if (eventData) {
+                        setSelectedEvent(eventData);
+                        // The hubEventId should be available in the events data, cast as any to access it
+                        setHubEventId((eventData as any)?.hubEventId || 1);
+                        setIsRegistrationOpen(true);
+                      }
+                    }}
                   />
                 ))}
               </div>
@@ -455,6 +497,46 @@ export default function EventsPage() {
       </main>
       
       <Footer />
+
+      {/* Event Registration Dialog */}
+      <Dialog open={isRegistrationOpen} onOpenChange={setIsRegistrationOpen}>
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="text-2xl">Register for Event</DialogTitle>
+            {!user && (
+              <DialogDescription>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+                  <p className="text-sm">
+                    <span className="font-semibold">Note:</span> You're registering as a guest. Consider{" "}
+                    <Link href="/auth" className="underline font-medium">
+                      signing up for an account
+                    </Link>{" "}
+                    to track your registrations and receive event updates.
+                  </p>
+                </div>
+              </DialogDescription>
+            )}
+          </DialogHeader>
+
+          {selectedEvent && hubEventId !== null && (
+            <EventRegistrationForm
+              eventId={selectedEvent.id}
+              hubEventId={hubEventId}
+              eventTitle={selectedEvent.title}
+              onSuccess={() => {
+                setIsRegistrationOpen(false);
+                setSelectedEvent(null);
+                setHubEventId(null);
+              }}
+              onCancel={() => {
+                setIsRegistrationOpen(false);
+                setSelectedEvent(null);
+                setHubEventId(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
