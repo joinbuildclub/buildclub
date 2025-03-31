@@ -229,57 +229,16 @@ export type HubEvent = typeof hubEvents.$inferSelect;
 export type InsertHubEventRegistration = z.infer<typeof insertHubEventRegistrationSchema>;
 export type HubEventRegistration = typeof hubEventRegistrations.$inferSelect;
 
-// Community members table for general signups to BuildClub (not specific events)
-export const communityMembers = pgTable("community_members", {
-  id: serial("id").primaryKey(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull().unique(),
-  interestAreas: text("interest_areas").array().notNull(),
-  aiInterests: text("ai_interests"),
-  userId: integer("user_id").references(() => users.id),
-  status: text("status").default("active"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Define the relation between users and community members
-export const communityMembersRelations = relations(communityMembers, ({ one }) => ({
-  user: one(users, {
-    fields: [communityMembers.userId],
-    references: [users.id],
-  }),
-}));
-
-// Add the relation to users as well
-export const usersCommunityRelations = relations(users, ({ one }) => ({
-  communityMember: one(communityMembers),
-}));
-
-// Define the schema for inserting new community members
-export const insertCommunityMemberSchema = createInsertSchema(communityMembers).pick({
-  firstName: true,
-  lastName: true, 
-  email: true,
-  interestAreas: true,
-  aiInterests: true,
-  userId: true,
-  status: true,
-});
-
-// Types for TypeScript
-export type InsertCommunityMember = z.infer<typeof insertCommunityMemberSchema>;
-export type CommunityMember = typeof communityMembers.$inferSelect;
-
 // Legacy types for backward compatibility during migration
-export type InsertWaitlistEntry = InsertCommunityMember;
-export type WaitlistEntry = CommunityMember;
+export type InsertWaitlistEntry = InsertHubEventRegistration;
+export type WaitlistEntry = HubEventRegistration;
 export type InsertEventRegistration = InsertHubEventRegistration;
 export type EventRegistration = HubEventRegistration;
 export type Registration = HubEventRegistration;
 export type InsertRegistration = InsertHubEventRegistration;
 
 // Legacy schemas for backward compatibility
-export const insertWaitlistSchema = insertCommunityMemberSchema;
+export const insertWaitlistSchema = insertHubEventRegistrationSchema;
 export const insertEventRegistrationSchema = insertHubEventRegistrationSchema;
 
 // The original waitlist entry table for reference before dropping it

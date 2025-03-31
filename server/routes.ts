@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
 import {
   insertHubEventRegistrationSchema,
   User,
@@ -8,7 +9,9 @@ import {
   Hub,
   HubEvent,
   HubEventRegistration,
+  users,
 } from "@shared/schema";
+import * as schema from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import passport from "passport";
@@ -18,6 +21,8 @@ import {
   extractTokenFromRequest,
   JwtPayload,
 } from "./jwt";
+import { eq, desc } from "drizzle-orm";
+import { sendWelcomeEmail, sendAdminNotification } from "./sendgrid";
 
 // Middleware for role-based access control
 interface AuthUser {
@@ -465,22 +470,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   );
 
-  // Registration API endpoints (renamed from waitlist)
+  // Community members API endpoints (renamed from registrations/waitlist)
   app.post("/api/registrations", async (req, res) => {
     try {
-      // We don't need to provide hubEventId - the createWaitlistEntry method
-      // will create a default event and hub for us internally
-      const registration = await storage.createWaitlistEntry({
+      // Since we're using Google auth for signup, this endpoint is just a legacy
+      // fallback. New users should use the Google Auth button which creates
+      // proper user accounts directly.
+      
+      // Create a user account directly instead of a waitlist entry
+      const user = await storage.createUser({
+        username: req.body.email, // Use email as username
+        email: req.body.email,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email,
-        interestAreas: req.body.interestAreas,
-        aiInterests: req.body.aiInterests,
-      } as any); // Use 'as any' to bypass TypeScript check since the method does the right thing
+        interests: req.body.interestAreas, // Map interest areas to interests
+        role: "member"
+      });
+
+      // Send welcome and admin notification emails - we'll use the existing email functions
+      // but with our new user data shaped like the old entry format
+      try {
+        const entryFormat = {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          interestAreas: req.body.interestAreas,
+          aiInterests: req.body.aiInterests
+        };
+        
+        await sendWelcomeEmail(entryFormat as any);
+        await sendAdminNotification(entryFormat as any);
+      } catch (emailError) {
+        console.error("Error sending notification emails:", emailError);
+        // Continue processing even if emails fail
+      }
 
       return res.status(201).json({
         message: "Successfully registered!",
-        entry: registration,
+        user: user,
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -495,15 +522,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all registrations (admin-only)
+  // Get all community members (admin-only)
   app.get("/api/registrations", isAdmin, async (req, res) => {
     try {
-      const entries = await storage.getWaitlistEntries();
+      // Since we've transitioned to using the users table directly, 
+      // we'll query for all members from there
+      const members = await storage.getUsers({ role: "member" });
+      
+      // Format them like the old registrations for backward compatibility
+      const entries = members.map((user: User) => ({
+        id: user.id,
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        interestAreas: user.interests || [],
+        createdAt: user.createdAt
+      }));
+      
       return res.status(200).json(entries);
     } catch (error) {
-      console.error("Error fetching registrations:", error);
+      console.error("Error fetching members:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the registrations.",
+        message: "An error occurred while fetching the members.",
       });
     }
   });

@@ -32,6 +32,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
+  getUsers(filters?: { role?: string }): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User>;
 
@@ -210,6 +211,8 @@ export class DatabaseStorage implements IStorage {
           id: events.id,
           title: events.title,
           description: events.description,
+          startDateTime: events.startDateTime,
+          endDateTime: events.endDateTime,
           startDate: events.startDate,
           endDate: events.endDate,
           startTime: events.startTime,
@@ -240,6 +243,8 @@ export class DatabaseStorage implements IStorage {
           id: events.id,
           title: events.title,
           description: events.description,
+          startDateTime: events.startDateTime,
+          endDateTime: events.endDateTime,
           startDate: events.startDate,
           endDate: events.endDate,
           startTime: events.startTime,
@@ -265,6 +270,8 @@ export class DatabaseStorage implements IStorage {
           id: events.id,
           title: events.title,
           description: events.description,
+          startDateTime: events.startDateTime,
+          endDateTime: events.endDateTime,
           startDate: events.startDate,
           endDate: events.endDate,
           startTime: events.startTime,
@@ -290,6 +297,8 @@ export class DatabaseStorage implements IStorage {
           id: events.id,
           title: events.title,
           description: events.description,
+          startDateTime: events.startDateTime,
+          endDateTime: events.endDateTime,
           startDate: events.startDate,
           endDate: events.endDate,
           startTime: events.startTime,
@@ -318,6 +327,10 @@ export class DatabaseStorage implements IStorage {
       id: row.id,
       title: row.title,
       description: row.description,
+      // Include new datetime fields with fallbacks for backward compatibility
+      startDateTime: row.startDateTime || new Date(row.startDate || Date.now()),
+      endDateTime: row.endDateTime || (row.endDate ? new Date(row.endDate) : null),
+      // Keep old fields for backward compatibility
       startDate: row.startDate,
       endDate: row.endDate,
       startTime: row.startTime,
@@ -419,7 +432,7 @@ export class DatabaseStorage implements IStorage {
       defaultEvent = await this.createEvent({
         title: "BuildClub Waitlist",
         description: "Default event for BuildClub waitlist entries",
-        startDate: formattedDate,
+        startDateTime: new Date(), // Use current date and time
         eventType: "meetup",
         isPublished: false,
       });
@@ -615,6 +628,25 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error in SendGrid processing:", error);
       // Don't let SendGrid errors prevent the form submission
+    }
+  }
+
+  // Implement getUsers method to query users with optional role filter
+  async getUsers(filters?: { role?: string }): Promise<User[]> {
+    // Use SQL literals for flexibility with type checking
+    if (filters?.role) {
+      // With role filter
+      return db.execute(sql`
+        SELECT * FROM "user" 
+        WHERE role = ${filters.role}
+        ORDER BY "createdAt" DESC
+      `).then(result => result.rows as User[]);
+    } else {
+      // Without filters
+      return db.execute(sql`
+        SELECT * FROM "user"
+        ORDER BY "createdAt" DESC
+      `).then(result => result.rows as User[]);
     }
   }
 }
