@@ -2,6 +2,10 @@ import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Define role type with allowed values
+export const RoleEnum = z.enum(["admin", "ambassador", "member"]);
+export type Role = z.infer<typeof RoleEnum>;
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -11,6 +15,7 @@ export const users = pgTable("users", {
   firstName: text("first_name"),
   lastName: text("last_name"),
   profilePicture: text("profile_picture"),
+  role: text("role").default("member").$type<Role>(),
 });
 
 export const waitlistEntries = pgTable("waitlist_entries", {
@@ -30,6 +35,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   firstName: true,
   lastName: true,
   profilePicture: true,
+  role: true,
 });
 
 export const insertWaitlistSchema = createInsertSchema(waitlistEntries).pick({

@@ -1,10 +1,51 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertWaitlistSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import passport from "passport";
+
+// Middleware for role-based access control
+interface AuthUser {
+  role?: string;
+}
+
+// Middleware to check if user is authenticated
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({ message: "Unauthorized" });
+};
+
+// Middleware to check if user has admin role
+const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const user = req.user as AuthUser;
+  if (user.role !== 'admin') {
+    return res.status(403).json({ message: "Forbidden: Admin access required" });
+  }
+  
+  return next();
+};
+
+// Middleware to check if user has ambassador or admin role
+const isAmbassadorOrAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const user = req.user as AuthUser;
+  if (user.role !== 'admin' && user.role !== 'ambassador') {
+    return res.status(403).json({ message: "Forbidden: Ambassador or Admin access required" });
+  }
+  
+  return next();
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
 
@@ -33,6 +74,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.redirect('/');
     });
   });
+  
+  // POST endpoint for logout (for API calls)
+  app.post('/api/auth/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        console.error('Error during logout:', err);
+        return res.status(500).json({ message: 'Error during logout' });
+      }
+      res.json({ message: 'Successfully logged out' });
+    });
+  });
 
   app.get('/api/user', (req, res) => {
     if (req.isAuthenticated()) {
@@ -46,6 +98,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isAuthenticated: false 
       });
     }
+  });
+  
+  // Get current authenticated user
+  app.get('/api/me', (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    res.json(req.user);
   });
 
   // put application routes here
@@ -85,8 +146,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API endpoint to get all waitlist entries (could be admin-only in a real app)
-  app.get("/api/waitlist", async (req, res) => {
+  // API endpoint to get all waitlist entries (admin-only)
+  app.get("/api/waitlist", isAdmin, async (req, res) => {
     try {
       const entries = await storage.getWaitlistEntries();
       return res.status(200).json(entries);
