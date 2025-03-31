@@ -54,12 +54,9 @@ export default function Navbar() {
               >
                 Roles
               </button>
-              <button
-                onClick={() => handleNavigation("#events")}
-                className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
-              >
+              <Link href="/events" className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors">
                 Events
-              </button>
+              </Link>
               {isAuthenticated ? (
                 <Link href="/dashboard">
                   <Button variant="default" className="gap-2">
@@ -106,12 +103,9 @@ export default function Navbar() {
                   >
                     Roles
                   </button>
-                  <button
-                    onClick={() => handleNavigation("#events")}
-                    className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors"
-                  >
+                  <Link href="/events" className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors block">
                     Events
-                  </button>
+                  </Link>
                   {isAuthenticated ? (
                     <Link href="/dashboard">
                       <Button variant="default" className="gap-2 w-full">
