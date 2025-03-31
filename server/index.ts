@@ -10,6 +10,10 @@ import cookieParser from "cookie-parser";
 const { Pool } = pg;
 
 const app = express();
+
+// Trust the first proxy in the chain when in production
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -28,9 +32,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      secure: false, // Allow HTTP for local development, but configure proxy to handle HTTPS in production
-      sameSite: 'lax'
-    }
+      secure: process.env.NODE_ENV === 'production', // Secure in production, allow HTTP for development
+      sameSite: 'lax',
+      path: '/'
+    },
+    proxy: process.env.NODE_ENV === 'production' // Trust the reverse proxy in production
   })
 );
 
