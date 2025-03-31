@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { registrationColumns, eventColumns, hubColumns } from "@/components/ui/data-table/columns";
 import { Loader2 } from "lucide-react";
+import DashboardHeader from "@/components/DashboardHeader";
 import type { 
   Registration as SchemaRegistration,
   Event as SchemaEvent, 
@@ -78,14 +79,7 @@ export default function Dashboard() {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Welcome back, {user?.firstName || user?.username || "there"}!
-          </p>
-        </div>
-      </div>
+      <DashboardHeader />
       
       <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
         <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
