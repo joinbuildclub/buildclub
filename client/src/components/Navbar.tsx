@@ -62,10 +62,7 @@ export default function Navbar() {
               </button>
               {isAuthenticated ? (
                 <Link href="/dashboard">
-                  <Button
-                    variant="default"
-                    className="gap-2"
-                  >
+                  <Button variant="default" className="gap-2">
                     <User size={16} />
                     Dashboard
                   </Button>
@@ -73,17 +70,12 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link href="/auth">
-                    <Button
-                      variant="outline"
-                      className="gap-2"
-                    >
+                    <Button variant="link" className="gap-2 text-gray-700">
                       <LogIn size={16} />
                       Login
                     </Button>
                   </Link>
-                  <Button
-                    onClick={() => handleNavigation("#join")}
-                  >
+                  <Button onClick={() => handleNavigation("#join")}>
                     Join the club
                   </Button>
                 </>
@@ -122,10 +114,7 @@ export default function Navbar() {
                   </button>
                   {isAuthenticated ? (
                     <Link href="/dashboard">
-                      <Button
-                        variant="default"
-                        className="gap-2 w-full"
-                      >
+                      <Button variant="default" className="gap-2 w-full">
                         <User size={16} />
                         Dashboard
                       </Button>
@@ -133,10 +122,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       <Link href="/auth" className="w-full">
-                        <Button
-                          variant="outline"
-                          className="gap-2 w-full"
-                        >
+                        <Button variant="outline" className="gap-2 w-full">
                           <LogIn size={16} />
                           Login
                         </Button>
