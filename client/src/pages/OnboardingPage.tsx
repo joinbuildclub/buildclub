@@ -56,21 +56,49 @@ type OnboardingFormData = z.infer<typeof onboardingSchema>;
 // Interest options with categories and colors
 const interestOptions = [
   { id: "ai_tools", label: "AI Tools", color: "bg-red-100 border-red-200" },
-  { id: "llms", label: "Large Language Models", color: "bg-blue-100 border-blue-200" },
-  { id: "nlp", label: "Natural Language Processing", color: "bg-blue-100 border-blue-200" },
-  { id: "computer_vision", label: "Computer Vision", color: "bg-blue-100 border-blue-200" },
-  { id: "generative_ai", label: "Generative AI", color: "bg-yellow-100 border-yellow-200" },
-  { id: "ai_ethics", label: "AI Ethics", color: "bg-purple-100 border-purple-200" },
+  {
+    id: "llms",
+    label: "Large Language Models",
+    color: "bg-blue-100 border-blue-200",
+  },
+  {
+    id: "nlp",
+    label: "Natural Language Processing",
+    color: "bg-blue-100 border-blue-200",
+  },
+  {
+    id: "computer_vision",
+    label: "Computer Vision",
+    color: "bg-blue-100 border-blue-200",
+  },
+  {
+    id: "generative_ai",
+    label: "Generative AI",
+    color: "bg-yellow-100 border-yellow-200",
+  },
+  {
+    id: "ai_ethics",
+    label: "AI Ethics",
+    color: "bg-purple-100 border-purple-200",
+  },
   { id: "robotics", label: "Robotics", color: "bg-green-100 border-green-200" },
-  { id: "ai_for_good", label: "AI for Good", color: "bg-green-100 border-green-200" },
-  { id: "ai_startups", label: "AI Startups", color: "bg-red-100 border-red-200" },
+  {
+    id: "ai_for_good",
+    label: "AI for Good",
+    color: "bg-green-100 border-green-200",
+  },
+  {
+    id: "ai_startups",
+    label: "AI Startups",
+    color: "bg-red-100 border-red-200",
+  },
 ];
 
 export default function OnboardingPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
   const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
@@ -94,7 +122,7 @@ export default function OnboardingPage() {
       });
       setIsSuccess(true);
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
+
       // Allow time for success message before redirecting
       setTimeout(() => {
         window.location.href = "/dashboard";
@@ -147,14 +175,17 @@ export default function OnboardingPage() {
         />
       </div>
 
-      <div className="container max-w-4xl py-10 relative">
+      <div className="container flex flex-col w-full max-w-5xl mx-auto py-10 justify-center ">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
             <UserCircle2 className="w-6 h-6 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold mb-3 text-gray-800">Complete Your Profile</h1>
+          <h1 className="text-4xl font-bold mb-3 text-gray-800">
+            Complete Your Profile
+          </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Tell us more about yourself so we can personalize your experience and connect you with like-minded builders
+            Tell us more about yourself so we can personalize your experience
+            and connect you with like-minded builders
           </p>
         </div>
 
@@ -166,7 +197,10 @@ export default function OnboardingPage() {
             </AlertDescription>
           </Alert>
         ) : onboardingMutation.isError ? (
-          <Alert variant="destructive" className="mb-8 rounded-xl mx-auto max-w-2xl">
+          <Alert
+            variant="destructive"
+            className="mb-8 rounded-xl mx-auto max-w-2xl"
+          >
             <AlertCircle className="h-5 w-5" />
             <AlertDescription>
               {onboardingMutation.error.message}
@@ -182,7 +216,9 @@ export default function OnboardingPage() {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base font-semibold">About You</FormLabel>
+                    <FormLabel className="text-base font-semibold">
+                      About You
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Tell us about yourself, your background, and what interests you about AI..."
@@ -204,7 +240,9 @@ export default function OnboardingPage() {
                   name="twitterHandle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold">Twitter Handle</FormLabel>
+                      <FormLabel className="font-semibold">
+                        Twitter Handle
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="@username"
@@ -223,7 +261,9 @@ export default function OnboardingPage() {
                   name="githubUsername"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-semibold">GitHub Username</FormLabel>
+                      <FormLabel className="font-semibold">
+                        GitHub Username
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="username"
@@ -243,7 +283,9 @@ export default function OnboardingPage() {
                 name="linkedinUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold">LinkedIn Profile URL</FormLabel>
+                    <FormLabel className="font-semibold">
+                      LinkedIn Profile URL
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="https://linkedin.com/in/username"
@@ -263,7 +305,9 @@ export default function OnboardingPage() {
                 render={() => (
                   <FormItem>
                     <div className="mb-4">
-                      <FormLabel className="text-base font-semibold">Areas of Interest</FormLabel>
+                      <FormLabel className="text-base font-semibold">
+                        Areas of Interest
+                      </FormLabel>
                       <FormDescription>
                         Select the AI topics you're most interested in
                       </FormDescription>
@@ -295,8 +339,8 @@ export default function OnboardingPage() {
                                           ])
                                         : field.onChange(
                                             field.value?.filter(
-                                              (value) => value !== interest.id
-                                            )
+                                              (value) => value !== interest.id,
+                                            ),
                                           );
                                     }}
                                   />
