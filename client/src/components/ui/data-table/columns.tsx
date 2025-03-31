@@ -41,9 +41,10 @@ export const eventColumns: ColumnDef<SchemaEvent>[] = [
   {
     accessorKey: "startDate",
     header: "Date",
-    cell: ({ row }) => (
-      <div>{new Date(row.original.startDate).toLocaleDateString()}</div>
-    ),
+    cell: ({ row }) => {
+      const startDate = row.original.startDate;
+      return <div>{startDate ? new Date(startDate as string).toLocaleDateString() : 'N/A'}</div>;
+    },
   },
   {
     accessorKey: "isPublished",

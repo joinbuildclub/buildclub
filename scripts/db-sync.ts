@@ -149,83 +149,34 @@ async function main() {
       `);
     }
     
-    // Create a Waitlist event if none exists
-    const waitlistEventExists = await drizzleDb.execute(sql`
-      SELECT EXISTS (
-        SELECT FROM "event" 
-        WHERE title = 'BuildClub Waitlist'
-      );
-    `);
-    
-    if (!waitlistEventExists.rows[0]?.exists) {
-      console.log("Creating BuildClub Waitlist event...");
-      await drizzleDb.execute(sql`
-        INSERT INTO "event" (title, description, start_date, event_type, focus_areas, is_published)
-        VALUES (
-          'BuildClub Waitlist', 
-          'Default event for waitlist registrations', 
-          CURRENT_DATE, 
-          'meetup', 
-          ARRAY['product', 'design', 'engineering'], 
-          true
-        )
-        RETURNING id
-      `);
-    }
-    
-    // Get default event ID
-    const defaultEvent = await drizzleDb.execute(sql`
-      SELECT id FROM "event" WHERE title = 'BuildClub Waitlist'
-    `);
-    
-    const defaultEventId = defaultEvent.rows[0]?.id;
-    
-    // Create default hub if it doesn't exist
-    const defaultHubExists = await drizzleDb.execute(sql`
+    // Create Providence hub if it doesn't exist
+    const pvdHubExists = await drizzleDb.execute(sql`
       SELECT EXISTS (
         SELECT FROM "hub" 
-        WHERE name = 'BuildClub Global'
+        WHERE name = 'Providence'
       );
     `);
     
-    let defaultHubId;
+    let pvdHubId;
     
-    if (!defaultHubExists.rows[0]?.exists) {
-      console.log("Creating BuildClub Global hub...");
+    if (!pvdHubExists.rows[0]?.exists) {
+      console.log("Creating Providence hub...");
       const hubResult = await drizzleDb.execute(sql`
         INSERT INTO "hub" (name, city, country, description)
         VALUES (
-          'BuildClub Global', 
-          'Global', 
-          'Online', 
-          'The global BuildClub community'
+          'Providence', 
+          'Providence', 
+          'USA', 
+          'The Providence BuildClub community'
         )
         RETURNING id
       `);
-      defaultHubId = hubResult.rows[0]?.id;
+      pvdHubId = hubResult.rows[0]?.id;
     } else {
       const hub = await drizzleDb.execute(sql`
-        SELECT id FROM "hub" WHERE name = 'BuildClub Global'
+        SELECT id FROM "hub" WHERE name = 'Providence'
       `);
-      defaultHubId = hub.rows[0]?.id;
-    }
-    
-    // Create hub_event mapping if it doesn't exist
-    if (defaultEventId && defaultHubId) {
-      const hubEventExists = await drizzleDb.execute(sql`
-        SELECT EXISTS (
-          SELECT FROM "hub_event" 
-          WHERE hub_id = ${defaultHubId} AND event_id = ${defaultEventId}
-        );
-      `);
-      
-      if (!hubEventExists.rows[0]?.exists) {
-        console.log("Creating default hub_event mapping...");
-        await drizzleDb.execute(sql`
-          INSERT INTO "hub_event" (hub_id, event_id, is_primary)
-          VALUES (${defaultHubId}, ${defaultEventId}, true)
-        `);
-      }
+      pvdHubId = hub.rows[0]?.id;
     }
     
     console.log("Database synchronization complete!");
