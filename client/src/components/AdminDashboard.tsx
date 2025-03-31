@@ -21,12 +21,12 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("registrations");
   
-  // Fetch registrations (previously waitlist entries)
+  // Fetch all event registrations
   const {
-    data: registrations = [] as SchemaRegistration[],
+    data: registrations = [],
     isLoading: isLoadingRegistrations,
     error: registrationsError,
-  } = useQuery<SchemaRegistration[]>({
+  } = useQuery<any[]>({
     queryKey: ["/api/registrations"],
     enabled: user?.role === "admin" || user?.role === "ambassador",
   });

@@ -149,10 +149,10 @@ export const hubColumns: ColumnDef<SchemaHub>[] = [
   },
 ];
 
-// Definition of columns for event registrations table
-export const registrationColumns: ColumnDef<SchemaRegistration>[] = [
+// Definition of columns for enriched event registrations table
+export const registrationColumns: ColumnDef<any>[] = [
   {
-    accessorKey: "email",
+    accessorKey: "registration.email",
     header: ({ column }) => {
       return (
         <Button
@@ -165,27 +165,72 @@ export const registrationColumns: ColumnDef<SchemaRegistration>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => <div>{row.original.registration.email}</div>,
   },
   {
-    accessorKey: "firstName",
+    accessorKey: "registration.firstName",
     header: "First Name",
+    cell: ({ row }) => <div>{row.original.registration.firstName}</div>,
   },
   {
-    accessorKey: "lastName",
+    accessorKey: "registration.lastName",
     header: "Last Name",
+    cell: ({ row }) => <div>{row.original.registration.lastName}</div>,
   },
   {
-    accessorKey: "interestAreas",
-    header: "Interests",
+    accessorKey: "event.title",
+    header: "Event",
+    cell: ({ row }) => <div className="font-medium">{row.original.event.title}</div>,
+  },
+  {
+    accessorKey: "hub.name",
+    header: "Hub",
+    cell: ({ row }) => <div>{row.original.hub.name}</div>,
+  },
+  {
+    accessorKey: "registration.status",
+    header: "Status",
     cell: ({ row }) => {
-      const interests = row.original.interestAreas as string[];
-      return <div>{interests.join(", ")}</div>;
+      const status = row.original.registration.status;
+      let statusClasses = "px-2 py-1 rounded text-xs font-medium";
+      
+      switch(status) {
+        case "registered":
+          statusClasses += " bg-amber-100 text-amber-800";
+          break;
+        case "confirmed":
+          statusClasses += " bg-blue-100 text-blue-800";
+          break;
+        case "attended":
+          statusClasses += " bg-green-100 text-green-800";
+          break;
+        case "cancelled":
+          statusClasses += " bg-red-100 text-red-800";
+          break;
+        default:
+          statusClasses += " bg-gray-100 text-gray-800";
+      }
+      
+      return (
+        <div className={statusClasses}>
+          {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Registered"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "registration.createdAt",
+    header: "Registration Date",
+    cell: ({ row }) => {
+      const date = row.original.registration.createdAt;
+      return <div>{date ? new Date(date).toLocaleDateString() : "N/A"}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const entry = row.original;
+      const registration = row.original.registration;
+      const event = row.original.event;
 
       return (
         <DropdownMenu>
@@ -199,7 +244,12 @@ export const registrationColumns: ColumnDef<SchemaRegistration>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
               <Edit className="h-4 w-4" />
-              <span>Send Invite</span>
+              <span>Update Status</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600">
+              <Trash className="h-4 w-4" />
+              <span>Cancel Registration</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

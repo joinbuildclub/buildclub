@@ -10,7 +10,9 @@ import {
   HubEvent,
   HubEventRegistration,
   users,
+  hubEventRegistrations,
 } from "@shared/schema";
+
 import * as schema from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -658,28 +660,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all community members (admin-only)
+  // Get all event registrations (admin-only)
   app.get("/api/registrations", isAdmin, async (req, res) => {
     try {
-      // Since we've transitioned to using the users table directly, 
-      // we'll query for all members from there
-      const members = await storage.getUsers({ role: "member" });
+      // Get all registrations from hubEventRegistrations table
+      const registrations = await db
+        .select()
+        .from(hubEventRegistrations)
+        .orderBy(desc(hubEventRegistrations.createdAt));
       
-      // Format them like the old registrations for backward compatibility
-      const entries = members.map((user: any) => ({
-        id: user.id,
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        interestAreas: user.interests || [],
-        createdAt: user.created_at ? new Date(user.created_at).toISOString() : new Date().toISOString()
-      }));
+      // For each registration, fetch associated event and hub data
+      const enrichedRegistrations = await Promise.all(
+        registrations.map(async (registration) => {
+          try {
+            const hubEvent = await storage.getHubEvent(registration.hubEventId);
+            
+            if (!hubEvent) {
+              return {
+                registration,
+                event: { title: "Unknown Event" },
+                hub: { name: "Unknown Hub" },
+                hubEvent: { id: registration.hubEventId }
+              };
+            }
+            
+            const event = await storage.getEvent(hubEvent.eventId);
+            const hub = await storage.getHub(hubEvent.hubId);
+            
+            return {
+              registration,
+              event: event || { title: "Unknown Event" },
+              hub: hub || { name: "Unknown Hub" },
+              hubEvent
+            };
+          } catch (err) {
+            console.error("Error enriching registration data:", err);
+            return {
+              registration,
+              event: { title: "Error loading event" },
+              hub: { name: "Error loading hub" },
+              hubEvent: { id: registration.hubEventId }
+            };
+          }
+        })
+      );
       
-      return res.status(200).json(entries);
+      // Filter out any null values (from failed lookups)
+      return res.status(200).json(enrichedRegistrations.filter(Boolean));
     } catch (error) {
-      console.error("Error fetching members:", error);
+      console.error("Error fetching registrations:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the members.",
+        message: "An error occurred while fetching registrations.",
       });
     }
   });
