@@ -10,6 +10,10 @@
   --color-green: #4CAF50;
   --color-blue: #6A8CFF;
   --color-yellow: #FFD166;
+  
+  /* shadcn variables - setting green as the primary color */
+  --primary: 122 39% 49%;
+  --primary-foreground: 0 0% 100%;
 }
 
 @layer base {

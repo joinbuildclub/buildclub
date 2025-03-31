@@ -63,8 +63,8 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <Link href="/dashboard">
                   <Button
-                    variant="outline"
-                    className="gap-2 border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                    variant="default"
+                    className="gap-2"
                   >
                     <User size={16} />
                     Dashboard
@@ -75,7 +75,7 @@ export default function Navbar() {
                   <Link href="/auth">
                     <Button
                       variant="outline"
-                      className="gap-2 border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                      className="gap-2"
                     >
                       <LogIn size={16} />
                       Login
@@ -83,7 +83,6 @@ export default function Navbar() {
                   </Link>
                   <Button
                     onClick={() => handleNavigation("#join")}
-                    className="bg-[--color-green] hover:bg-[--color-green]/90 text-white"
                   >
                     Join the club
                   </Button>
@@ -124,8 +123,8 @@ export default function Navbar() {
                   {isAuthenticated ? (
                     <Link href="/dashboard">
                       <Button
-                        variant="outline"
-                        className="gap-2 w-full border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                        variant="default"
+                        className="gap-2 w-full"
                       >
                         <User size={16} />
                         Dashboard
@@ -136,7 +135,7 @@ export default function Navbar() {
                       <Link href="/auth" className="w-full">
                         <Button
                           variant="outline"
-                          className="gap-2 w-full border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                          className="gap-2 w-full"
                         >
                           <LogIn size={16} />
                           Login
@@ -144,7 +143,7 @@ export default function Navbar() {
                       </Link>
                       <Button
                         onClick={() => handleNavigation("#join")}
-                        className="bg-[--color-green] hover:bg-[--color-green]/90 text-white w-full mt-2"
+                        className="w-full mt-2"
                       >
                         Join the club
                       </Button>

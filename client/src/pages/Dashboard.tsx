@@ -84,24 +84,15 @@ export default function Dashboard() {
       <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">Dashboard</h1>
         <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 bg-white border border-gray-200 shadow-sm dashboard-font">
-            <TabsTrigger 
-              value="registrations" 
-              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
-            >
+          <TabsList className="mb-6 dashboard-font">
+            <TabsTrigger value="registrations">
               Registrations
             </TabsTrigger>
-            <TabsTrigger 
-              value="events" 
-              className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
-            >
+            <TabsTrigger value="events">
               Events
             </TabsTrigger>
             {user?.role === "admin" && (
-              <TabsTrigger 
-                value="hubs" 
-                className="data-[state=active]:bg-[--color-green]/10 data-[state=active]:text-[--color-green] data-[state=active]:border-b-2 data-[state=active]:border-[--color-green] data-[state=active]:shadow-none rounded-none px-6"
-              >
+              <TabsTrigger value="hubs">
                 Hubs
               </TabsTrigger>
             )}
