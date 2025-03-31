@@ -37,66 +37,8 @@ import {
 } from "@/components/ui/dialog";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
 
-// Focus type for the different areas
-type Focus = "product" | "design" | "engineering";
-
-// Define event types from the API
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  // New datetime fields
-  startDateTime: string;
-  endDateTime?: string;
-  // Legacy fields for backward compatibility
-  startDate?: string;
-  endDate?: string;
-  startTime?: string;
-  endTime?: string;
-  eventType: string;
-  focusAreas: Focus[];
-  location?: string;
-  isPublished: boolean;
-  hubEventId?: string;
-}
-
-// Shape component for focus areas
-function FocusBadge({ focus }: { focus: Focus }) {
-  switch (focus) {
-    case "product":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-red-50 text-red-600 border-red-100 hover:bg-red-100"
-        >
-          <div className="w-2 h-2 bg-[var(--color-red)] rounded-full mr-1.5"></div>
-          Product
-        </Badge>
-      );
-    case "design":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100"
-        >
-          <div className="w-2 h-2 bg-[var(--color-blue)] rounded-full mr-1.5"></div>
-          Design
-        </Badge>
-      );
-    case "engineering":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-yellow-50 text-yellow-600 border-yellow-100 hover:bg-yellow-100"
-        >
-          <div className="w-2 h-2 bg-[var(--color-yellow)] rounded-sm mr-1.5"></div>
-          Engineering
-        </Badge>
-      );
-    default:
-      return null;
-  }
-}
+// Import the types and components from EventsSection
+import { Focus, Event, FocusBadge, EventCard as EventCardComponent, EventCardProps } from "@/components/EventsSection";
 
 interface ProcessedEvent {
   id: string;
@@ -122,98 +64,7 @@ interface EventCardProps {
   onRegisterClick?: (event: ProcessedEvent) => void;
 }
 
-function EventCard({ event, onClick, onRegisterClick }: EventCardProps) {
-  return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-      <div className="flex flex-col h-full">
-        <div className="flex flex-grow" onClick={onClick}>
-          {/* Date column - special gradient based on focus area */}
-          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
-                ${event.isHackathon
-                  ? "bg-gray-100" // Base color for hackathons covered by gradient
-                  : event.focuses.includes("engineering")
-                    ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
-                    : event.focuses.includes("design")
-                      ? "bg-gradient-to-br from-blue-400 to-blue-500"
-                      : event.focuses.includes("product")
-                        ? "bg-gradient-to-br from-red-400 to-red-500"
-                        : "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
-            
-            {/* Animated gradient overlay for hackathons */}
-            {event.isHackathon && (
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
-            )}
-            
-            {/* Date content with z-index to ensure it appears above the gradient */}
-            <div className="relative z-10">
-              <div className="text-sm font-medium opacity-90 uppercase">
-                {event.dateComponents?.dayOfWeek.substring(0, 3)}
-              </div>
-              <div className="text-3xl font-bold leading-none mt-1 mb-1">
-                {event.dateComponents?.day}
-              </div>
-              <div className="text-sm font-medium opacity-90 uppercase">
-                {event.dateComponents?.month}
-              </div>
-            </div>
-          </div>
-
-          {/* Content column */}
-          <div className="flex-1 p-4">
-            <div className="flex items-center mb-2 flex-wrap gap-2">
-              {event.focuses.map((focus, idx) => (
-                <FocusBadge key={idx} focus={focus} />
-              ))}
-
-              <Badge
-                variant="outline"
-                className="bg-gray-50 text-gray-600 border-gray-100"
-              >
-                {event.eventType.charAt(0).toUpperCase() +
-                  event.eventType.slice(1)}
-              </Badge>
-            </div>
-
-            <h3 className="text-lg font-bold text-gray-800 mb-1">
-              {event.title}
-            </h3>
-            <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-              {event.description}
-            </p>
-
-            <div className="flex flex-col gap-1 text-sm text-gray-500">
-              <div className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                <span>{event.time}</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                <span>{event.location}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Buttons section */}
-        {onRegisterClick && (
-          <div className="flex justify-end border-t border-gray-100 p-3 bg-gray-50">
-            <Button
-              variant="default"
-              size="sm"
-              className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 rounded-md"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRegisterClick(event);
-              }}
-            >
-              Register
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+// We're using the shared EventCardComponent imported from EventsSection
 
 export default function EventsPage() {
   // State for filters and registration

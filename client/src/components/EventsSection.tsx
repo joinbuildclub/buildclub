@@ -31,10 +31,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Focus type for the different areas
-type Focus = "product" | "design" | "engineering";
+export type Focus = "product" | "design" | "engineering";
 
 // Define event types from the API
-interface Event {
+export interface Event {
   id: string;
   title: string;
   description: string;
@@ -52,23 +52,10 @@ interface Event {
   isPublished: boolean;
 }
 
-interface EventCardProps {
-  date: string;
-  time?: string;
-  title: string;
-  description: string;
-  location: string;
-  focuses: Focus[];
-  isHackathon?: boolean;
-  dateComponents?: {
-    day: string;
-    month: string;
-    dayOfWeek: string;
-  };
-}
+
 
 // Shape component for focus areas
-function FocusBadge({ focus }: { focus: Focus }) {
+export function FocusBadge({ focus }: { focus: Focus }) {
   switch (focus) {
     case "product":
       return (
@@ -96,7 +83,7 @@ function FocusBadge({ focus }: { focus: Focus }) {
   }
 }
 
-interface EventCardProps {
+export interface EventCardProps {
   date: string;
   time?: string;
   title: string;
@@ -114,7 +101,7 @@ interface EventCardProps {
   onRegisterClick: (eventId: string, hubEventId: string) => void;
 }
 
-function EventCard({
+export function EventCard({
   date,
   time,
   title,
