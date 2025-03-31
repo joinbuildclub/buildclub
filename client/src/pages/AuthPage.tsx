@@ -54,7 +54,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-white via-gray-50 to-gray-100 relative overflow-hidden page-content">
+    <div className="page-container flex flex-col md:flex-row bg-gradient-to-b from-white via-gray-50 to-gray-100 relative overflow-hidden">
       {/* Decorative shapes */}
       <div className="absolute w-full h-full overflow-hidden opacity-30 pointer-events-none">
         <RoundedTriangle

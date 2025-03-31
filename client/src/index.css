@@ -34,9 +34,13 @@
 }
 
 @layer components {
-  /* Page layout - add spacing for fixed navbar */
-  .page-content {
-    @apply pt-16; /* Matches the height of the navbar (h-16) */
+  /* Container for pages with fixed navbar */
+  .page-container {
+    @apply min-h-screen flex flex-col;
+  }
+  
+  .main-content {
+    @apply mt-16 flex-grow; /* Adds margin-top equal to navbar height */
   }
   
   .clay-button {

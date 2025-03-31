@@ -8,13 +8,15 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-hidden page-content">
+    <div className="page-container bg-background text-foreground overflow-hidden">
       <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <RolesSection />
-      <EventsSection />
-      <JoinSection />
+      <div className="main-content">
+        <HeroSection />
+        <AboutSection />
+        <RolesSection />
+        <EventsSection />
+        <JoinSection />
+      </div>
       <Footer />
     </div>
   );

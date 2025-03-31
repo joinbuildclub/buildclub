@@ -78,104 +78,105 @@ export default function Dashboard() {
   }, [registrationsError, eventsError, hubsError, toast]);
   
   return (
-    <div className="min-h-screen bg-gray-50 dashboard-font page-content">
+    <div className="page-container bg-gray-50 dashboard-font">
       <DashboardHeader />
-      
-      <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">Dashboard</h1>
-        <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 dashboard-font">
-            <TabsTrigger value="registrations">
-              Registrations
-            </TabsTrigger>
-            <TabsTrigger value="events">
-              Events
-            </TabsTrigger>
-            {user?.role === "admin" && (
-              <TabsTrigger value="hubs">
-                Hubs
+      <div className="main-content">
+        <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">Dashboard</h1>
+          <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="mb-6 dashboard-font">
+              <TabsTrigger value="registrations">
+                Registrations
               </TabsTrigger>
-            )}
-          </TabsList>
-          
-          <TabsContent value="registrations">
-            <Card className="border border-gray-200 shadow-md overflow-hidden">
-              <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle className="dashboard-heading">Event Registration Management</CardTitle>
-                <CardDescription>
-                  View and manage people who have registered for BuildClub events.
-                </CardDescription>
-              </CardHeader>
-              <Separator />
-              <CardContent className="pt-6">
-                {isLoadingRegistrations ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
-                  </div>
-                ) : (
-                  <DataTable
-                    columns={registrationColumns}
-                    data={registrations}
-                    searchColumn="email"
-                    searchPlaceholder="Search by email..."
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="events">
-            <Card className="border border-gray-200 shadow-md overflow-hidden">
-              <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle className="dashboard-heading">Event Management</CardTitle>
-                <CardDescription>
-                  Create and manage BuildClub events across all locations.
-                </CardDescription>
-              </CardHeader>
-              <Separator />
-              <CardContent className="pt-6">
-                {isLoadingEvents ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
-                  </div>
-                ) : (
-                  <DataTable
-                    columns={eventColumns}
-                    data={events}
-                    searchColumn="title"
-                    searchPlaceholder="Search events..."
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="hubs">
-            <Card className="border border-gray-200 shadow-md overflow-hidden">
-              <CardHeader className="bg-white border-b border-gray-100">
-                <CardTitle className="dashboard-heading">Hub Management</CardTitle>
-                <CardDescription>
-                  Manage BuildClub locations around the world.
-                </CardDescription>
-              </CardHeader>
-              <Separator />
-              <CardContent className="pt-6">
-                {isLoadingHubs ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
-                  </div>
-                ) : (
-                  <DataTable
-                    columns={hubColumns}
-                    data={hubs}
-                    searchColumn="name"
-                    searchPlaceholder="Search hubs..."
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              <TabsTrigger value="events">
+                Events
+              </TabsTrigger>
+              {user?.role === "admin" && (
+                <TabsTrigger value="hubs">
+                  Hubs
+                </TabsTrigger>
+              )}
+            </TabsList>
+            
+            <TabsContent value="registrations">
+              <Card className="border border-gray-200 shadow-md overflow-hidden">
+                <CardHeader className="bg-white border-b border-gray-100">
+                  <CardTitle className="dashboard-heading">Event Registration Management</CardTitle>
+                  <CardDescription>
+                    View and manage people who have registered for BuildClub events.
+                  </CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  {isLoadingRegistrations ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                    </div>
+                  ) : (
+                    <DataTable
+                      columns={registrationColumns}
+                      data={registrations}
+                      searchColumn="email"
+                      searchPlaceholder="Search by email..."
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="events">
+              <Card className="border border-gray-200 shadow-md overflow-hidden">
+                <CardHeader className="bg-white border-b border-gray-100">
+                  <CardTitle className="dashboard-heading">Event Management</CardTitle>
+                  <CardDescription>
+                    Create and manage BuildClub events across all locations.
+                  </CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  {isLoadingEvents ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                    </div>
+                  ) : (
+                    <DataTable
+                      columns={eventColumns}
+                      data={events}
+                      searchColumn="title"
+                      searchPlaceholder="Search events..."
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="hubs">
+              <Card className="border border-gray-200 shadow-md overflow-hidden">
+                <CardHeader className="bg-white border-b border-gray-100">
+                  <CardTitle className="dashboard-heading">Hub Management</CardTitle>
+                  <CardDescription>
+                    Manage BuildClub locations around the world.
+                  </CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  {isLoadingHubs ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-[--color-green]" />
+                    </div>
+                  ) : (
+                    <DataTable
+                      columns={hubColumns}
+                      data={hubs}
+                      searchColumn="name"
+                      searchPlaceholder="Search hubs..."
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
