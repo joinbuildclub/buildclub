@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import {
   MapPin,
@@ -138,53 +139,72 @@ function EventCard({
   return (
     <Link href={`/events/${eventId}`}>
       <div
-        className={`event-card group transition-all duration-200 ${isHackathon ? "hackathon-event" : ""} cursor-pointer hover:shadow-md`}
+        className={`event-card group transition-all duration-300 ${isHackathon ? "hackathon-event" : ""} cursor-pointer transform hover:-translate-y-1 hover:shadow-xl`}
       >
-        <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-200 flex flex-row">
-          {/* Left side with date */}
-          <div className="w-20 bg-gray-50 p-4 flex flex-col items-center justify-center border-r border-gray-200">
-            <div className="text-sm font-medium text-gray-700">
-              {shortDayOfWeek}
+        <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-row">
+          {/* Left side with date - enhanced with gradient background based on focus */}
+          <div className={`w-24 p-4 flex flex-col items-center justify-center text-white
+                           ${focuses.includes("engineering") ? "bg-gradient-to-br from-yellow-400 to-yellow-500" :
+                             focuses.includes("design") ? "bg-gradient-to-br from-blue-400 to-blue-500" :
+                             focuses.includes("product") ? "bg-gradient-to-br from-red-400 to-red-500" : 
+                             "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
+            <div className="text-sm font-medium opacity-90">
+              {shortDayOfWeek.toUpperCase()}
             </div>
-            <div className="text-3xl font-bold text-gray-900 leading-none mt-1 mb-1">{day}</div>
-            <div className="text-sm font-medium text-gray-700">
-              {month}
+            <div className="text-4xl font-bold leading-none mt-1 mb-1">{day}</div>
+            <div className="text-sm font-medium opacity-90">
+              {month.toUpperCase()}
             </div>
           </div>
 
-          {/* Middle content */}
-          <div className="flex-1 p-4 flex flex-col justify-center">
-            <div className="mb-1 flex items-center text-gray-500 text-sm">
-              <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span>{time || "Time TBD"}</span>
-            </div>
-            
-            <h3 className="font-semibold text-lg text-gray-900 mb-1">
-              {title}
-            </h3>
-            
-            <div className="mb-2 flex items-center text-gray-500 text-sm">
-              <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span>{location}</span>
-            </div>
-
-            {/* Focus area tags */}
-            <div className="flex flex-wrap gap-1.5">
+          {/* Middle content - enhanced with better typography and spacing */}
+          <div className="flex-1 p-5 flex flex-col justify-center">
+            <div className="flex flex-wrap gap-1.5 mb-2">
               {focuses &&
                 Array.isArray(focuses) &&
                 focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
+              
+              <Badge
+                variant="outline"
+                className="bg-gray-50 text-gray-600 border-gray-100"
+              >
+                {isHackathon ? "Hackathon" : "Workshop"}
+              </Badge>
+            </div>
+            
+            <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-[var(--color-blue)] transition-colors">
+              {title}
+            </h3>
+            
+            <p className="text-gray-600 mb-3 line-clamp-2 text-sm">
+              {description}
+            </p>
+            
+            <div className="flex flex-wrap gap-4 text-gray-500 text-sm">
+              <div className="flex items-center">
+                <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
+                <span>{time || "Time TBD"}</span>
+              </div>
+              
+              <div className="flex items-center">
+                <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+                <span>{location}</span>
+              </div>
             </div>
           </div>
 
-          {/* Right side with view details text */}
-          <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-200">
-            <Button
-              variant="default"
-              size="sm"
-              className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md"
-            >
-              View Details
-            </Button>
+          {/* Right side with register button - enhanced with animated hover effect */}
+          <div className="w-28 flex flex-col items-center justify-center p-4 border-l border-gray-100">
+            <div className="relative overflow-hidden rounded-md w-full">
+              <Button
+                variant="default"
+                size="sm"
+                className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium px-3 h-9 rounded-md relative z-10 transition-all duration-300 group-hover:shadow-md"
+              >
+                Register
+              </Button>
+              <div className="absolute inset-0 bg-gray-800 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 z-0"></div>
+            </div>
           </div>
         </div>
       </div>

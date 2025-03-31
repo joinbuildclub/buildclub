@@ -10,6 +10,22 @@ import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+// Define the Event type
+interface EventDetails {
+  id: string;
+  title: string;
+  description?: string;
+  startDateTime?: string;
+  endDateTime?: string;
+  eventType?: string;
+  focusAreas?: string[];
+  hub?: {
+    id?: string;
+    name?: string;
+    location?: string;
+  };
+}
+
 const guestSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -41,7 +57,7 @@ export default function EventRegistrationForm({
   const { toast } = useToast();
   
   // Fetch event details to display in the form
-  const { data: event } = useQuery({
+  const { data: event } = useQuery<EventDetails>({
     queryKey: [`/api/events/${eventId}`],
     enabled: !!eventId,
   });
