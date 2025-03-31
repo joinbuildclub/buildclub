@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import Link from "next/link";
 
 const guestSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -98,9 +96,9 @@ export default function EventRegistrationForm({
           <span className="text-sm">
             <span className="font-semibold">Note:</span> You're registering as
             a guest. Consider{" "}
-            <Link href="/auth" className="underline font-medium">
+            <a href="/auth" className="underline font-medium">
               signing up for an account
-            </Link>{" "}
+            </a>{" "}
             to track your registrations and receive event updates.
           </span>
         </div>
