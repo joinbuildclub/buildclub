@@ -157,12 +157,15 @@ function EventCard({
             {isHackathon && (
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
             )}
-            <div className="text-sm font-medium opacity-90">
-              {shortDayOfWeek.toUpperCase()}
-            </div>
-            <div className="text-4xl font-bold leading-none mt-1 mb-1">{day}</div>
-            <div className="text-sm font-medium opacity-90">
-              {month.toUpperCase()}
+            {/* Date content with z-index to ensure it appears above the gradient */}
+            <div className="relative z-10">
+              <div className="text-sm font-medium opacity-90">
+                {shortDayOfWeek.toUpperCase()}
+              </div>
+              <div className="text-4xl font-bold leading-none mt-1 mb-1">{day}</div>
+              <div className="text-sm font-medium opacity-90">
+                {month.toUpperCase()}
+              </div>
             </div>
           </div>
 
