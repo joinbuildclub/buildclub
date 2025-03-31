@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect } from "wouter";
 import { 
@@ -18,19 +18,25 @@ import {
   UserCheck, 
   LogOut, 
   MailPlus, 
-  ListChecks
+  ListChecks,
+  Loader2
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import { toast } from "@/hooks/use-toast";
-// Using a type definition based on schema
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { User as SchemaUser } from "@shared/schema";
+
+// Local type definition that matches what we get from the API
 type User = {
   id: number;
   username: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  profilePicture?: string;
-  role: "admin" | "ambassador" | "member";
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  profilePicture: string | null;
+  role: "admin" | "ambassador" | "member" | null;
+  googleId?: string | null;
+  password?: string | null;
 };
 
 type WaitlistEntry = {
@@ -222,39 +228,28 @@ function MemberDashboard({ user }: { user: User }) {
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("profile");
+  const { toast } = useToast();
+  const { user, isLoading, logoutMutation } = useAuth();
   
-  // Fetch current user info
-  const userQuery = useQuery({
-    queryKey: ["/api/me"]
-  });
-
-  const user = userQuery.data as User;
-  
-  // Handle loading and error states
-  if (userQuery.isLoading) {
-    return <div className="container mx-auto p-8">Loading...</div>;
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-8 flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
   
-  if (userQuery.isError || !user) {
-    return <Redirect to="/" />;
+  if (!user) {
+    return <Redirect to="/auth" />;
   }
 
   // Determine which role-specific components to show
   const showAdminPanel = user.role === "admin";
   const showAmbassadorPanel = user.role === "admin" || user.role === "ambassador";
 
-  const handleSignOut = async () => {
-    try {
-      await apiRequest("POST", "/api/auth/logout");
-      // Redirect to home page after logout
-      window.location.href = "/";
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const handleSignOut = () => {
+    logoutMutation.mutate();
   };
 
   return (

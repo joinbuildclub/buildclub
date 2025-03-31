@@ -1,27 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, User } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Menu, User, LogIn } from "lucide-react";
 import logoPath from "../assets/logo.png";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-
-  // Define the expected response type
-  interface AuthResponse {
-    user: any;
-    isAuthenticated: boolean;
-  }
-
-  // Query for user authentication status
-  const { data: authData } = useQuery<AuthResponse>({
-    queryKey: ["/api/user"],
-    refetchOnWindowFocus: true,
-  });
-
-  const isAuthenticated = authData?.isAuthenticated || false;
+  const { isAuthenticated, user } = useAuth();
 
   const handleNavigation = (href: string) => {
     setOpen(false);
@@ -84,12 +71,23 @@ export default function Navbar() {
                   </Button>
                 </Link>
               ) : (
-                <Button
-                  onClick={() => handleNavigation("#join")}
-                  className="bg-[--color-green] hover:bg-[--color-green]/90 text-white"
-                >
-                  Join the club
-                </Button>
+                <>
+                  <Link href="/auth">
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                    >
+                      <LogIn size={16} />
+                      Login
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={() => handleNavigation("#join")}
+                    className="bg-[--color-green] hover:bg-[--color-green]/90 text-white"
+                  >
+                    Join the club
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -134,12 +132,23 @@ export default function Navbar() {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      onClick={() => handleNavigation("#join")}
-                      className="bg-primary hover:bg-primary/90 text-white w-full"
-                    >
-                      Join the club
-                    </Button>
+                    <>
+                      <Link href="/auth" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="gap-2 w-full border-[--color-green] text-[--color-green] hover:text-[--color-green] hover:border-[--color-green]/90 hover:bg-[--color-green]/10"
+                        >
+                          <LogIn size={16} />
+                          Login
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => handleNavigation("#join")}
+                        className="bg-[--color-green] hover:bg-[--color-green]/90 text-white w-full mt-2"
+                      >
+                        Join the club
+                      </Button>
+                    </>
                   )}
                 </div>
               </SheetContent>

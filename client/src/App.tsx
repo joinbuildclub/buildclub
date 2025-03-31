@@ -5,13 +5,24 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
+import AuthPage from "@/pages/AuthPage";
+import { AuthProvider } from "@/hooks/use-auth";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function Router() {
   return (
     <Switch>
-      {/* Add pages below */}
+      {/* Public routes */}
       <Route path="/" component={Home} />
-      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/auth" component={AuthPage} />
+      
+      {/* Protected routes */}
+      <Route path="/dashboard">
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      </Route>
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
@@ -21,8 +32,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -5,12 +5,14 @@ import { setupPassport, passportMiddleware, passportSession } from "./auth";
 import session from "express-session";
 import pg from "pg";
 import connectPgSimple from "connect-pg-simple";
+import cookieParser from "cookie-parser";
 
 const { Pool } = pg;
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Set up session middleware
 const PgSession = connectPgSimple(session);
