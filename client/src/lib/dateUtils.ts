@@ -56,34 +56,45 @@ export function formatDisplayDate(dateStr: string | undefined): string {
     return 'Date TBD';
   }
   
-  // Handle potentially invalid date by adding a default time if needed
-  let date: Date;
-  
-  try {
-    // First try to parse the date as is
-    date = new Date(dateStr);
+  // Special handling for YYYY-MM-DD format to prevent timezone shifts
+  if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [yearStr, monthStr, dayStr] = dateStr.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1; // 0-indexed months in JS
+    const day = parseInt(dayStr, 10);
     
-    // Check if the date is valid, if not, try adding a time component
-    if (isNaN(date.getTime()) && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      // If it's in YYYY-MM-DD format without time, add a default time
-      date = new Date(dateStr + 'T12:00:00Z');
-    }
+    // Create date in UTC to avoid timezone issues
+    const date = new Date(Date.UTC(year, month, day));
+    
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC' // Ensure we get the right format in UTC
+    });
+  }
+  
+  // Handle ISO date strings and other formats
+  try {
+    const date = new Date(dateStr);
     
     // Final check if date is valid
     if (isNaN(date.getTime())) {
       console.error('Invalid date format:', dateStr);
       return 'Invalid date';
     }
+    
+    // For ISO strings and other formats, use timeZone: 'UTC' to prevent timezone shifts
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC' // Force UTC timezone to prevent conversion
+    });
   } catch (e) {
     console.error('Error parsing date:', dateStr, e);
     return 'Invalid date';
   }
-  
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
 }
 
 /**
@@ -98,17 +109,20 @@ function formatTime(timeStr?: string): string {
   if (timeStr.match(/^\d{1,2}:\d{2}$/)) {
     // Create a dummy date object with today's date and the time
     const [hours, minutes] = timeStr.split(':').map(Number);
+    
+    // Create a UTC date to avoid timezone shifts
     const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
+    date.setUTCHours(hours, minutes, 0, 0);
     
     return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true
+      hour12: true,
+      timeZone: 'UTC' // Important: force UTC time zone
     });
   }
   
-  // Handle date with time
+  // Handle ISO format with time
   try {
     const date = new Date(timeStr);
     if (isNaN(date.getTime())) {
@@ -116,10 +130,12 @@ function formatTime(timeStr?: string): string {
       return timeStr; // Return the original string if we can't parse it
     }
     
+    // Use UTC time methods to avoid timezone shifts
     return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true
+      hour12: true,
+      timeZone: 'UTC' // Important: force UTC time zone
     });
   } catch (e) {
     console.error('Error parsing time:', timeStr, e);
@@ -151,8 +167,28 @@ export function formatTimeRange(startTime?: string, endTime?: string): string {
  * @returns Day of week (e.g., "Monday")
  */
 export function getDayOfWeek(dateStr: string): string {
+  // Special handling for YYYY-MM-DD format
+  if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [yearStr, monthStr, dayStr] = dateStr.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1; // 0-indexed months in JS
+    const day = parseInt(dayStr, 10);
+    
+    // Create date in UTC to avoid timezone issues
+    const date = new Date(Date.UTC(year, month, day));
+    
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      timeZone: 'UTC' // Force UTC timezone
+    });
+  }
+  
+  // For other formats
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'long',
+    timeZone: 'UTC' // Force UTC timezone
+  });
 }
 
 /**
@@ -170,18 +206,32 @@ export function extractDateComponents(dateStr: string | undefined): { day: strin
     };
   }
   
-  // Handle potentially invalid date by adding a default time if needed
-  let date: Date;
-  
-  try {
-    // First try to parse the date as is
-    date = new Date(dateStr);
+  // Special handling for YYYY-MM-DD format to prevent timezone shifts
+  if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [yearStr, monthStr, dayStr] = dateStr.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1; // 0-indexed months in JS
+    const day = parseInt(dayStr, 10);
     
-    // Check if the date is valid, if not, try adding a time component
-    if (isNaN(date.getTime()) && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      // If it's in YYYY-MM-DD format without time, add a default time
-      date = new Date(dateStr + 'T12:00:00Z');
-    }
+    // Create date in UTC to avoid timezone issues
+    const date = new Date(Date.UTC(year, month, day));
+    
+    return {
+      day: day.toString(),
+      month: new Date(Date.UTC(year, month, day)).toLocaleDateString('en-US', { 
+        month: 'short', 
+        timeZone: 'UTC' // Ensure we get the right month name
+      }),
+      dayOfWeek: new Date(Date.UTC(year, month, day)).toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        timeZone: 'UTC' // Ensure we get the right day of week
+      })
+    };
+  }
+  
+  // Handle ISO date strings
+  try {
+    const date = new Date(dateStr);
     
     // Final check if date is valid
     if (isNaN(date.getTime())) {
@@ -192,6 +242,19 @@ export function extractDateComponents(dateStr: string | undefined): { day: strin
         dayOfWeek: '------'
       };
     }
+    
+    // For ISO strings, force UTC interpretation to prevent timezone shifts
+    return {
+      day: date.getUTCDate().toString(),
+      month: date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        timeZone: 'UTC' 
+      }),
+      dayOfWeek: date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        timeZone: 'UTC' 
+      })
+    };
   } catch (e) {
     console.error('Error parsing date in extractDateComponents:', dateStr, e);
     return {
@@ -200,10 +263,4 @@ export function extractDateComponents(dateStr: string | undefined): { day: strin
       dayOfWeek: '------'
     };
   }
-  
-  return {
-    day: date.getDate().toString(),
-    month: date.toLocaleDateString('en-US', { month: 'short' }),
-    dayOfWeek: date.toLocaleDateString('en-US', { weekday: 'long' })
-  };
 }

@@ -47,6 +47,11 @@ interface EventCardProps {
   location: string;
   focuses: Focus[];
   isHackathon?: boolean;
+  dateComponents?: {
+    day: string;
+    month: string;
+    dayOfWeek: string;
+  };
 }
 
 // Shape component for focus areas
@@ -86,6 +91,7 @@ function EventCard({
   location,
   focuses,
   isHackathon = false,
+  dateComponents,
 }: EventCardProps) {
   // Get icon based on primary focus
   const Icon = (focuses && Array.isArray(focuses) && focuses.includes("product"))
@@ -96,8 +102,8 @@ function EventCard({
         ? Code
         : Calendar;
 
-  // Extract date components using our utility
-  const { day, month, dayOfWeek } = extractDateComponents(date);
+  // Use the provided date components or extract them from the date string
+  const { day, month, dayOfWeek } = dateComponents || extractDateComponents(date);
 
   return (
     <div
@@ -182,26 +188,69 @@ export default function EventsSection() {
 
   // Process events for display, using our utility functions
   const processedEvents = events.map(event => {
-    // Prioritize the new datetime fields if available, fall back to the old fields
-    const dateForFormatting = event.startDateTime || event.startDate || '';
-    const startDate = event.startDateTime ? new Date(event.startDateTime) : null;
-    const endDate = event.endDateTime ? new Date(event.endDateTime) : null;
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+    let dateForDisplay: string = '';
     
+    // Handle the datetime fields with proper timezone adjustment
+    if (event.startDateTime) {
+      // Create a date from the UTC datetime string and adjust for the display
+      startDate = new Date(event.startDateTime);
+      
+      // Use the full datetime to create a properly formatted local date string
+      dateForDisplay = startDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'UTC' // Force timezone to UTC to prevent double conversion
+      });
+    } else if (event.startDate) {
+      // Fall back to using the separate date field
+      // For date-only fields, we need to parse it a special way
+      const dateParts = event.startDate.split('-');
+      if (dateParts.length === 3) {
+        // Create date using UTC to avoid timezone shifts
+        // Using Date.UTC to specify components in UTC
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1; // Months are 0-indexed in JS
+        const day = parseInt(dateParts[2], 10);
+        const dateObj = new Date(Date.UTC(year, month, day));
+        
+        dateForDisplay = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          timeZone: 'UTC' // Force timezone to UTC to prevent double conversion
+        });
+      } else {
+        dateForDisplay = 'Date TBD';
+      }
+    } else {
+      dateForDisplay = 'Date TBD';
+    }
+    
+    // Similarly for end date
+    if (event.endDateTime) {
+      endDate = new Date(event.endDateTime);
+    }
+    
+    // Format the time display
     let timeDisplay;
     if (startDate && endDate) {
-      // Format time directly from the datetime objects
+      // Format time from datetime objects with timezone consideration
       timeDisplay = `${startDate.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
+        timeZone: 'UTC' // Force timezone to UTC to prevent double conversion
       })} - ${endDate.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
+        timeZone: 'UTC' // Force timezone to UTC to prevent double conversion
       })}`;
     } else {
       // Fallback to the old time fields if datetime fields aren't populated
-      // Use a default format that doesn't trigger parsing errors
       const startTimeStr = event.startTime || "";
       const endTimeStr = event.endTime || "";
       timeDisplay = (startTimeStr && endTimeStr) 
@@ -209,10 +258,21 @@ export default function EventsSection() {
         : startTimeStr || "Time TBD";
     }
     
+    // Extract components for the date card with timezone consideration
+    const dateComponents = event.startDateTime 
+      ? {
+          // Extract components from the startDate (now properly adjusted)
+          day: startDate!.getUTCDate().toString(), // Use UTC methods
+          month: startDate!.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }),
+          dayOfWeek: startDate!.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })
+        }
+      : extractDateComponents(event.startDate);
+    
     return {
       id: event.id,
-      date: formatDisplayDate(dateForFormatting), // Format the date for display using our utility
+      date: dateForDisplay,
       time: timeDisplay,
+      dateComponents, // Pass the extracted components for the date card
       title: event.title,
       description: event.description,
       location: "Providence, RI", // Default location since it's not in our model
@@ -294,6 +354,7 @@ export default function EventsSection() {
                 location={event.location}
                 focuses={event.focuses}
                 isHackathon={event.isHackathon}
+                dateComponents={event.dateComponents}
               />
             ))
           )}
