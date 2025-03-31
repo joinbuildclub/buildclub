@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SiGoogle } from "react-icons/si";
 import { Loader2, User, LogIn, Mail, Key, UserPlus } from "lucide-react";
-import AnimatedBlob from "@/components/AnimatedBlob";
+import RoundedTriangle from "@/components/shapes/RoundedTriangle";
+import RoundedSquare from "@/components/shapes/RoundedSquare";
+import RoundedCircle from "@/components/shapes/RoundedCircle";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -43,20 +45,37 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 relative overflow-hidden">
-      {/* Decorative elements */}
-      <AnimatedBlob 
-        color="primary" 
-        className="w-[600px] h-[600px] -top-64 -right-40 opacity-30" 
-      />
-      <AnimatedBlob 
-        color="accent" 
-        className="w-[500px] h-[500px] -bottom-40 -left-20 opacity-20" 
-      />
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-white via-gray-50 to-gray-100 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute w-full h-full overflow-hidden opacity-30 pointer-events-none">
+        <RoundedTriangle
+          className="absolute -right-12 top-16"
+          width="w-32 sm:w-40"
+          height="h-32 sm:h-40"
+          rotate="rotate-12"
+          animateClass="animate-floating-slow"
+          shadow
+        />
+        <RoundedSquare
+          className="absolute -left-16 top-72"
+          width="w-32 sm:w-40"
+          height="h-32 sm:h-40"
+          rotate="-rotate-12"
+          animateClass="animate-floating-delayed-slow"
+          shadow
+        />
+        <RoundedCircle
+          className="absolute right-20 bottom-20"
+          width="w-32 sm:w-36"
+          height="h-32 sm:h-36"
+          animateClass="animate-floating-slow"
+          shadow
+        />
+      </div>
       
       {/* Left side - Auth forms */}
       <div className="flex-1 flex items-center justify-center p-6 z-10">
-        <Card className="w-full max-w-md shadow-lg clay-card bg-white">
+        <Card className="w-full max-w-md shadow-lg bg-white rounded-3xl border border-gray-200 shadow-sm">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold tracking-tight">Welcome to BuildClub</CardTitle>
             <CardDescription>
@@ -270,54 +289,77 @@ export default function AuthPage() {
       </div>
       
       {/* Right side - Hero section */}
-      <div className="flex-1 bg-[--color-green] relative hidden md:flex flex-col justify-center items-center overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute w-full h-full bg-[#4CAF50] opacity-10">
-          <div className="absolute top-[5%] right-[10%] w-64 h-64 rounded-full bg-white opacity-20"></div>
-          <div className="absolute bottom-[15%] left-[5%] w-40 h-40 rounded-[42%_58%_70%_30%/45%_45%_55%_55%] bg-white opacity-20"></div>
-          <div className="absolute top-[40%] left-[20%] w-32 h-32 rounded-md bg-white opacity-10" style={{ transform: "rotate(15deg)" }}></div>
+      <div className="flex-1 bg-white relative hidden md:flex flex-col justify-center items-center overflow-hidden border-l border-gray-200">
+        {/* Decorative shapes */}
+        <div className="absolute w-full h-full pointer-events-none">
+          <RoundedCircle
+            className="absolute top-[10%] right-[15%]"
+            width="w-20 sm:w-24"
+            height="h-20 sm:h-24"
+            color="var(--color-blue)"
+            animateClass="animate-floating"
+            shadow
+          />
+          <RoundedTriangle
+            className="absolute bottom-[20%] right-[25%]"
+            width="w-24 sm:w-28"
+            height="h-24 sm:h-28"
+            color="var(--color-red)"
+            rotate="rotate-12"
+            animateClass="animate-floating-delayed"
+            shadow
+          />
+          <RoundedSquare
+            className="absolute bottom-[30%] left-[15%]"
+            width="w-16 sm:w-20"
+            height="h-16 sm:h-20"
+            color="var(--color-yellow)"
+            rotate="rotate-12"
+            animateClass="animate-floating-slow"
+            shadow
+          />
         </div>
         
-        <div className="max-w-md space-y-8 p-12 z-10 text-white">
+        <div className="max-w-md space-y-8 p-12 z-10 text-gray-800">
           <div className="space-y-3">
             <h1 className="text-5xl font-bold tracking-tight font-outfit">BuildClub</h1>
-            <p className="text-2xl font-outfit">Where AI builders meet IRL</p>
+            <p className="text-2xl font-outfit text-gray-600">Where AI builders meet IRL</p>
           </div>
           
           <div className="space-y-6 mt-8">
             <div className="flex items-start space-x-4">
-              <div className="bg-white bg-opacity-20 p-3 rounded-full flex-shrink-0 shadow-inner">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <div className="bg-red-100 p-3 rounded-full flex-shrink-0 clay-shape">
+                <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-xl">Connect with AI enthusiasts</h3>
-                <p className="text-sm opacity-90">Meet like-minded individuals passionate about AI and technology</p>
+                <h3 className="font-medium text-xl text-gray-800">Connect with AI enthusiasts</h3>
+                <p className="text-sm text-gray-600">Meet like-minded individuals passionate about AI and technology</p>
               </div>
             </div>
             
             <div className="flex items-start space-x-4">
-              <div className="bg-white bg-opacity-20 p-3 rounded-full flex-shrink-0 shadow-inner">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <div className="bg-blue-100 p-3 rounded-full flex-shrink-0 clay-shape">
+                <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-xl">Attend exclusive events</h3>
-                <p className="text-sm opacity-90">Join workshops, hackathons, and social gatherings focused on AI innovation</p>
+                <h3 className="font-medium text-xl text-gray-800">Attend exclusive events</h3>
+                <p className="text-sm text-gray-600">Join workshops, hackathons, and social gatherings focused on AI innovation</p>
               </div>
             </div>
             
             <div className="flex items-start space-x-4">
-              <div className="bg-white bg-opacity-20 p-3 rounded-full flex-shrink-0 shadow-inner">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <div className="bg-yellow-100 p-3 rounded-full flex-shrink-0 clay-shape">
+                <svg className="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-xl">Build together</h3>
-                <p className="text-sm opacity-90">Collaborate on projects and share knowledge with the community</p>
+                <h3 className="font-medium text-xl text-gray-800">Build together</h3>
+                <p className="text-sm text-gray-600">Collaborate on projects and share knowledge with the community</p>
               </div>
             </div>
           </div>
