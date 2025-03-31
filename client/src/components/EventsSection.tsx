@@ -15,6 +15,7 @@ import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
+import { formatDisplayDate, formatTimeRange, extractDateComponents } from "@/lib/dateUtils";
 
 // Focus type for the different areas
 type Focus = "product" | "design" | "engineering";
@@ -91,13 +92,8 @@ function EventCard({
         ? Code
         : Calendar;
 
-  // Format the date components
-  const dateParts = date.split(" ");
-  const day = dateParts[1].replace(",", "");
-  const month = dateParts[0];
-  const dayOfWeek = new Date(date).toLocaleDateString("en-US", {
-    weekday: "long",
-  });
+  // Extract date components using our utility
+  const { day, month, dayOfWeek } = extractDateComponents(date);
 
   return (
     <div
@@ -178,33 +174,26 @@ export default function EventsSection() {
     queryFn: () => fetch('/api/events?hubId=1&published=true').then(res => res.json()),
   });
 
-  // Function to format date for display
-  const formatEventDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const month = date.toLocaleString('en-US', { month: 'short' });
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `${month} ${day}, ${year}`;
-  };
+  // We're now using our utility functions from dateUtils.ts instead
 
-  // Function to format time range
-  const formatTimeRange = (startTime?: string, endTime?: string) => {
-    if (!startTime) return "Time TBD";
-    if (!endTime) return startTime;
-    return `${startTime} - ${endTime}`;
-  };
-
-  // Process events for display
-  const processedEvents = events.map(event => ({
-    id: event.id,
-    date: formatEventDate(event.startDate),
-    time: formatTimeRange(event.startTime, event.endTime),
-    title: event.title,
-    description: event.description,
-    location: "Providence, RI", // Default location since it's not in our model
-    focuses: event.focusAreas,
-    isHackathon: event.eventType === 'hackathon'
-  }));
+  // Process events for display, using our utility functions
+  const processedEvents = events.map(event => {
+    // Get the timestamp strings
+    const startDateStr = event.startDate;
+    const startTimeStr = event.startTime;
+    const endTimeStr = event.endTime;
+    
+    return {
+      id: event.id,
+      date: formatDisplayDate(startDateStr), // Format the date for display using our utility
+      time: formatTimeRange(startTimeStr, endTimeStr),
+      title: event.title,
+      description: event.description,
+      location: "Providence, RI", // Default location since it's not in our model
+      focuses: event.focusAreas,
+      isHackathon: event.eventType === 'hackathon'
+    };
+  });
 
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
