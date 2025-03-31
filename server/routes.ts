@@ -422,7 +422,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: validatedRegistration.email,
           firstName: validatedRegistration.firstName,
           lastName: validatedRegistration.lastName,
-          isGuest: true,
           role: "member"
         });
         validatedRegistration.userId = guestUser.id;
@@ -610,7 +609,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     isAmbassadorOrAdmin,
     async (req, res) => {
       try {
-        const hubEventId = parseInt(req.params.hubEventId);
+        const hubEventId = req.params.hubEventId as string;
         const registrations =
           await storage.getHubEventRegistrationsByHubEventId(hubEventId);
 
