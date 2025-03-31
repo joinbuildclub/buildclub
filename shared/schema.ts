@@ -147,6 +147,7 @@ export const hubEventRegistrations = pgTable(
     interestAreas: text("interest_areas").array().notNull(),
     aiInterests: text("ai_interests"),
     status: text("status").default("registered").$type<RegistrationStatus>(),
+    notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => ({
@@ -268,6 +269,7 @@ export const insertHubEventRegistrationSchema = createInsertSchema(
   interestAreas: true,
   aiInterests: true,
   status: true,
+  notes: true,
 });
 
 // Types for TypeScript

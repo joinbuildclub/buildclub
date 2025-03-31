@@ -415,6 +415,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         validatedRegistration.userId = user.id;
       }
 
+      // If no user is authenticated, create a guest user account
+      if (!user) {
+        const guestUser = await storage.createUser({
+          username: validatedRegistration.email, // Use email as username
+          email: validatedRegistration.email,
+          firstName: validatedRegistration.firstName,
+          lastName: validatedRegistration.lastName,
+          isGuest: true,
+          role: "member"
+        });
+        validatedRegistration.userId = guestUser.id;
+      }
+
       // Create the registration
       const registration = await storage.createHubEventRegistration(
         validatedRegistration,
