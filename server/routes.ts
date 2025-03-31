@@ -666,13 +666,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const members = await storage.getUsers({ role: "member" });
       
       // Format them like the old registrations for backward compatibility
-      const entries = members.map((user: User) => ({
+      const entries = members.map((user: any) => ({
         id: user.id,
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
         interestAreas: user.interests || [],
-        createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString()
+        createdAt: user.created_at ? new Date(user.created_at).toISOString() : new Date().toISOString()
       }));
       
       return res.status(200).json(entries);

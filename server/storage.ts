@@ -642,13 +642,13 @@ export class DatabaseStorage implements IStorage {
       return db.execute(sql`
         SELECT * FROM "user" 
         WHERE role = ${filters.role}
-        ORDER BY "createdAt" DESC
+        ORDER BY "created_at" DESC
       `).then(result => result.rows as User[]);
     } else {
       // Without filters
       return db.execute(sql`
         SELECT * FROM "user"
-        ORDER BY "createdAt" DESC
+        ORDER BY "created_at" DESC
       `).then(result => result.rows as User[]);
     }
   }
