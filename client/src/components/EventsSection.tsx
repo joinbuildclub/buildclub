@@ -31,23 +31,23 @@ function FocusBadge({ focus }: { focus: Focus }) {
   switch (focus) {
     case "product":
       return (
-        <div className="flex items-center gap-1.5 bg-red-50 text-red-600 py-1 px-2 rounded-md text-xs">
-          <div className="w-3 h-3 bg-[var(--color-red)] rounded-full transform rotate-45"></div>
-          <span className="font-medium">Product</span>
+        <div className="flex items-center gap-1.5 bg-red-50 text-red-600 py-1.5 px-2.5 rounded-md text-xs border border-red-100">
+          <div className="w-2.5 h-2.5 bg-[var(--color-red)] rounded-full flex-shrink-0"></div>
+          <span className="font-semibold">Product</span>
         </div>
       );
     case "design":
       return (
-        <div className="flex items-center gap-1.5 bg-blue-50 text-blue-600 py-1 px-2 rounded-md text-xs">
-          <div className="w-3 h-3 bg-[var(--color-blue)] rounded-full"></div>
-          <span className="font-medium">Design</span>
+        <div className="flex items-center gap-1.5 bg-blue-50 text-blue-600 py-1.5 px-2.5 rounded-md text-xs border border-blue-100">
+          <div className="w-2.5 h-2.5 bg-[var(--color-blue)] rounded-full flex-shrink-0"></div>
+          <span className="font-semibold">Design</span>
         </div>
       );
     case "engineering":
       return (
-        <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-600 py-1 px-2 rounded-md text-xs">
-          <div className="w-3 h-3 bg-[var(--color-yellow)] rounded-md transform rotate-3"></div>
-          <span className="font-medium">Engineering</span>
+        <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-600 py-1.5 px-2.5 rounded-md text-xs border border-yellow-100">
+          <div className="w-2.5 h-2.5 bg-[var(--color-yellow)] rounded-sm flex-shrink-0"></div>
+          <span className="font-semibold">Engineering</span>
         </div>
       );
     default:
@@ -85,22 +85,22 @@ function EventCard({
     <div
       className={`event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? "hackathon-event" : ""}`}
     >
-      <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-row">
+      <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-col sm:flex-row">
         {/* Left side with date and decorative element */}
-        <div className="w-28 bg-gray-50 p-4 flex flex-col items-center justify-between border-r border-gray-100">
-          <div className="text-center">
-            <div className="text-xs font-medium text-gray-500 uppercase mb-1">
+        <div className="sm:w-28 bg-gray-50 p-3 sm:p-4 flex flex-row justify-between sm:flex-col sm:items-center sm:justify-between border-b sm:border-b-0 sm:border-r border-gray-100">
+          <div className="flex flex-row sm:flex-col items-center sm:text-center">
+            <div className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase sm:mb-1 mr-2 sm:mr-0 tracking-wider">
               {dayOfWeek}
             </div>
-            <div className="text-2xl font-bold text-gray-800">{day}</div>
-            <div className="text-sm font-medium text-gray-500 uppercase">
+            <div className="text-xl sm:text-2xl font-bold text-gray-800 mr-2 sm:mr-0 leading-none">{day}</div>
+            <div className="text-[10px] sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
               {month}
             </div>
           </div>
         </div>
 
         {/* Main content */}
-        <div className="flex-1 p-5">
+        <div className="flex-1 p-4 sm:p-5">
           <h3 className="font-bold text-xl text-gray-800 mb-2 transition-colors duration-300 group-hover:text-[var(--color-red)]">
             {title}
           </h3>
@@ -115,18 +115,18 @@ function EventCard({
 
           {/* Event details */}
           <div className="flex items-center text-gray-600 mb-3 text-xs">
-            <Clock className="w-4 h-4 mr-2 text-gray-400" />
+            <Clock className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
             <span>{time || "Time TBD"}</span>
           </div>
 
           <div className="flex items-center text-gray-600 text-xs">
-            <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+            <MapPin className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
             <span>{location}</span>
           </div>
         </div>
 
         {/* Right side with action button */}
-        <div className="w-24 flex flex-col items-center justify-center p-3 bg-gray-50 border-l border-gray-100">
+        <div className="hidden sm:flex w-24 flex-col items-center justify-center p-3 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
           <Button
             variant="ghost"
             size="sm"
@@ -134,6 +134,18 @@ function EventCard({
           >
             <ArrowRight className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" />
             <span className="text-xs font-medium">Details</span>
+          </Button>
+        </div>
+        
+        {/* Mobile Details Button */}
+        <div className="sm:hidden flex justify-center border-t border-gray-100 p-3 bg-gray-50">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-2 flex items-center gap-2"
+          >
+            <span className="text-xs font-medium">View Details</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         </div>
       </div>
