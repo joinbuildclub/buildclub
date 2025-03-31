@@ -1,26 +1,19 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Link } from "wouter";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import Link from "next/link";
 
 const guestSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  interestAreas: z.array(z.string()),
   notes: z.string().optional(),
 });
 
@@ -32,17 +25,20 @@ type GuestFormData = z.infer<typeof guestSchema>;
 type UserFormData = z.infer<typeof userSchema>;
 
 export default function EventRegistrationForm({ 
-  hubEventId, 
-  isOpen, 
-  onClose 
+  eventId,
+  hubEventId,
+  eventTitle,
+  onSuccess,
+  onCancel
 }: { 
+  eventId: string;
   hubEventId: string;
-  isOpen: boolean;
-  onClose: () => void;
+  eventTitle: string;
+  onSuccess: () => void;
+  onCancel: () => void;
 }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const guestForm = useForm<GuestFormData>({
     resolver: zodResolver(guestSchema),
@@ -53,7 +49,6 @@ export default function EventRegistrationForm({
   });
 
   const onSubmit = async (data: GuestFormData | UserFormData) => {
-    setIsSubmitting(true);
     try {
       const response = await fetch("/api/events/register", {
         method: "POST",
@@ -64,7 +59,7 @@ export default function EventRegistrationForm({
             firstName: (data as GuestFormData).firstName,
             lastName: (data as GuestFormData).lastName,
             email: (data as GuestFormData).email,
-            interestAreas: (data as GuestFormData).interestAreas || [],
+            interestAreas: [],
           } : {
             firstName: user.firstName || "",
             lastName: user.lastName || "",
@@ -82,98 +77,93 @@ export default function EventRegistrationForm({
         title: "Success!",
         description: "You're registered for the event.",
       });
-      onClose();
+      onSuccess();
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to register for event. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Register for Event</DialogTitle>
-        </DialogHeader>
+    <div className="p-6">
+      <DialogHeader>
+        <DialogTitle>Register for {eventTitle}</DialogTitle>
+      </DialogHeader>
 
+      {!user && (
+        <div className="my-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+          <span className="text-sm">
+            <span className="font-semibold">Note:</span> You're registering as
+            a guest. Consider{" "}
+            <Link href="/auth" className="underline font-medium">
+              signing up for an account
+            </Link>{" "}
+            to track your registrations and receive event updates.
+          </span>
+        </div>
+      )}
+
+      <form onSubmit={!user ? guestForm.handleSubmit(onSubmit) : userForm.handleSubmit(onSubmit)} className="space-y-4 mt-4">
         {!user && (
-          <DialogDescription>
-            <div className="my-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
-              <p className="text-sm">
-                <span className="font-semibold">Note:</span> You're registering as
-                a guest. Consider{" "}
-                <Link href="/auth" className="underline font-medium">
-                  signing up for an account
-                </Link>{" "}
-                to track your registrations and receive event updates.
-              </p>
+          <>
+            <div className="space-y-2">
+              <Input
+                placeholder="First Name"
+                {...guestForm.register("firstName")}
+              />
+              {guestForm.formState.errors.firstName && (
+                <span className="text-sm text-red-500">
+                  {guestForm.formState.errors.firstName.message}
+                </span>
+              )}
             </div>
-          </DialogDescription>
+
+            <div className="space-y-2">
+              <Input
+                placeholder="Last Name"
+                {...guestForm.register("lastName")}
+              />
+              {guestForm.formState.errors.lastName && (
+                <span className="text-sm text-red-500">
+                  {guestForm.formState.errors.lastName.message}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                {...guestForm.register("email")}
+              />
+              {guestForm.formState.errors.email && (
+                <span className="text-sm text-red-500">
+                  {guestForm.formState.errors.email.message}
+                </span>
+              )}
+            </div>
+          </>
         )}
 
-        <form onSubmit={user ? userForm.handleSubmit(onSubmit) : guestForm.handleSubmit(onSubmit)}>
-          {!user && (
-            <>
-              <div className="space-y-4 mb-4">
-                <div>
-                  <Input
-                    placeholder="First Name"
-                    {...guestForm.register("firstName")}
-                  />
-                  {guestForm.formState.errors.firstName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {guestForm.formState.errors.firstName.message}
-                    </p>
-                  )}
-                </div>
+        <div className="space-y-2">
+          <Textarea
+            placeholder="Any notes or questions? (Optional)"
+            {...(user ? userForm.register("notes") : guestForm.register("notes"))}
+          />
+        </div>
 
-                <div>
-                  <Input
-                    placeholder="Last Name"
-                    {...guestForm.register("lastName")}
-                  />
-                  {guestForm.formState.errors.lastName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {guestForm.formState.errors.lastName.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    {...guestForm.register("email")}
-                  />
-                  {guestForm.formState.errors.email && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {guestForm.formState.errors.email.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="mb-4">
-            <Textarea
-              placeholder="Any notes or comments? (optional)"
-              {...(user ? userForm.register("notes") : guestForm.register("notes"))}
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Registering..." : "Register"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        <div className="flex justify-end gap-3 pt-4">
+          <Button variant="outline" type="button" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit">
+            Register
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
