@@ -68,7 +68,7 @@ export default function HeroSection() {
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-gray-800">
             Where <span className="text-[var(--color-red)]">AI</span> builders
-            meet <span className="text-[var(--color-blue)] squiggle-underline">IRL</span>
+            meet <span className="text-[var(--color-blue)]">IRL</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto mb-12">
             A fun community of product makers, designers, and engineers
@@ -100,7 +100,7 @@ export default function HeroSection() {
           <div className="text-center mb-8">
             <div className="inline-block mb-6">
               <div className="clay-shape bg-gray-700 px-5 py-2">
-                <span className="text-lg sm:text-xl font-bold text-white flex items-center">
+                <span className="text-sm sm:text-xl font-bold text-white flex items-center">
                   <Sparkles className="w-5 h-5 mr-2" /> Build with leading AI
                   technologies
                 </span>

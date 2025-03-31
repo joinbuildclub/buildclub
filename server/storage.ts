@@ -21,6 +21,9 @@ import {
   addContactToSendGrid,
   sendWelcomeEmail,
   sendAdminNotification,
+  sendEventRegistrationConfirmation,
+  sendEventReminder,
+  sendRegistrationCancellation
 } from "./sendgrid";
 
 export interface IStorage {
@@ -64,6 +67,10 @@ export interface IStorage {
     hubEventId: number,
     email: string,
   ): Promise<HubEventRegistration | undefined>;
+  getRegistrationsByUserId(userId: number): Promise<HubEventRegistration[]>;
+  getUserEventRegistrations(userId: number): Promise<any[]>;
+  updateRegistrationStatus(id: number, status: "registered" | "confirmed" | "attended" | "cancelled"): Promise<HubEventRegistration>;
+  deleteRegistration(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -473,6 +480,80 @@ export class DatabaseStorage implements IStorage {
       );
     return registration || undefined;
   }
+  
+  // Get all registrations for a specific user by user ID
+  async getRegistrationsByUserId(userId: number): Promise<HubEventRegistration[]> {
+    return db
+      .select()
+      .from(hubEventRegistrations)
+      .where(eq(hubEventRegistrations.userId, userId))
+      .orderBy(desc(hubEventRegistrations.createdAt));
+  }
+  
+  // Get enriched registrations with event and hub details
+  async getUserEventRegistrations(userId: number): Promise<any[]> {
+    const registrations = await this.getRegistrationsByUserId(userId);
+    
+    // If no registrations, return empty array
+    if (registrations.length === 0) {
+      return [];
+    }
+    
+    // For each registration, fetch the associated hub event, event, and hub
+    const enrichedRegistrations = await Promise.all(
+      registrations.map(async (registration) => {
+        const hubEvent = await this.getHubEvent(registration.hubEventId);
+        
+        if (!hubEvent) {
+          return null;
+        }
+        
+        const event = await this.getEvent(hubEvent.eventId);
+        const hub = await this.getHub(hubEvent.hubId);
+        
+        if (!event || !hub) {
+          return null;
+        }
+        
+        return {
+          registration,
+          event,
+          hub,
+          hubEvent
+        };
+      })
+    );
+    
+    // Filter out any null values (from failed lookups)
+    return enrichedRegistrations.filter(Boolean);
+  }
+  
+  // Update registration status
+  async updateRegistrationStatus(
+    id: number, 
+    status: "registered" | "confirmed" | "attended" | "cancelled"
+  ): Promise<HubEventRegistration> {
+    const [registration] = await db
+      .update(hubEventRegistrations)
+      .set({ status })
+      .where(eq(hubEventRegistrations.id, id))
+      .returning();
+      
+    return registration;
+  }
+  
+  // Delete a registration
+  async deleteRegistration(id: number): Promise<boolean> {
+    try {
+      await db
+        .delete(hubEventRegistrations)
+        .where(eq(hubEventRegistrations.id, id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+      return false;
+    }
+  }
 
 
 
@@ -511,14 +592,29 @@ export class DatabaseStorage implements IStorage {
         // Continue with other operations even if this one fails
       }
 
-      // Try to send welcome email to the subscriber
+      // Get Hub Event, Event, and Hub info
+      const hubEvent = await this.getHubEvent(entry.hubEventId);
+      if (!hubEvent) {
+        console.error("Hub event not found in processWithSendGrid:", entry.hubEventId);
+        return;
+      }
+      
+      const event = await this.getEvent(hubEvent.eventId);
+      const hub = await this.getHub(hubEvent.hubId);
+      
+      if (!event || !hub) {
+        console.error("Event or hub not found in processWithSendGrid");
+        return;
+      }
+      
+      // Send event registration confirmation email
       try {
-        const welcomeEmailSent = await sendWelcomeEmail(entry);
-        if (welcomeEmailSent) {
-          console.log(`Welcome email sent to ${entry.email} successfully`);
+        const confirmationSent = await sendEventRegistrationConfirmation(entry, event, hub);
+        if (confirmationSent) {
+          console.log(`Event registration confirmation email sent to ${entry.email} successfully`);
         }
       } catch (err) {
-        console.error("Error sending welcome email:", err);
+        console.error("Error sending event registration confirmation:", err);
       }
 
       // Try to send notification to admin
@@ -526,7 +622,7 @@ export class DatabaseStorage implements IStorage {
         const adminNotificationSent = await sendAdminNotification(entry);
         if (adminNotificationSent) {
           console.log(
-            `Admin notification sent for ${entry.email} successfully`,
+            `Admin notification sent for ${entry.email} event registration successfully`,
           );
         }
       } catch (err) {

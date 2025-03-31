@@ -9,6 +9,7 @@ import { DataTable } from "@/components/ui/data-table/data-table";
 import { registrationColumns, eventColumns, hubColumns } from "@/components/ui/data-table/columns";
 import { Loader2 } from "lucide-react";
 import DashboardHeader from "@/components/DashboardHeader";
+import UserRegistrations from "@/components/UserRegistrations";
 import type { 
   Registration as SchemaRegistration,
   Event as SchemaEvent, 
@@ -83,14 +84,26 @@ export default function Dashboard() {
       <div className="main-content">
         <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">Dashboard</h1>
-          <Tabs defaultValue="registrations" value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue={user?.role === "admin" || user?.role === "ambassador" ? "registrations" : "my-registrations"} value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 dashboard-font">
-              <TabsTrigger value="registrations">
-                Registrations
+              {/* Show My Registrations tab for all users */}
+              <TabsTrigger value="my-registrations">
+                My Registrations
               </TabsTrigger>
-              <TabsTrigger value="events">
-                Events
-              </TabsTrigger>
+              
+              {/* Admin/Ambassador tabs */}
+              {(user?.role === "admin" || user?.role === "ambassador") && (
+                <>
+                  <TabsTrigger value="registrations">
+                    All Registrations
+                  </TabsTrigger>
+                  <TabsTrigger value="events">
+                    Events
+                  </TabsTrigger>
+                </>
+              )}
+              
+              {/* Admin-only tabs */}
               {user?.role === "admin" && (
                 <TabsTrigger value="hubs">
                   Hubs
@@ -120,6 +133,21 @@ export default function Dashboard() {
                       searchPlaceholder="Search by email..."
                     />
                   )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            {/* My Registrations tab for all users */}
+            <TabsContent value="my-registrations">
+              <Card className="border border-gray-200 shadow-md">
+                <CardHeader className="bg-white border-b border-gray-100">
+                  <CardTitle className="dashboard-heading">My Event Registrations</CardTitle>
+                  <CardDescription>
+                    View and manage your registrations for upcoming BuildClub events.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <UserRegistrations />
                 </CardContent>
               </Card>
             </TabsContent>

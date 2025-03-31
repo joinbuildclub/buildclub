@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
@@ -10,6 +11,7 @@ import {
   Palette,
   Code,
   Loader2,
+  UserPlus,
 } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
@@ -17,6 +19,15 @@ import RoundedSquare from "@/components/shapes/RoundedSquare";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { formatDisplayDate, formatTimeRange, extractDateComponents } from "@/lib/dateUtils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import EventRegistrationForm from "./EventRegistrationForm";
+import { useAuth } from "@/hooks/use-auth";
 
 // Focus type for the different areas
 type Focus = "product" | "design" | "engineering";
@@ -84,6 +95,24 @@ function FocusBadge({ focus }: { focus: Focus }) {
   }
 }
 
+interface EventCardProps {
+  date: string;
+  time?: string;
+  title: string;
+  description: string;
+  location: string;
+  focuses: Focus[];
+  isHackathon?: boolean;
+  dateComponents?: {
+    day: string;
+    month: string;
+    dayOfWeek: string;
+  };
+  eventId: number;
+  hubEventId: number;
+  onRegisterClick: (eventId: number, hubEventId: number) => void;
+}
+
 function EventCard({
   date,
   time,
@@ -93,7 +122,12 @@ function EventCard({
   focuses,
   isHackathon = false,
   dateComponents,
+  eventId,
+  hubEventId,
+  onRegisterClick,
 }: EventCardProps) {
+  const { user } = useAuth();
+  
   // Get icon based on primary focus
   const Icon = (focuses && Array.isArray(focuses) && focuses.includes("product"))
     ? Briefcase
@@ -106,9 +140,15 @@ function EventCard({
   // Use the provided date components or extract them from the date string
   const { day, month, dayOfWeek } = dateComponents || extractDateComponents(date);
 
+  // Handle registration click
+  const handleRegisterClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onRegisterClick(eventId, hubEventId);
+  };
+
   return (
     <div
-      className={`event-card group cursor-pointer transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? "hackathon-event" : ""}`}
+      className={`event-card group transform transition-all duration-300 hover:-translate-y-1 ${isHackathon ? "hackathon-event" : ""}`}
     >
       <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 flex flex-col sm:flex-row">
         {/* Left side with date and decorative element */}
@@ -150,27 +190,55 @@ function EventCard({
           </div>
         </div>
 
-        {/* Right side with action button */}
-        <div className="hidden sm:flex w-24 flex-col items-center justify-center p-3 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
+        {/* Right side with action buttons */}
+        <div className="hidden sm:flex w-24 flex-col items-center justify-center p-3 gap-4 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
           <Button
             variant="ghost"
             size="sm"
             className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-0 flex flex-col items-center gap-2 h-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/events/${eventId}`;
+            }}
           >
             <ArrowRight className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" />
             <span className="text-xs font-medium">Details</span>
           </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-2 flex items-center gap-1"
+            onClick={handleRegisterClick}
+          >
+            <UserPlus className="w-3 h-3" />
+            <span className="text-xs font-medium">Register</span>
+          </Button>
         </div>
         
-        {/* Mobile Details Button */}
-        <div className="sm:hidden flex justify-center border-t border-gray-100 p-3 bg-gray-50">
+        {/* Mobile buttons */}
+        <div className="sm:hidden flex justify-between border-t border-gray-100 p-3 bg-gray-50">
           <Button
             variant="ghost"
             size="sm"
             className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-2 flex items-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/events/${eventId}`;
+            }}
           >
-            <span className="text-xs font-medium">View Details</span>
+            <span className="text-xs font-medium">Details</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-3 flex items-center gap-1"
+            onClick={handleRegisterClick}
+          >
+            <UserPlus className="w-3 h-3" />
+            <span className="text-xs font-medium">Register</span>
           </Button>
         </div>
       </div>
@@ -179,6 +247,11 @@ function EventCard({
 }
 
 export default function EventsSection() {
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [hubEventId, setHubEventId] = useState<number | null>(null);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const { user } = useAuth();
+  
   // Fetch events from the API, filtering for published events from the Providence Hub (ID: 1)
   const { data: events = [], isLoading, error } = useQuery<Event[]>({
     queryKey: ['/api/events'],
@@ -282,6 +355,35 @@ export default function EventsSection() {
     };
   });
 
+  // Handle event registration button click
+  const handleRegisterClick = (eventId: number, hubEventId: number) => {
+    // If user is not logged in, we'll still show the form but with a notice
+    // The form will prefill with user data if available
+    
+    // Find the event in our dataset
+    const eventToRegister = events.find(event => event.id === eventId);
+    
+    if (eventToRegister) {
+      setSelectedEvent(eventToRegister);
+      setHubEventId(hubEventId);
+      setIsRegistrationOpen(true);
+    }
+  };
+
+  // Close registration dialog
+  const handleRegistrationClose = () => {
+    setIsRegistrationOpen(false);
+    setSelectedEvent(null);
+    setHubEventId(null);
+  };
+
+  // Handle successful registration
+  const handleRegistrationSuccess = () => {
+    setIsRegistrationOpen(false);
+    setSelectedEvent(null);
+    setHubEventId(null);
+  };
+
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
       <RoundedTriangle
@@ -345,19 +447,29 @@ export default function EventsSection() {
               <p className="text-gray-600">No upcoming events at the moment. Check back soon!</p>
             </div>
           ) : (
-            processedEvents.map((event, idx) => (
-              <EventCard
-                key={event.id}
-                date={event.date}
-                time={event.time}
-                title={event.title}
-                description={event.description}
-                location={event.location}
-                focuses={event.focuses}
-                isHackathon={event.isHackathon}
-                dateComponents={event.dateComponents}
-              />
-            ))
+            processedEvents.map((event, idx) => {
+              // Find the hubEvent ID for this event (assuming we're showing Providence Hub events)
+              const eventData = events.find(e => e.id === event.id);
+              // The hubEventId should be available in the events data, cast as any to access it
+              const hubEventId = (eventData as any)?.hubEventId || 1;
+              
+              return (
+                <EventCard
+                  key={event.id}
+                  date={event.date}
+                  time={event.time}
+                  title={event.title}
+                  description={event.description}
+                  location={event.location}
+                  focuses={event.focuses}
+                  isHackathon={event.isHackathon}
+                  dateComponents={event.dateComponents}
+                  eventId={event.id}
+                  hubEventId={hubEventId}
+                  onRegisterClick={handleRegisterClick}
+                />
+              );
+            })
           )}
         </div>
 
@@ -370,6 +482,38 @@ export default function EventsSection() {
           </Link>
         </div>
       </div>
+
+      {/* Event Registration Dialog */}
+      <Dialog open={isRegistrationOpen} onOpenChange={setIsRegistrationOpen}>
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="text-2xl">Register for Event</DialogTitle>
+            {!user && (
+              <DialogDescription>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+                  <p className="text-sm">
+                    <span className="font-semibold">Note:</span> You're registering as a guest. Consider{" "}
+                    <Link href="/auth" className="underline font-medium">
+                      signing up for an account
+                    </Link>{" "}
+                    to track your registrations and receive event updates.
+                  </p>
+                </div>
+              </DialogDescription>
+            )}
+          </DialogHeader>
+
+          {selectedEvent && hubEventId !== null && (
+            <EventRegistrationForm
+              eventId={selectedEvent.id}
+              hubEventId={hubEventId}
+              eventTitle={selectedEvent.title}
+              onSuccess={handleRegistrationSuccess}
+              onCancel={handleRegistrationClose}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

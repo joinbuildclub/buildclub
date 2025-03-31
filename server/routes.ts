@@ -22,7 +22,13 @@ import {
   JwtPayload,
 } from "./jwt";
 import { eq, desc } from "drizzle-orm";
-import { sendWelcomeEmail, sendAdminNotification } from "./sendgrid";
+import { 
+  sendWelcomeEmail, 
+  sendAdminNotification, 
+  sendEventRegistrationConfirmation,
+  sendEventReminder,
+  sendRegistrationCancellation
+} from "./sendgrid";
 
 // Middleware for role-based access control
 interface AuthUser {
@@ -402,7 +408,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // New event registration endpoint
+  // Event registration endpoint
   app.post("/api/events/register", async (req, res) => {
     try {
       // Validate the request body using the Zod schema
@@ -446,6 +452,136 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error registering for event:", error);
       return res.status(500).json({
         message: "An error occurred while processing your registration.",
+      });
+    }
+  });
+  
+  // Get user's event registrations
+  app.get("/api/my-registrations", isAuthenticated, async (req, res) => {
+    try {
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const registrations = await storage.getUserEventRegistrations(user.id);
+      return res.status(200).json(registrations);
+    } catch (error) {
+      console.error("Error fetching user registrations:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching your registrations.",
+      });
+    }
+  });
+  
+  // Update registration status
+  app.patch("/api/registrations/:id/status", isAuthenticated, async (req, res) => {
+    try {
+      const registrationId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !["registered", "confirmed", "attended", "cancelled"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+      }
+      
+      // Make sure user owns this registration or is admin/ambassador
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const registration = await storage.getHubEventRegistration(registrationId);
+      if (!registration) {
+        return res.status(404).json({ message: "Registration not found" });
+      }
+      
+      // Check if user has permission (owns registration or is admin/ambassador)
+      if (registration.userId !== user.id && user.role !== "admin" && user.role !== "ambassador") {
+        return res.status(403).json({ message: "You don't have permission to update this registration" });
+      }
+      
+      // Update status
+      const updatedRegistration = await storage.updateRegistrationStatus(
+        registrationId,
+        status as "registered" | "confirmed" | "attended" | "cancelled"
+      );
+      
+      // If cancelled, send cancellation email
+      if (status === "cancelled") {
+        try {
+          // Get the event details
+          const hubEvent = await storage.getHubEvent(registration.hubEventId);
+          if (hubEvent) {
+            const event = await storage.getEvent(hubEvent.eventId);
+            if (event) {
+              await sendRegistrationCancellation(registration, event);
+            }
+          }
+        } catch (emailError) {
+          console.error("Error sending cancellation email:", emailError);
+          // Continue with response even if email fails
+        }
+      }
+      
+      return res.status(200).json({
+        message: `Registration status updated to ${status}`,
+        registration: updatedRegistration
+      });
+    } catch (error) {
+      console.error("Error updating registration status:", error);
+      return res.status(500).json({
+        message: "An error occurred while updating the registration status."
+      });
+    }
+  });
+  
+  // Delete registration (unregister)
+  app.delete("/api/registrations/:id", isAuthenticated, async (req, res) => {
+    try {
+      const registrationId = parseInt(req.params.id);
+      
+      // Make sure user owns this registration or is admin
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const registration = await storage.getHubEventRegistration(registrationId);
+      if (!registration) {
+        return res.status(404).json({ message: "Registration not found" });
+      }
+      
+      // Check if user has permission (owns registration or is admin)
+      if (registration.userId !== user.id && user.role !== "admin") {
+        return res.status(403).json({ message: "You don't have permission to delete this registration" });
+      }
+      
+      // Send cancellation email before deleting
+      try {
+        const hubEvent = await storage.getHubEvent(registration.hubEventId);
+        if (hubEvent) {
+          const event = await storage.getEvent(hubEvent.eventId);
+          if (event) {
+            await sendRegistrationCancellation(registration, event);
+          }
+        }
+      } catch (emailError) {
+        console.error("Error sending cancellation email before deletion:", emailError);
+        // Continue with deletion even if email fails
+      }
+      
+      // Delete registration
+      const deleted = await storage.deleteRegistration(registrationId);
+      
+      if (deleted) {
+        return res.status(200).json({ message: "Registration successfully deleted" });
+      } else {
+        return res.status(500).json({ message: "Failed to delete registration" });
+      }
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+      return res.status(500).json({
+        message: "An error occurred while deleting the registration."
       });
     }
   });
