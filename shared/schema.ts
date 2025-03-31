@@ -68,6 +68,7 @@ export const users = pgTable("user", {
   profilePicture: text("profile_picture"),
   role: text("role").default("member").$type<Role>(),
   isOnboarded: boolean("is_onboarded").default(false),
+  isGuest: boolean("is_guest").default(false),
   twitterHandle: text("twitter_handle"),
   linkedinUrl: text("linkedin_url"),
   githubUsername: text("github_username"),
@@ -147,6 +148,7 @@ export const hubEventRegistrations = pgTable(
     interestAreas: text("interest_areas").array().notNull(),
     aiInterests: text("ai_interests"),
     status: text("status").default("registered").$type<RegistrationStatus>(),
+    notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => ({
@@ -214,6 +216,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   profilePicture: true,
   role: true,
   isOnboarded: true,
+  isGuest: true,
   twitterHandle: true,
   linkedinUrl: true,
   githubUsername: true,
@@ -268,6 +271,7 @@ export const insertHubEventRegistrationSchema = createInsertSchema(
   interestAreas: true,
   aiInterests: true,
   status: true,
+  notes: true,
 });
 
 // Types for TypeScript

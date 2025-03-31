@@ -422,6 +422,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: validatedRegistration.email,
           firstName: validatedRegistration.firstName,
           lastName: validatedRegistration.lastName,
+          isGuest: true,
           role: "member"
         });
         validatedRegistration.userId = guestUser.id;
@@ -637,6 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         interests: req.body.interestAreas, // Map interest areas to interests
+        isGuest: false, // These users are explicitly registering
         role: "member",
       });
 
@@ -691,8 +693,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interestAreas: hubEventRegistrations.interestAreas,
           aiInterests: hubEventRegistrations.aiInterests,
           status: hubEventRegistrations.status,
+          notes: hubEventRegistrations.notes,
           createdAt: hubEventRegistrations.createdAt
-          // Removed the notes column since it doesn't exist
         })
         .from(hubEventRegistrations)
         .orderBy(desc(hubEventRegistrations.createdAt));
