@@ -6,11 +6,13 @@ import { Loader2 } from "lucide-react";
 interface ProtectedRouteProps {
   children: ReactNode;
   requiredRole?: "admin" | "ambassador" | "member";
+  skipOnboarding?: boolean;
 }
 
 export default function ProtectedRoute({ 
   children,
-  requiredRole 
+  requiredRole,
+  skipOnboarding = false
 }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
   
@@ -24,6 +26,11 @@ export default function ProtectedRoute({
   
   if (!isAuthenticated || !user) {
     return <Redirect to="/auth" />;
+  }
+  
+  // If user hasn't completed onboarding and we're not on the onboarding page
+  if (!skipOnboarding && user.isOnboarded === false && window.location.pathname !== '/onboarding') {
+    return <Redirect to="/onboarding" />;
   }
   
   // If a specific role is required, check if the user has that role

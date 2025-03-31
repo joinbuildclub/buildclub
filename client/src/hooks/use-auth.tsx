@@ -18,6 +18,12 @@ type User = {
   role: "admin" | "ambassador" | "member" | null;
   googleId?: string | null;
   password?: string | null;
+  isOnboarded?: boolean;
+  twitterHandle?: string | null;
+  linkedinUrl?: string | null;
+  githubUsername?: string | null;
+  bio?: string | null;
+  interests?: string[] | null;
 };
 
 type AuthContextType = {

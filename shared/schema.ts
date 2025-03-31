@@ -32,6 +32,12 @@ export const users = pgTable("user", {
   lastName: text("last_name"),
   profilePicture: text("profile_picture"),
   role: text("role").default("member").$type<Role>(),
+  isOnboarded: boolean("is_onboarded").default(false),
+  twitterHandle: text("twitter_handle"),
+  linkedinUrl: text("linkedin_url"),
+  githubUsername: text("github_username"),
+  bio: text("bio"),
+  interests: text("interests").array(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -148,6 +154,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
   lastName: true,
   profilePicture: true,
   role: true,
+  isOnboarded: true,
+  twitterHandle: true,
+  linkedinUrl: true,
+  githubUsername: true,
+  bio: true,
+  interests: true,
 });
 
 export const insertHubSchema = createInsertSchema(hubs).pick({

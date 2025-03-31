@@ -473,6 +473,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.redirect(307, '/api/registrations');
   });
 
+  // User onboarding endpoint
+  app.post("/api/user/onboard", isAuthenticated, async (req, res) => {
+    try {
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      // Update user profile
+      const updatedUser = await storage.updateUser(user.id, {
+        twitterHandle: req.body.twitterHandle,
+        linkedinUrl: req.body.linkedinUrl,
+        githubUsername: req.body.githubUsername,
+        bio: req.body.bio,
+        interests: req.body.interests,
+        isOnboarded: true
+      });
+      
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      return res.status(500).json({
+        message: "An error occurred while updating your profile."
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

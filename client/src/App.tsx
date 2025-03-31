@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import AuthPage from "@/pages/AuthPage";
+import OnboardingPage from "@/pages/OnboardingPage";
 import { AuthProvider } from "@/hooks/use-auth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -20,6 +21,12 @@ function Router() {
       <Route path="/dashboard">
         <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/onboarding">
+        <ProtectedRoute skipOnboarding={true}>
+          <OnboardingPage />
         </ProtectedRoute>
       </Route>
       

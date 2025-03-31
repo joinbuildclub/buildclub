@@ -33,6 +33,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, userData: Partial<User>): Promise<User>;
   
   // Hub methods
   createHub(hub: InsertHub): Promise<Hub>;
@@ -127,6 +128,15 @@ export class DatabaseStorage implements IStorage {
       .values(this.safeData(insertUser))
       .returning();
     return user;
+  }
+  
+  async updateUser(id: number, userData: Partial<User>): Promise<User> {
+    const [updatedUser] = await db
+      .update(users)
+      .set(this.safeData(userData))
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser;
   }
   
   // Hub methods
