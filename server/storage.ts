@@ -176,14 +176,139 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
   
-  async getEvents(filters?: { isPublished?: boolean }): Promise<Event[]> {
-    let query = db.select().from(events);
+  async getEvents(filters?: { isPublished?: boolean; hubId?: number }): Promise<Event[]> {
+    // Handle different filter combinations with separate queries for type safety
+    let eventsQuery;
     
-    if (filters?.isPublished !== undefined) {
-      query = query.where(eq(events.isPublished, filters.isPublished)) as any;
+    if (filters?.isPublished !== undefined && filters?.hubId !== undefined) {
+      // Both filters
+      eventsQuery = db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          startTime: events.startTime,
+          endTime: events.endTime,
+          eventType: events.eventType,
+          focusAreas: events.focusAreas,
+          capacity: events.capacity,
+          isPublished: events.isPublished,
+          createdAt: events.createdAt,
+          createdById: events.createdById,
+          // Hub event data
+          hubId: hubEvents.hubId,
+          hubEventId: hubEvents.id,
+        })
+        .from(events)
+        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
+        .where(
+          and(
+            eq(events.isPublished, filters.isPublished),
+            eq(hubEvents.hubId, filters.hubId)
+          )
+        )
+        .orderBy(desc(events.startDate));
+    } 
+    else if (filters?.isPublished !== undefined) {
+      // Only published filter
+      eventsQuery = db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          startTime: events.startTime,
+          endTime: events.endTime,
+          eventType: events.eventType,
+          focusAreas: events.focusAreas,
+          capacity: events.capacity,
+          isPublished: events.isPublished,
+          createdAt: events.createdAt,
+          createdById: events.createdById,
+          // Hub event data 
+          hubId: hubEvents.hubId,
+          hubEventId: hubEvents.id,
+        })
+        .from(events)
+        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
+        .where(eq(events.isPublished, filters.isPublished))
+        .orderBy(desc(events.startDate));
+    } 
+    else if (filters?.hubId !== undefined) {
+      // Only hubId filter
+      eventsQuery = db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          startTime: events.startTime,
+          endTime: events.endTime,
+          eventType: events.eventType,
+          focusAreas: events.focusAreas,
+          capacity: events.capacity,
+          isPublished: events.isPublished,
+          createdAt: events.createdAt,
+          createdById: events.createdById,
+          // Hub event data
+          hubId: hubEvents.hubId,
+          hubEventId: hubEvents.id,
+        })
+        .from(events)
+        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
+        .where(eq(hubEvents.hubId, filters.hubId))
+        .orderBy(desc(events.startDate));
+    } 
+    else {
+      // No filters
+      eventsQuery = db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          startTime: events.startTime,
+          endTime: events.endTime,
+          eventType: events.eventType,
+          focusAreas: events.focusAreas,
+          capacity: events.capacity,
+          isPublished: events.isPublished,
+          createdAt: events.createdAt,
+          createdById: events.createdById,
+          // Hub event data
+          hubId: hubEvents.hubId,
+          hubEventId: hubEvents.id,
+        })
+        .from(events)
+        .innerJoin(hubEvents, eq(events.id, hubEvents.eventId))
+        .orderBy(desc(events.startDate));
     }
     
-    return await query.orderBy(desc(events.startDate));
+    // Execute the query
+    const joinedResults = await eventsQuery;
+    
+    // Process and map results to Event type
+    // In Drizzle join results, table fields are directly accessible 
+    return joinedResults.map((row: any) => ({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      startTime: row.startTime,
+      endTime: row.endTime,
+      eventType: row.eventType,
+      focusAreas: row.focusAreas,
+      capacity: row.capacity,
+      isPublished: row.isPublished,
+      createdAt: row.createdAt,
+      createdById: row.createdById
+    }));
   }
   
   // Hub Event methods

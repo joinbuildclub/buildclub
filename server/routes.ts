@@ -1,24 +1,29 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { 
-  insertHubEventRegistrationSchema, 
-  User, 
-  Event, 
-  Hub, 
-  HubEvent, 
-  HubEventRegistration 
+import {
+  insertHubEventRegistrationSchema,
+  User,
+  Event,
+  Hub,
+  HubEvent,
+  HubEventRegistration,
 } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import passport from "passport";
-import { generateToken, verifyToken, extractTokenFromRequest, JwtPayload } from "./jwt";
+import {
+  generateToken,
+  verifyToken,
+  extractTokenFromRequest,
+  JwtPayload,
+} from "./jwt";
 
 // Middleware for role-based access control
 interface AuthUser {
   id: number;
   username: string;
-  role: 'admin' | 'ambassador' | 'member' | null;
+  role: "admin" | "ambassador" | "member" | null;
   email?: string | null;
   password?: string | null;
   googleId?: string | null;
@@ -33,18 +38,18 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  
+
   // Then check JWT token
   const token = extractTokenFromRequest(req);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  
+
   const payload = verifyToken(token);
   if (!payload) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
-  
+
   // Add user info to request
   (req as any).jwtPayload = payload;
   return next();
@@ -56,7 +61,7 @@ const getUserInfo = async (req: Request): Promise<AuthUser | null> => {
   if (req.isAuthenticated() && req.user) {
     return req.user as AuthUser;
   }
-  
+
   // Then check JWT
   const payload = (req as any).jwtPayload as JwtPayload | undefined;
   if (payload) {
@@ -64,137 +69,144 @@ const getUserInfo = async (req: Request): Promise<AuthUser | null> => {
     const user = await storage.getUser(payload.userId);
     return user || null;
   }
-  
+
   return null;
 };
 
 // Middleware to check if user has admin role
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const user = await getUserInfo(req);
-  
+
   if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  
-  if (user.role !== 'admin') {
-    return res.status(403).json({ message: "Forbidden: Admin access required" });
+
+  if (user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Admin access required" });
   }
-  
+
   return next();
 };
 
 // Middleware to check if user has ambassador or admin role
-const isAmbassadorOrAdmin = async (req: Request, res: Response, next: NextFunction) => {
+const isAmbassadorOrAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const user = await getUserInfo(req);
-  
+
   if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  
-  if (user.role !== 'admin' && user.role !== 'ambassador') {
-    return res.status(403).json({ message: "Forbidden: Ambassador or Admin access required" });
+
+  if (user.role !== "admin" && user.role !== "ambassador") {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Ambassador or Admin access required" });
   }
-  
+
   return next();
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-
   // Google OAuth routes
   app.get(
-    '/auth/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
+    "/auth/google",
+    passport.authenticate("google", { scope: ["profile", "email"] }),
   );
 
   app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { 
-      failureRedirect: '/?error=auth-failed' 
+    "/auth/google/callback",
+    passport.authenticate("google", {
+      failureRedirect: "/?error=auth-failed",
     }),
     (req, res) => {
       // Generate JWT token for the authenticated user
       if (req.user) {
         const token = generateToken(req.user as User);
-        
+
         // Set JWT token as a cookie
-        res.cookie('token', token, {
+        res.cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production', // Secure in production, allow HTTP for development
-          sameSite: 'lax', // Enhanced security
-          path: '/',
+          secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+          sameSite: "lax", // Enhanced security
+          path: "/",
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
       }
-      
+
       // Successful authentication
-      res.redirect('/?success=google-auth');
-    }
+      res.redirect("/dashboard/?success=google-auth");
+    },
   );
 
-  app.get('/auth/logout', (req, res) => {
+  app.get("/auth/logout", (req, res) => {
     // Clear session
     req.logout((err) => {
       if (err) {
-        console.error('Error during logout:', err);
+        console.error("Error during logout:", err);
       }
-      
+
       // Clear JWT token cookie
-      res.clearCookie('token');
-      
-      res.redirect('/');
+      res.clearCookie("token");
+
+      res.redirect("/");
     });
   });
-  
+
   // POST endpoint for logout (for API calls)
-  app.post('/api/auth/logout', (req, res) => {
+  app.post("/api/auth/logout", (req, res) => {
     // Clear session
     req.logout((err) => {
       if (err) {
-        console.error('Error during logout:', err);
-        return res.status(500).json({ message: 'Error during logout' });
+        console.error("Error during logout:", err);
+        return res.status(500).json({ message: "Error during logout" });
       }
-      
+
       // Clear JWT token cookie
-      res.clearCookie('token');
-      
-      res.json({ message: 'Successfully logged out' });
+      res.clearCookie("token");
+
+      res.json({ message: "Successfully logged out" });
     });
   });
 
   // LOGIN endpoint - Generate JWT token
-  app.post('/api/auth/login', (req, res) => {
+  app.post("/api/auth/login", (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    
+
     const token = generateToken(req.user as User);
-    
+
     // Set JWT token as cookie
-    res.cookie('token', token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Secure in production, allow HTTP for development
-      sameSite: 'lax', // Enhanced security
-      path: '/',
+      secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+      sameSite: "lax", // Enhanced security
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    
+
     // Also return token in response for clients that need it
     res.json({
       token,
-      user: req.user
+      user: req.user,
     });
   });
 
   // Get user info - supports both session and JWT auth
-  app.get('/api/user', async (req, res) => {
+  app.get("/api/user", async (req, res) => {
     // Check for session authentication
     if (req.isAuthenticated()) {
-      return res.json({ 
+      return res.json({
         user: req.user,
-        isAuthenticated: true 
+        isAuthenticated: true,
       });
     }
-    
+
     // Check for JWT authentication
     const token = extractTokenFromRequest(req);
     if (token) {
@@ -204,27 +216,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (user) {
           return res.json({
             user,
-            isAuthenticated: true
+            isAuthenticated: true,
           });
         }
       }
     }
-    
+
     // Not authenticated
-    res.json({ 
+    res.json({
       user: null,
-      isAuthenticated: false 
+      isAuthenticated: false,
     });
   });
-  
+
   // Get current authenticated user - supports both session and JWT auth
-  app.get('/api/me', async (req, res) => {
+  app.get("/api/me", async (req, res) => {
     const user = await getUserInfo(req);
-    
+
     if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    
+
     res.json(user);
   });
 
@@ -239,11 +251,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching hubs:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the hubs."
+        message: "An error occurred while fetching the hubs.",
       });
     }
   });
-  
+
   app.post("/api/hubs", isAdmin, async (req, res) => {
     try {
       const hub = await storage.createHub(req.body);
@@ -253,60 +265,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error creating hub:", error);
       return res.status(500).json({
-        message: "An error occurred while creating the hub."
+        message: "An error occurred while creating the hub.",
       });
     }
   });
-  
+
   // Event related routes
   app.get("/api/events", async (req, res) => {
     try {
-      const isPublished = req.query.published === 'true';
-      const events = await storage.getEvents({ isPublished });
+      // Set up filters based on query parameters
+      const filters: { isPublished?: boolean; hubId?: number } = {};
+      
+      // Only apply isPublished filter if explicitly set to true or false
+      // This way, requesting /api/events without a published param returns all events
+      if (req.query.published === "true") {
+        filters.isPublished = true;
+      } else if (req.query.published === "false") {
+        filters.isPublished = false;
+      }
+      
+      // Add hubId filter if provided
+      if (req.query.hubId) {
+        filters.hubId = parseInt(req.query.hubId as string);
+      }
+      
+      const events = await storage.getEvents(filters);
       return res.status(200).json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the events."
+        message: "An error occurred while fetching the events.",
       });
     }
   });
-  
+
   app.get("/api/events/:id", async (req, res) => {
     try {
       const eventId = parseInt(req.params.id);
       const event = await storage.getEvent(eventId);
-      
+
       if (!event) {
         return res.status(404).json({
-          message: "Event not found."
+          message: "Event not found.",
         });
       }
-      
+
       return res.status(200).json(event);
     } catch (error) {
       console.error("Error fetching event:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the event."
+        message: "An error occurred while fetching the event.",
       });
     }
   });
-  
+
   app.post("/api/events", isAmbassadorOrAdmin, async (req, res) => {
     try {
       const user = await getUserInfo(req);
       if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      
+
       const eventData = {
         ...req.body,
-        createdById: user.id
+        createdById: user.id,
       };
-      
+
       const event = await storage.createEvent(eventData);
       return res.status(201).json(event);
     } catch (error) {
@@ -314,10 +341,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error creating event:", error);
       return res.status(500).json({
-        message: "An error occurred while creating the event."
+        message: "An error occurred while creating the event.",
       });
     }
   });
@@ -325,30 +352,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Hub Event related routes
   app.get("/api/hub-events", async (req, res) => {
     try {
-      const eventId = req.query.eventId ? parseInt(req.query.eventId as string) : undefined;
-      const hubId = req.query.hubId ? parseInt(req.query.hubId as string) : undefined;
-      
+      const eventId = req.query.eventId
+        ? parseInt(req.query.eventId as string)
+        : undefined;
+      const hubId = req.query.hubId
+        ? parseInt(req.query.hubId as string)
+        : undefined;
+
       let hubEvents = [];
-      
+
       if (eventId) {
         hubEvents = await storage.getHubEventsByEventId(eventId);
       } else if (hubId) {
         hubEvents = await storage.getHubEventsByHubId(hubId);
       } else {
         return res.status(400).json({
-          message: "Either eventId or hubId query parameter is required."
+          message: "Either eventId or hubId query parameter is required.",
         });
       }
-      
+
       return res.status(200).json(hubEvents);
     } catch (error) {
       console.error("Error fetching hub events:", error);
       return res.status(500).json({
-        message: "An error occurred while fetching the hub events."
+        message: "An error occurred while fetching the hub events.",
       });
     }
   });
-  
+
   app.post("/api/hub-events", isAmbassadorOrAdmin, async (req, res) => {
     try {
       const hubEvent = await storage.createHubEvent(req.body);
@@ -358,10 +389,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error creating hub event:", error);
       return res.status(500).json({
-        message: "An error occurred while creating the hub event."
+        message: "An error occurred while creating the hub event.",
       });
     }
   });
@@ -370,60 +401,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/events/register", async (req, res) => {
     try {
       // Validate the request body using the Zod schema
-      const validatedRegistration = insertHubEventRegistrationSchema.parse(req.body);
-      
+      const validatedRegistration = insertHubEventRegistrationSchema.parse(
+        req.body,
+      );
+
       // Check if email already exists for this hub event
       const existingRegistration = await storage.getHubEventRegistrationByEmail(
-        validatedRegistration.hubEventId, 
-        validatedRegistration.email
+        validatedRegistration.hubEventId,
+        validatedRegistration.email,
       );
-      
+
       if (existingRegistration) {
-        return res.status(409).json({ 
-          message: "You are already registered for this event." 
+        return res.status(409).json({
+          message: "You are already registered for this event.",
         });
       }
-      
+
       // Get user ID if authenticated
       const user = await getUserInfo(req);
       if (user) {
         validatedRegistration.userId = user.id;
       }
-      
+
       // Create the registration
-      const registration = await storage.createHubEventRegistration(validatedRegistration);
-      
-      return res.status(201).json({ 
+      const registration = await storage.createHubEventRegistration(
+        validatedRegistration,
+      );
+
+      return res.status(201).json({
         message: "Successfully registered for the event!",
-        registration 
+        registration,
       });
     } catch (error) {
       if (error instanceof ZodError) {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error registering for event:", error);
-      return res.status(500).json({ 
-        message: "An error occurred while processing your registration." 
+      return res.status(500).json({
+        message: "An error occurred while processing your registration.",
       });
     }
   });
 
   // Get registrations for a hub event (admin or ambassador only)
-  app.get("/api/hub-events/:hubEventId/registrations", isAmbassadorOrAdmin, async (req, res) => {
-    try {
-      const hubEventId = parseInt(req.params.hubEventId);
-      const registrations = await storage.getHubEventRegistrationsByHubEventId(hubEventId);
-      
-      return res.status(200).json(registrations);
-    } catch (error) {
-      console.error("Error fetching event registrations:", error);
-      return res.status(500).json({
-        message: "An error occurred while fetching the registrations."
-      });
-    }
-  });
+  app.get(
+    "/api/hub-events/:hubEventId/registrations",
+    isAmbassadorOrAdmin,
+    async (req, res) => {
+      try {
+        const hubEventId = parseInt(req.params.hubEventId);
+        const registrations =
+          await storage.getHubEventRegistrationsByHubEventId(hubEventId);
+
+        return res.status(200).json(registrations);
+      } catch (error) {
+        console.error("Error fetching event registrations:", error);
+        return res.status(500).json({
+          message: "An error occurred while fetching the registrations.",
+        });
+      }
+    },
+  );
 
   // Registration API endpoints (renamed from waitlist)
   app.post("/api/registrations", async (req, res) => {
@@ -435,22 +475,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName: req.body.lastName,
         email: req.body.email,
         interestAreas: req.body.interestAreas,
-        aiInterests: req.body.aiInterests
+        aiInterests: req.body.aiInterests,
       } as any); // Use 'as any' to bypass TypeScript check since the method does the right thing
-      
-      return res.status(201).json({ 
+
+      return res.status(201).json({
         message: "Successfully registered!",
-        entry: registration 
+        entry: registration,
       });
     } catch (error) {
       if (error instanceof ZodError) {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error submitting registration:", error);
-      return res.status(500).json({ 
-        message: "An error occurred while processing your request." 
+      return res.status(500).json({
+        message: "An error occurred while processing your request.",
       });
     }
   });
@@ -462,19 +502,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(200).json(entries);
     } catch (error) {
       console.error("Error fetching registrations:", error);
-      return res.status(500).json({ 
-        message: "An error occurred while fetching the registrations." 
+      return res.status(500).json({
+        message: "An error occurred while fetching the registrations.",
       });
     }
   });
-  
+
   // Legacy API endpoints for backward compatibility
   app.post("/api/waitlist", async (req, res) => {
-    return res.redirect(307, '/api/registrations');
+    return res.redirect(307, "/api/registrations");
   });
-  
+
   app.get("/api/waitlist", isAdmin, async (req, res) => {
-    return res.redirect(307, '/api/registrations');
+    return res.redirect(307, "/api/registrations");
   });
 
   // User onboarding endpoint
@@ -484,7 +524,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      
+
       // Update user profile
       const updatedUser = await storage.updateUser(user.id, {
         twitterHandle: req.body.twitterHandle,
@@ -492,14 +532,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         githubUsername: req.body.githubUsername,
         bio: req.body.bio,
         interests: req.body.interests,
-        isOnboarded: true
+        isOnboarded: true,
       });
-      
+
       return res.status(200).json(updatedUser);
     } catch (error) {
       console.error("Error updating user profile:", error);
       return res.status(500).json({
-        message: "An error occurred while updating your profile."
+        message: "An error occurred while updating your profile.",
       });
     }
   });
