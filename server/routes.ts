@@ -1,7 +1,14 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertWaitlistSchema, User } from "@shared/schema";
+import { 
+  insertHubEventRegistrationSchema, 
+  User, 
+  Event, 
+  Hub, 
+  HubEvent, 
+  HubEventRegistration 
+} from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import passport from "passport";
@@ -220,26 +227,216 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
   // prefix all routes with /api
 
-  // API endpoint to handle the waitlist form submission
-  app.post("/api/waitlist", async (req, res) => {
+  // Hub related routes
+  app.get("/api/hubs", async (req, res) => {
     try {
-      // Validate the request body using the Zod schema
-      const validatedEntry = insertWaitlistSchema.parse(req.body);
+      const hubs = await storage.getHubs();
+      return res.status(200).json(hubs);
+    } catch (error) {
+      console.error("Error fetching hubs:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching the hubs."
+      });
+    }
+  });
+  
+  app.post("/api/hubs", isAdmin, async (req, res) => {
+    try {
+      const hub = await storage.createHub(req.body);
+      return res.status(201).json(hub);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
       
-      // Check if email already exists
-      const existingEntry = await storage.getWaitlistEntryByEmail(validatedEntry.email);
-      if (existingEntry) {
-        return res.status(409).json({ 
-          message: "This email is already on our waitlist." 
+      console.error("Error creating hub:", error);
+      return res.status(500).json({
+        message: "An error occurred while creating the hub."
+      });
+    }
+  });
+  
+  // Event related routes
+  app.get("/api/events", async (req, res) => {
+    try {
+      const isPublished = req.query.published === 'true';
+      const events = await storage.getEvents({ isPublished });
+      return res.status(200).json(events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching the events."
+      });
+    }
+  });
+  
+  app.get("/api/events/:id", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      const event = await storage.getEvent(eventId);
+      
+      if (!event) {
+        return res.status(404).json({
+          message: "Event not found."
         });
       }
       
-      // Create the waitlist entry
-      const entry = await storage.createWaitlistEntry(validatedEntry);
+      return res.status(200).json(event);
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching the event."
+      });
+    }
+  });
+  
+  app.post("/api/events", isAmbassadorOrAdmin, async (req, res) => {
+    try {
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      const eventData = {
+        ...req.body,
+        createdById: user.id
+      };
+      
+      const event = await storage.createEvent(eventData);
+      return res.status(201).json(event);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error creating event:", error);
+      return res.status(500).json({
+        message: "An error occurred while creating the event."
+      });
+    }
+  });
+
+  // Hub Event related routes
+  app.get("/api/hub-events", async (req, res) => {
+    try {
+      const eventId = req.query.eventId ? parseInt(req.query.eventId as string) : undefined;
+      const hubId = req.query.hubId ? parseInt(req.query.hubId as string) : undefined;
+      
+      let hubEvents = [];
+      
+      if (eventId) {
+        hubEvents = await storage.getHubEventsByEventId(eventId);
+      } else if (hubId) {
+        hubEvents = await storage.getHubEventsByHubId(hubId);
+      } else {
+        return res.status(400).json({
+          message: "Either eventId or hubId query parameter is required."
+        });
+      }
+      
+      return res.status(200).json(hubEvents);
+    } catch (error) {
+      console.error("Error fetching hub events:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching the hub events."
+      });
+    }
+  });
+  
+  app.post("/api/hub-events", isAmbassadorOrAdmin, async (req, res) => {
+    try {
+      const hubEvent = await storage.createHubEvent(req.body);
+      return res.status(201).json(hubEvent);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error creating hub event:", error);
+      return res.status(500).json({
+        message: "An error occurred while creating the hub event."
+      });
+    }
+  });
+
+  // New event registration endpoint
+  app.post("/api/events/register", async (req, res) => {
+    try {
+      // Validate the request body using the Zod schema
+      const validatedRegistration = insertHubEventRegistrationSchema.parse(req.body);
+      
+      // Check if email already exists for this hub event
+      const existingRegistration = await storage.getHubEventRegistrationByEmail(
+        validatedRegistration.hubEventId, 
+        validatedRegistration.email
+      );
+      
+      if (existingRegistration) {
+        return res.status(409).json({ 
+          message: "You are already registered for this event." 
+        });
+      }
+      
+      // Get user ID if authenticated
+      const user = await getUserInfo(req);
+      if (user) {
+        validatedRegistration.userId = user.id;
+      }
+      
+      // Create the registration
+      const registration = await storage.createHubEventRegistration(validatedRegistration);
+      
+      return res.status(201).json({ 
+        message: "Successfully registered for the event!",
+        registration 
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error registering for event:", error);
+      return res.status(500).json({ 
+        message: "An error occurred while processing your registration." 
+      });
+    }
+  });
+
+  // Get registrations for a hub event (admin or ambassador only)
+  app.get("/api/hub-events/:hubEventId/registrations", isAmbassadorOrAdmin, async (req, res) => {
+    try {
+      const hubEventId = parseInt(req.params.hubEventId);
+      const registrations = await storage.getHubEventRegistrationsByHubEventId(hubEventId);
+      
+      return res.status(200).json(registrations);
+    } catch (error) {
+      console.error("Error fetching event registrations:", error);
+      return res.status(500).json({
+        message: "An error occurred while fetching the registrations."
+      });
+    }
+  });
+
+  // Legacy API endpoint to handle the waitlist form submission for backward compatibility
+  app.post("/api/waitlist", async (req, res) => {
+    try {
+      // We don't need to provide hubEventId - the createWaitlistEntry method
+      // will create a default event and hub for us internally
+      const waitlistEntry = await storage.createWaitlistEntry({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        interestAreas: req.body.interestAreas,
+        aiInterests: req.body.aiInterests
+      } as any); // Use 'as any' to bypass TypeScript check since the method does the right thing
       
       return res.status(201).json({ 
         message: "Successfully joined the waitlist!",
-        entry 
+        entry: waitlistEntry 
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -254,7 +451,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API endpoint to get all waitlist entries (admin-only)
+  // Legacy API endpoint to get all waitlist entries (admin-only) for backward compatibility
   app.get("/api/waitlist", isAdmin, async (req, res) => {
     try {
       const entries = await storage.getWaitlistEntries();

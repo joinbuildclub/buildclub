@@ -17,6 +17,10 @@ export const focusAreaEnum = pgEnum("focus_area", ["product", "design", "enginee
 export const FocusAreaEnum = z.enum(["product", "design", "engineering", "general"]);
 export type FocusArea = z.infer<typeof FocusAreaEnum>;
 
+// Define registration status enum
+export const registrationStatusEnum = z.enum(["registered", "confirmed", "attended", "cancelled"]);
+export type RegistrationStatus = z.infer<typeof registrationStatusEnum>;
+
 // Users table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -31,11 +35,6 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Relations for users
-export const usersRelations = relations(users, ({ many }) => ({
-  eventRegistrations: many(eventRegistrations),
-}));
-
 // Hubs (physical locations) table
 export const hubs = pgTable("hubs", {
   id: serial("id").primaryKey(),
@@ -49,11 +48,6 @@ export const hubs = pgTable("hubs", {
   longitude: text("longitude"),
   createdAt: timestamp("created_at").defaultNow(),
 });
-
-// Relations for hubs
-export const hubsRelations = relations(hubs, ({ many }) => ({
-  hubEvents: many(hubEvents),
-}));
 
 // Events table
 export const events = pgTable("events", {
@@ -72,30 +66,56 @@ export const events = pgTable("events", {
   createdById: integer("created_by_id").references(() => users.id),
 });
 
-// Relations for events
-export const eventsRelations = relations(events, ({ many, one }) => ({
-  hubEvents: many(hubEvents),
-  eventRegistrations: many(eventRegistrations),
-  createdBy: one(users, {
-    fields: [events.createdById],
-    references: [users.id],
-  }),
-}));
-
 // Hub Events junction table for many-to-many relationship
 export const hubEvents = pgTable("hub_events", {
   id: serial("id").primaryKey(),
   hubId: integer("hub_id").notNull().references(() => hubs.id),
   eventId: integer("event_id").notNull().references(() => events.id),
   isPrimary: boolean("is_primary").default(false),
+  capacity: integer("capacity"),
   createdAt: timestamp("created_at").defaultNow(),
 }, (t) => ({
   // Ensure an event can only be linked to a hub once
   uniqHubEvent: uniqueIndex("uniq_hub_event_idx").on(t.hubId, t.eventId),
 }));
 
-// Relations for hub events
-export const hubEventsRelations = relations(hubEvents, ({ one }) => ({
+// Hub Event Registrations table 
+export const hubEventRegistrations = pgTable("hub_event_registrations", {
+  id: serial("id").primaryKey(),
+  hubEventId: integer("hub_event_id").notNull().references(() => hubEvents.id),
+  userId: integer("user_id").references(() => users.id),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  interestAreas: text("interest_areas").array().notNull(),
+  aiInterests: text("ai_interests"),
+  status: text("status").default("registered").$type<RegistrationStatus>(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (t) => ({
+  // Ensure a user can only register once for a hub event
+  uniqEventUser: uniqueIndex("uniq_hubevent_user_idx").on(t.hubEventId, t.email),
+}));
+
+// Define relations after all tables are declared
+export const usersRelations = relations(users, ({ many }) => ({
+  hubEventRegistrations: many(hubEventRegistrations),
+  events: many(events, { relationName: "createdEvents" }),
+}));
+
+export const hubsRelations = relations(hubs, ({ many }) => ({
+  hubEvents: many(hubEvents),
+}));
+
+export const eventsRelations = relations(events, ({ many, one }) => ({
+  hubEvents: many(hubEvents),
+  createdBy: one(users, {
+    fields: [events.createdById],
+    references: [users.id],
+    relationName: "createdEvents",
+  }),
+}));
+
+export const hubEventsRelations = relations(hubEvents, ({ one, many }) => ({
   hub: one(hubs, {
     fields: [hubEvents.hubId],
     references: [hubs.id],
@@ -104,33 +124,16 @@ export const hubEventsRelations = relations(hubEvents, ({ one }) => ({
     fields: [hubEvents.eventId],
     references: [events.id],
   }),
+  registrations: many(hubEventRegistrations),
 }));
 
-// Event registrations table (renamed from waitlistEntries)
-export const eventRegistrations = pgTable("event_registrations", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").references(() => events.id),
-  userId: integer("user_id").references(() => users.id),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
-  interestAreas: text("interest_areas").array().notNull(),
-  aiInterests: text("ai_interests"),
-  status: text("status").default("registered").$type<"registered" | "confirmed" | "attended" | "cancelled">(),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (t) => ({
-  // Ensure a user can only register once for an event
-  uniqEventUser: uniqueIndex("uniq_event_user_idx").on(t.eventId, t.email),
-}));
-
-// Relations for event registrations
-export const eventRegistrationsRelations = relations(eventRegistrations, ({ one }) => ({
-  event: one(events, {
-    fields: [eventRegistrations.eventId],
-    references: [events.id],
+export const hubEventRegistrationsRelations = relations(hubEventRegistrations, ({ one }) => ({
+  hubEvent: one(hubEvents, {
+    fields: [hubEventRegistrations.hubEventId],
+    references: [hubEvents.id],
   }),
   user: one(users, {
-    fields: [eventRegistrations.userId],
+    fields: [hubEventRegistrations.userId],
     references: [users.id],
   }),
 }));
@@ -176,10 +179,11 @@ export const insertHubEventSchema = createInsertSchema(hubEvents).pick({
   hubId: true,
   eventId: true,
   isPrimary: true,
+  capacity: true,
 });
 
-export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
-  eventId: true,
+export const insertHubEventRegistrationSchema = createInsertSchema(hubEventRegistrations).pick({
+  hubEventId: true,
   userId: true,
   firstName: true,
   lastName: true,
@@ -202,9 +206,25 @@ export type Event = typeof events.$inferSelect;
 export type InsertHubEvent = z.infer<typeof insertHubEventSchema>;
 export type HubEvent = typeof hubEvents.$inferSelect;
 
-export type InsertEventRegistration = z.infer<typeof insertEventRegistrationSchema>;
-export type EventRegistration = typeof eventRegistrations.$inferSelect;
+export type InsertHubEventRegistration = z.infer<typeof insertHubEventRegistrationSchema>;
+export type HubEventRegistration = typeof hubEventRegistrations.$inferSelect;
 
 // Legacy types for backward compatibility during migration
-export type InsertWaitlistEntry = InsertEventRegistration;
-export type WaitlistEntry = EventRegistration;
+export type InsertWaitlistEntry = InsertHubEventRegistration;
+export type WaitlistEntry = HubEventRegistration;
+export type InsertEventRegistration = InsertHubEventRegistration;
+export type EventRegistration = HubEventRegistration;
+
+// Legacy schemas for backward compatibility
+export const insertWaitlistSchema = insertHubEventRegistrationSchema;
+export const insertEventRegistrationSchema = insertHubEventRegistrationSchema;
+
+// The original waitlistEntries table for reference before dropping it
+export const waitlistEntries = pgTable("waitlist_entries", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull().unique(),
+  interestAreas: text("interest_areas").array().notNull(),
+  aiInterests: text("ai_interests"),
+});
