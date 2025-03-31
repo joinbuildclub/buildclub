@@ -24,7 +24,8 @@ import Logo from "@/assets/logo.png";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { user, isAuthenticated, isLoading, loginMutation, registerMutation } = useAuth();
+  const { user, isAuthenticated, isLoading, loginMutation, registerMutation } =
+    useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("login");
 
@@ -204,163 +205,164 @@ export default function AuthPage() {
             </TabsContent>
 
             <TabsContent value="register">
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                // Use the register mutation to create a new account
-                if (registerData.email && registerData.password) {
-                  // Create registration credentials - username is optional in the API now
-                  // The server will auto-generate a username from email if not provided
-                  registerMutation.mutate({
-                    email: registerData.email,
-                    password: registerData.password,
-                    firstName: registerData.firstName || undefined,
-                    lastName: registerData.lastName || undefined,
-                    role: "member", // Default role for new users
-                  });
-                } else {
-                  // Show toast error if fields are missing
-                  toast({
-                    title: "Missing required fields",
-                    description: "Please fill out all required fields.",
-                    variant: "destructive",
-                  });
-                }
-              }}>
-              <CardContent className="space-y-4 pt-4">
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="reg-email"
-                    className="flex items-center gap-1.5"
-                  >
-                    <Mail className="h-4 w-4 text-[--color-green]" />
-                    Email
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="reg-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={registerData.email}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          email: e.target.value,
-                        })
-                      }
-                      required
-                      className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="firstName"
-                      className="flex items-center gap-1.5"
-                    >
-                      First Name
-                    </Label>
-                    <Input
-                      id="firstName"
-                      type="text"
-                      placeholder="First name"
-                      value={registerData.firstName}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          firstName: e.target.value,
-                        })
-                      }
-                      className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                    />
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // Use the register mutation to create a new account
+                  if (registerData.email && registerData.password) {
+                    // Create registration credentials - username is optional in the API now
+                    // The server will auto-generate a username from email if not provided
+                    registerMutation.mutate({
+                      email: registerData.email,
+                      password: registerData.password,
+                      firstName: registerData.firstName || undefined,
+                      lastName: registerData.lastName || undefined,
+                      role: "member", // Default role for new users
+                    });
+                  } else {
+                    // Show toast error if fields are missing
+                    toast({
+                      title: "Missing required fields",
+                      description: "Please fill out all required fields.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                <CardContent className="space-y-4 pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="firstName"
+                        className="flex items-center gap-1.5"
+                      >
+                        First Name
+                      </Label>
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="First name"
+                        value={registerData.firstName}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            firstName: e.target.value,
+                          })
+                        }
+                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="lastName"
+                        className="flex items-center gap-1.5"
+                      >
+                        Last Name
+                      </Label>
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Last name"
+                        value={registerData.lastName}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            lastName: e.target.value,
+                          })
+                        }
+                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label
-                      htmlFor="lastName"
+                      htmlFor="reg-email"
                       className="flex items-center gap-1.5"
                     >
-                      Last Name
+                      <Mail className="h-4 w-4 text-[--color-green]" />
+                      Email
                     </Label>
-                    <Input
-                      id="lastName"
-                      type="text"
-                      placeholder="Last name"
-                      value={registerData.lastName}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          lastName: e.target.value,
-                        })
-                      }
-                      className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                    />
+                    <div className="relative">
+                      <Input
+                        id="reg-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={registerData.email}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            email: e.target.value,
+                          })
+                        }
+                        required
+                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="reg-password"
-                    className="flex items-center gap-1.5"
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="reg-password"
+                      className="flex items-center gap-1.5"
+                    >
+                      <Key className="h-4 w-4 text-[--color-green]" />
+                      Password
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="reg-password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={registerData.password}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            password: e.target.value,
+                          })
+                        }
+                        required
+                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+
+                <CardFooter className="flex flex-col space-y-4">
+                  <Button
+                    type="submit"
+                    className="w-full bg-[--color-green] hover:bg-[--color-green]/90 text-white h-11 font-medium"
+                    disabled={registerMutation.isPending}
                   >
-                    <Key className="h-4 w-4 text-[--color-green]" />
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="reg-password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={registerData.password}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          password: e.target.value,
-                        })
-                      }
-                      required
-                      className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                    />
-                  </div>
-                </div>
-              </CardContent>
+                    {registerMutation.isPending ? (
+                      <span className="flex items-center">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </span>
+                    ) : (
+                      "Join the club"
+                    )}
+                  </Button>
 
-              <CardFooter className="flex flex-col space-y-4">
-                <Button
-                  type="submit"
-                  className="w-full bg-[--color-green] hover:bg-[--color-green]/90 text-white h-11 font-medium"
-                  disabled={registerMutation.isPending}
-                >
-                  {registerMutation.isPending ? (
-                    <span className="flex items-center">
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </span>
-                  ) : (
-                    "Join the club"
-                  )}
-                </Button>
-
-                <div className="relative w-full">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                  <div className="relative w-full">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
+                    </div>
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full border-gray-200 hover:bg-gray-50 hover:border-gray-300 h-11 font-medium"
-                  onClick={handleGoogleLogin}
-                >
-                  <SiGoogle className="mr-2 h-4 w-4" />
-                  Sign up with Google
-                </Button>
-              </CardFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full border-gray-200 hover:bg-gray-50 hover:border-gray-300 h-11 font-medium"
+                    onClick={handleGoogleLogin}
+                  >
+                    <SiGoogle className="mr-2 h-4 w-4" />
+                    Sign up with Google
+                  </Button>
+                </CardFooter>
               </form>
             </TabsContent>
           </Tabs>

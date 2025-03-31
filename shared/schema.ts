@@ -206,7 +206,8 @@ export const hubEventRegistrationsRelations = relations(
 );
 
 // Schemas for insert operations
-export const insertUserSchema = createInsertSchema(users).pick({
+// Create base schema and then modify it to make username optional for email-based authentication
+const baseUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   email: true,
@@ -222,6 +223,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
   githubUsername: true,
   bio: true,
   interests: true,
+});
+
+export const insertUserSchema = baseUserSchema.extend({
+  // Make username optional - it will be auto-generated from email if not provided
+  username: baseUserSchema.shape.username.optional(),
 });
 
 export const insertHubSchema = createInsertSchema(hubs).pick({

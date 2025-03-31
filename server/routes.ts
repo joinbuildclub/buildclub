@@ -195,6 +195,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      // Auto-generate username from email if not provided
+      if (!userData.username && userData.email) {
+        // Get the part before the @ sign and add a random suffix to ensure uniqueness
+        userData.username = `${userData.email.split('@')[0]}_${Math.floor(Math.random() * 1000)}`;
+      }
+      
       // Hash password
       if (userData.password) {
         userData.password = await hashPassword(userData.password);
