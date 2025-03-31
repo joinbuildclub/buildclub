@@ -21,8 +21,8 @@ export type FocusArea = z.infer<typeof FocusAreaEnum>;
 export const registrationStatusEnum = z.enum(["registered", "confirmed", "attended", "cancelled"]);
 export type RegistrationStatus = z.infer<typeof registrationStatusEnum>;
 
-// Users table
-export const users = pgTable("users", {
+// User table
+export const users = pgTable("user", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password"),
@@ -35,8 +35,8 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Hubs (physical locations) table
-export const hubs = pgTable("hubs", {
+// Hub (physical location) table
+export const hubs = pgTable("hub", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
@@ -49,8 +49,8 @@ export const hubs = pgTable("hubs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Events table
-export const events = pgTable("events", {
+// Event table
+export const events = pgTable("event", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
@@ -66,8 +66,8 @@ export const events = pgTable("events", {
   createdById: integer("created_by_id").references(() => users.id),
 });
 
-// Hub Events junction table for many-to-many relationship
-export const hubEvents = pgTable("hub_events", {
+// Hub Event junction table for many-to-many relationship
+export const hubEvents = pgTable("hub_event", {
   id: serial("id").primaryKey(),
   hubId: integer("hub_id").notNull().references(() => hubs.id),
   eventId: integer("event_id").notNull().references(() => events.id),
@@ -79,8 +79,8 @@ export const hubEvents = pgTable("hub_events", {
   uniqHubEvent: uniqueIndex("uniq_hub_event_idx").on(t.hubId, t.eventId),
 }));
 
-// Hub Event Registrations table 
-export const hubEventRegistrations = pgTable("hub_event_registrations", {
+// Hub Event Registration table 
+export const hubEventRegistrations = pgTable("hub_event_registration", {
   id: serial("id").primaryKey(),
   hubEventId: integer("hub_event_id").notNull().references(() => hubEvents.id),
   userId: integer("user_id").references(() => users.id),
@@ -219,8 +219,8 @@ export type EventRegistration = HubEventRegistration;
 export const insertWaitlistSchema = insertHubEventRegistrationSchema;
 export const insertEventRegistrationSchema = insertHubEventRegistrationSchema;
 
-// The original waitlistEntries table for reference before dropping it
-export const waitlistEntries = pgTable("waitlist_entries", {
+// The original waitlist entry table for reference before dropping it
+export const waitlistEntries = pgTable("waitlist_entry", {
   id: serial("id").primaryKey(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
