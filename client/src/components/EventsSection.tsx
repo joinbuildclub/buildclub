@@ -8,13 +8,31 @@ import {
   Briefcase,
   Palette,
   Code,
+  Loader2,
 } from "lucide-react";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
 
 // Focus type for the different areas
 type Focus = "product" | "design" | "engineering";
+
+// Define event types from the API
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate?: string;
+  startTime: string;
+  endTime: string;
+  eventType: string;
+  focusAreas: Focus[];
+  location?: string; 
+  isPublished: boolean;
+}
 
 interface EventCardProps {
   date: string;
@@ -65,11 +83,11 @@ function EventCard({
   isHackathon = false,
 }: EventCardProps) {
   // Get icon based on primary focus
-  const Icon = focuses.includes("product")
+  const Icon = (focuses && Array.isArray(focuses) && focuses.includes("product"))
     ? Briefcase
-    : focuses.includes("design")
+    : (focuses && Array.isArray(focuses) && focuses.includes("design"))
       ? Palette
-      : focuses.includes("engineering")
+      : (focuses && Array.isArray(focuses) && focuses.includes("engineering"))
         ? Code
         : Calendar;
 
@@ -108,7 +126,7 @@ function EventCard({
 
           {/* Focus area tags */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {focuses.map((focus, i) => (
+            {focuses && Array.isArray(focuses) && focuses.map((focus, i) => (
               <FocusBadge key={i} focus={focus} />
             ))}
           </div>
@@ -154,45 +172,39 @@ function EventCard({
 }
 
 export default function EventsSection() {
-  const events = [
-    {
-      date: "April 17, 2025",
-      time: "6:30 PM - 9:30 PM",
-      title: "AI Agents Workshop",
-      description:
-        "Learn all about AI agents and get hands-on with a practical workshop.",
-      location: "Providence, RI",
-      focuses: ["engineering"] as Focus[],
-    },
-    {
-      date: "May 15, 2025",
-      time: "6:30 PM - 9:30 PM",
-      title: "AI UI/UX Workshop",
-      description:
-        "Learn about emrging AI UI/UX patterns and how to build impactful interfaces for the age of AI.",
-      location: "Providence, RI",
-      focuses: ["design"] as Focus[],
-    },
-    {
-      date: "Jun 19, 2025",
-      time: "6:30 PM - 9:30 PM",
-      title: "AI Product Strategy Workshop",
-      description:
-        "Deep dive into the latest AI engineering product strategy best-practices with hands-on workshops and discussions.",
-      location: "Providence, RI",
-      focuses: ["product"] as Focus[],
-    },
-    {
-      date: "Jul 19, 2025",
-      time: "10:00 AM - 4:00 PM",
-      title: "AI Hackathon",
-      description:
-        "Teamup with product, design, and engineering peers to something impactiful using your AI know-how.",
-      location: "Providence, RI",
-      isHackathon: true,
-      focuses: ["product", "design", "engineering"] as Focus[],
-    },
-  ];
+  // Fetch events from the API, filtering for published events from the Providence Hub (ID: 1)
+  const { data: events = [], isLoading, error } = useQuery<Event[]>({
+    queryKey: ['/api/events'],
+    queryFn: () => fetch('/api/events?hubId=1&published=true').then(res => res.json()),
+  });
+
+  // Function to format date for display
+  const formatEventDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
+  };
+
+  // Function to format time range
+  const formatTimeRange = (startTime?: string, endTime?: string) => {
+    if (!startTime) return "Time TBD";
+    if (!endTime) return startTime;
+    return `${startTime} - ${endTime}`;
+  };
+
+  // Process events for display
+  const processedEvents = events.map(event => ({
+    id: event.id,
+    date: formatEventDate(event.startDate),
+    time: formatTimeRange(event.startTime, event.endTime),
+    title: event.title,
+    description: event.description,
+    location: "Providence, RI", // Default location since it's not in our model
+    focuses: event.focusAreas,
+    isHackathon: event.eventType === 'hackathon'
+  }));
 
   return (
     <section id="events" className="py-24 bg-white relative overflow-hidden">
@@ -243,18 +255,33 @@ export default function EventsSection() {
         </div>
 
         <div className="flex flex-col space-y-5 max-w-4xl mx-auto">
-          {events.map((event, idx) => (
-            <EventCard
-              key={idx}
-              date={event.date}
-              time={event.time}
-              title={event.title}
-              description={event.description}
-              location={event.location}
-              focuses={event.focuses}
-              isHackathon={event.isHackathon}
-            />
-          ))}
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <Loader2 className="h-10 w-10 text-gray-400 animate-spin mb-4" />
+              <p className="text-gray-500">Loading events...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <p className="text-red-600">Error loading events. Please try again later.</p>
+            </div>
+          ) : processedEvents.length === 0 ? (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+              <p className="text-gray-600">No upcoming events at the moment. Check back soon!</p>
+            </div>
+          ) : (
+            processedEvents.map((event, idx) => (
+              <EventCard
+                key={event.id}
+                date={event.date}
+                time={event.time}
+                title={event.title}
+                description={event.description}
+                location={event.location}
+                focuses={event.focuses}
+                isHackathon={event.isHackathon}
+              />
+            ))
+          )}
         </div>
 
         <div className="mt-16 text-center">
