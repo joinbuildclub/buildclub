@@ -191,37 +191,11 @@ function EventCard({
         </div>
 
         {/* Right side with action buttons */}
-        <div className="hidden sm:flex w-24 flex-col items-center justify-center p-3 gap-4 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
+        <div className="hidden sm:flex w-32 flex-col items-center justify-center p-5 gap-5 bg-gray-50 border-t sm:border-t-0 sm:border-l border-gray-100">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-0 flex flex-col items-center gap-2 h-auto"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/events/${eventId}`;
-            }}
-          >
-            <ArrowRight className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" />
-            <span className="text-xs font-medium">Details</span>
-          </Button>
-          
-          <Button
-            variant="default"
-            size="sm"
-            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-2 flex items-center gap-1 rounded-md"
-            onClick={handleRegisterClick}
-          >
-            <UserPlus className="w-3 h-3" />
-            <span className="text-xs font-medium">Register</span>
-          </Button>
-        </div>
-        
-        {/* Mobile buttons */}
-        <div className="sm:hidden flex justify-between border-t border-gray-100 p-3 bg-gray-50">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-600 hover:text-[var(--color-red)] hover:bg-transparent p-2 flex items-center gap-2"
+            className="w-full text-gray-600 hover:text-[var(--color-red)] border border-gray-200 hover:bg-gray-50 flex items-center justify-center gap-1.5 h-8 rounded-md transition-all duration-200"
             onClick={(e) => {
               e.stopPropagation();
               window.location.href = `/events/${eventId}`;
@@ -234,10 +208,36 @@ function EventCard({
           <Button
             variant="default"
             size="sm"
-            className="bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-0 px-3 flex items-center gap-1 rounded-md"
+            className="w-full clay-button bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-b-2 border-[var(--color-green-dark)] px-2 flex items-center justify-center gap-1.5 h-9 rounded-md transition-all duration-200 shadow-sm hover:shadow"
             onClick={handleRegisterClick}
           >
-            <UserPlus className="w-3 h-3" />
+            <UserPlus className="w-4 h-4" />
+            <span className="text-xs font-medium">Register</span>
+          </Button>
+        </div>
+        
+        {/* Mobile buttons */}
+        <div className="sm:hidden flex justify-between items-center border-t border-gray-100 p-4 bg-gray-50">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-gray-600 hover:text-[var(--color-red)] border border-gray-200 hover:bg-gray-50 px-3 flex items-center gap-1.5 h-8 rounded-md transition-all duration-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/events/${eventId}`;
+            }}
+          >
+            <span className="text-xs font-medium">Details</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </Button>
+          
+          <Button
+            variant="default"
+            size="sm"
+            className="clay-button bg-[var(--color-green)] text-white hover:bg-[var(--color-green)]/90 border-b-2 border-[var(--color-green-dark)] px-4 flex items-center gap-1.5 h-9 rounded-md transition-all duration-200 shadow-sm hover:shadow"
+            onClick={handleRegisterClick}
+          >
+            <UserPlus className="w-4 h-4" />
             <span className="text-xs font-medium">Register</span>
           </Button>
         </div>
@@ -255,7 +255,7 @@ export default function EventsSection() {
   // Fetch events from the API, filtering for published events from the Providence Hub (ID: 1)
   const { data: events = [], isLoading, error } = useQuery<Event[]>({
     queryKey: ['/api/events', 'providence-hub'],
-    queryFn: getQueryFn(`/api/events?hubId=1&published=true`),
+    queryFn: () => fetch('/api/events?hubId=1&published=true').then(res => res.json()),
     staleTime: 10000, // 10 seconds
     refetchOnMount: true,
     refetchOnWindowFocus: true,

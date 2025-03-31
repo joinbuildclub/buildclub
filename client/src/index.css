@@ -8,6 +8,7 @@
 :root {
   --color-red: #FF6B6B;
   --color-green: #4CAF50;
+  --color-green-dark: #388E3C; /* Darker shade for button borders */
   --color-blue: #6A8CFF;
   --color-yellow: #FFD166;
   
