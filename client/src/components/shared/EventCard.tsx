@@ -173,13 +173,13 @@ export function EventCard({
           </div>
         </div>
 
-        {/* Button on desktop, arrow on mobile */}
+        {/* Register button on mobile, arrow on desktop */}
         <div className="flex p-4 md:p-6 justify-end border-t border-gray-100 md:border-0">
           {showRegisterButton && onRegisterClick ? (
-            <div className="hidden md:block">
+            <div className="md:hidden w-full">
               <Button
                 variant="default"
-                className="bg-black hover:bg-gray-800 text-white"
+                className="bg-black hover:bg-gray-800 text-white w-full"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -190,7 +190,7 @@ export function EventCard({
               </Button>
             </div>
           ) : null}
-          <div className="relative w-full md:w-auto flex justify-end md:hidden">
+          <div className="hidden md:flex md:w-auto justify-end">
             <ArrowRight className="w-6 h-6 text-gray-400" />
           </div>
         </div>

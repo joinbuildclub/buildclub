@@ -295,22 +295,25 @@ export default function EventDetailPage() {
                 <div className="p-0">
                   <div className="flex flex-col md:flex-row">
                     {/* Left column with date box - special gradient based on focus area */}
-                    <div className={`md:w-48 p-6 flex flex-col items-center justify-center text-white relative overflow-hidden
-                      ${event.eventType === 'hackathon'
-                        ? "bg-gray-100" // Base color for hackathons covered by gradient
-                        : event.focusAreas.includes("engineering")
-                          ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
-                          : event.focusAreas.includes("design")
-                            ? "bg-gradient-to-br from-blue-400 to-blue-500"
-                            : event.focusAreas.includes("product")
-                              ? "bg-gradient-to-br from-red-400 to-red-500"
-                              : "bg-gradient-to-br from-purple-400 to-purple-500"}`}>
-                      
+                    <div
+                      className={`md:w-48 p-6 flex flex-col items-center justify-center text-white relative overflow-hidden
+                      ${
+                        event.eventType === "hackathon"
+                          ? "bg-gray-100" // Base color for hackathons covered by gradient
+                          : event.focusAreas.includes("engineering")
+                            ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
+                            : event.focusAreas.includes("design")
+                              ? "bg-gradient-to-br from-blue-400 to-blue-500"
+                              : event.focusAreas.includes("product")
+                                ? "bg-gradient-to-br from-red-400 to-red-500"
+                                : "bg-gradient-to-br from-purple-400 to-purple-500"
+                      }`}
+                    >
                       {/* Animated gradient overlay for hackathons */}
-                      {event.eventType === 'hackathon' && (
+                      {event.eventType === "hackathon" && (
                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
                       )}
-                      
+
                       {/* Date content with z-index to ensure it appears above the gradient */}
                       <div className="relative z-10">
                         <div className="text-sm font-medium opacity-90 uppercase">
@@ -375,21 +378,22 @@ export default function EventDetailPage() {
                       </div>
 
                       {/* Register button */}
-                      <Button
-                        onClick={handleRegister}
-                        className="bg-gray-900 hover:bg-gray-800 text-white border-0 rounded-md h-10 px-6"
-                      >
-                        Register
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        onClick={handleShare}
-                        className="h-10 ml-3"
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
-                      </Button>
+                      <div className="flex items-center justify-between w-full gap-x-4">
+                        <Button
+                          variant="outline"
+                          onClick={handleShare}
+                          className="h-10 ml-3 w-full"
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Share
+                        </Button>
+                        <Button
+                          onClick={handleRegister}
+                          className="bg-gray-900 hover:bg-gray-800 text-white border-0 rounded-md h-10 px-6 w-full"
+                        >
+                          Register
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
