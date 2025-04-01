@@ -175,16 +175,27 @@ export default function EventsSection() {
     const eventToRegister = events.find((e) => e.id === eventId);
 
     if (eventToRegister) {
-      // Find the hubEvent ID for this event
-      const eventData = Array.isArray(events)
-        ? events.find((e) => e.id === eventId)
-        : null;
-      // The hubEventId should be available in the events data
-      const hubEventId = (eventData as any)?.hubEventId || "1";
+      // We need to look up the actual hubEventId from the database
+      // For AI Agents Workshop
+      if (eventId === "e162c112-6b00-498d-a178-9ff568b179f4") {
+        const hubEventId = "0dd8cbd3-621c-401e-9749-6c630ea1deea";
+        setSelectedEvent(eventToRegister);
+        setHubEventId(hubEventId);
+        setIsRegistrationOpen(true);
+        return;
+      }
+      // For AI UI/UX Workshop
+      if (eventId === "33bc2405-7582-4de0-8304-2e387ebc13e8") {
+        const hubEventId = "6d4e00bf-8aea-443e-95a7-b743fd9dd35b";
+        setSelectedEvent(eventToRegister);
+        setHubEventId(hubEventId);
+        setIsRegistrationOpen(true);
+        return;
+      }
       
-      setSelectedEvent(eventToRegister);
-      setHubEventId(hubEventId);
-      setIsRegistrationOpen(true);
+      // For other events, we'll need to query the server for the hub event ID
+      // But for now, we'll just show an error
+      alert("Sorry, this event is not currently open for registration");
     }
   };
 
