@@ -66,7 +66,7 @@ export const users = pgTable("user", {
   firstName: text("first_name"),
   lastName: text("last_name"),
   profilePicture: text("profile_picture"),
-  role: text("role").default("member").$type<Role>(),
+  role: text("role", { enum: ["admin", "ambassador", "member"] }).default("member"),
   isOnboarded: boolean("is_onboarded").default(false),
   isGuest: boolean("is_guest").default(false),
   twitterHandle: text("twitter_handle"),

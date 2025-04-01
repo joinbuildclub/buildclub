@@ -8,7 +8,15 @@ import {
   User,
   Event,
   hubEventRegistrations,
+  RoleEnum,
 } from "@shared/schema";
+
+// Extend Express.Session to include our custom fields
+declare module 'express-session' {
+  interface SessionData {
+    convertEmail?: string;
+  }
+}
 
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -120,9 +128,16 @@ const isAmbassadorOrAdmin = async (
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Google OAuth routes
+  // Standard Google OAuth route
   app.get(
     "/auth/google",
+    (req, res, next) => {
+      // Store email from session or query params if provided
+      if (req.query.email) {
+        req.session.convertEmail = req.query.email as string;
+      }
+      next();
+    },
     passport.authenticate("google", { scope: ["profile", "email"] }),
   );
 
@@ -131,20 +146,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     passport.authenticate("google", {
       failureRedirect: "/?error=auth-failed",
     }),
-    (req, res) => {
-      // Generate JWT token for the authenticated user
-      if (req.user) {
-        const token = generateToken(req.user as User);
-
-        // Set JWT token as a cookie
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
-          sameSite: "lax", // Enhanced security
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
+    async (req, res) => {
+      if (!req.user) {
+        return res.redirect("/?error=auth-failed-no-user");
       }
+      
+      const user = req.user as User;
+      
+      // Check if we need to convert a guest account
+      const convertEmail = req.session.convertEmail;
+      if (convertEmail) {
+        try {
+          // Find if there's a guest account with this email
+          const guestUser = await storage.getUserByEmail(convertEmail);
+          
+          if (guestUser && guestUser.isGuest) {
+            console.log(`Converting guest account ${convertEmail} via Google OAuth`);
+            
+            // Get the Google user's email
+            if (user.email !== convertEmail) {
+              console.log(`Warning: Google account email (${user.email}) doesn't match guest account email (${convertEmail})`);
+              // We'll still proceed but log the discrepancy
+            }
+            
+            // Update the guest account with Google user data
+            const updatedData: Partial<User> = {
+              googleId: user.googleId,
+              email: user.email, // Use Google's verified email
+              firstName: user.firstName || guestUser.firstName,
+              lastName: user.lastName || guestUser.lastName,
+              profilePicture: user.profilePicture,
+              isGuest: false, // Mark as no longer a guest
+              role: "member", // Ensure role is a valid value
+            };
+            
+            // Convert the guest account
+            await storage.convertGuestAccount(convertEmail, updatedData);
+            
+            // Clear the session variable
+            delete req.session.convertEmail;
+            
+            // After successful conversion, redirect to dashboard
+            res.redirect("/dashboard/?success=account-converted");
+            return;
+          }
+        } catch (error) {
+          console.error("Error converting guest account via Google OAuth:", error);
+          // Continue with normal flow even if conversion fails
+        }
+        
+        // Clear the session variable even if conversion failed
+        delete req.session.convertEmail;
+      }
+      
+      // Normal Google OAuth flow - generate JWT token
+      const token = generateToken(user);
+
+      // Set JWT token as a cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+        sameSite: "lax", // Enhanced security
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
       // Successful authentication
       res.redirect("/dashboard/?success=google-auth");
@@ -190,6 +255,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if email already exists
       if (userData.email) {
         const existingUser = await storage.getUserByEmail(userData.email);
+        
+        // If there's an existing guest account with this email, convert it instead of creating a new one
+        if (existingUser && existingUser.isGuest) {
+          console.log(`Converting guest account with email ${userData.email} to permanent account`);
+          
+          // Hash password if provided
+          if (userData.password) {
+            userData.password = await hashPassword(userData.password);
+          }
+          
+          // Make sure role is one of the valid enum values
+          if (userData.role && !['admin', 'ambassador', 'member'].includes(userData.role as string)) {
+            userData.role = "member" as any; // Force it to be a valid value
+          }
+          
+          // Create a properly typed userData object with validated role
+          const validatedUserData: Partial<User> = {
+            ...userData,
+            // Ensure role is cast to the proper type
+            role: (userData.role && ['admin', 'ambassador', 'member'].includes(userData.role as string)) 
+              ? (userData.role as "admin" | "ambassador" | "member") 
+              : "member"
+          };
+          
+          // Convert the guest account to a permanent one
+          const updatedUser = await storage.convertGuestAccount(userData.email, validatedUserData);
+          
+          if (!updatedUser) {
+            return res.status(500).json({ message: "Failed to convert guest account" });
+          }
+          
+          // Log the user in
+          req.login(updatedUser, (err) => {
+            if (err) {
+              console.error("Error logging in after guest account conversion:", err);
+              return res.status(500).json({ message: "Error during authentication" });
+            }
+            
+            // Generate JWT token for the authenticated user
+            const token = generateToken(updatedUser);
+            
+            // Set JWT token as a cookie
+            res.cookie("token", token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+              sameSite: "lax", // Enhanced security
+              path: "/",
+              maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+            
+            return res.status(200).json({ 
+              message: "Guest account successfully converted to permanent account",
+              user: updatedUser,
+              token 
+            });
+          });
+          
+          return;
+        }
+        
+        // Regular case - email already exists and not a guest
         if (existingUser) {
           return res
             .status(409)

@@ -1,9 +1,15 @@
-import sgMail from '@sendgrid/mail';
-import sgClient from '@sendgrid/client';
-import type { WaitlistEntry, HubEventRegistration, Event, Hub } from '@shared/schema';
+import sgMail from "@sendgrid/mail";
+import sgClient from "@sendgrid/client";
+import type {
+  WaitlistEntry,
+  HubEventRegistration,
+  Event,
+  Hub,
+} from "@shared/schema";
 
 // Initialize SendGrid conditionally
-const isSendGridConfigured = !!process.env.SENDGRID_API_KEY && !!process.env.ADMIN_EMAIL;
+const isSendGridConfigured =
+  !!process.env.SENDGRID_API_KEY && !!process.env.ADMIN_EMAIL;
 
 if (isSendGridConfigured) {
   try {
@@ -16,14 +22,16 @@ if (isSendGridConfigured) {
     console.error("Error initializing SendGrid:", error);
   }
 } else {
-  console.warn("SendGrid not configured. SENDGRID_API_KEY and/or ADMIN_EMAIL missing.");
+  console.warn(
+    "SendGrid not configured. SENDGRID_API_KEY and/or ADMIN_EMAIL missing.",
+  );
 }
 
 // Function to send email with SendGrid
 export async function sendEmail(
-  to: string, 
-  subject: string, 
-  htmlContent: string
+  to: string,
+  subject: string,
+  htmlContent: string,
 ): Promise<boolean> {
   if (!process.env.SENDGRID_API_KEY || !process.env.ADMIN_EMAIL) {
     console.warn("SendGrid credentials not found. Email not sent.");
@@ -41,13 +49,15 @@ export async function sendEmail(
     console.log(`Email sent to ${to}`);
     return true;
   } catch (error) {
-    console.error('SendGrid email error:', error);
+    console.error("SendGrid email error:", error);
     return false;
   }
 }
 
 // Function to add a contact to SendGrid
-export async function addContactToSendGrid(entry: WaitlistEntry): Promise<boolean> {
+export async function addContactToSendGrid(
+  entry: WaitlistEntry,
+): Promise<boolean> {
   if (!process.env.SENDGRID_API_KEY) {
     console.warn("SENDGRID_API_KEY not found. Contact not added to SendGrid.");
     return false;
@@ -64,24 +74,27 @@ export async function addContactToSendGrid(entry: WaitlistEntry): Promise<boolea
           custom_fields: {
             // You can add custom fields if needed
             // e.g. for roles: roles: entry.role.join(',')
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     // Add contact to SendGrid
     const request = {
-      url: '/v3/marketing/contacts',
-      method: 'PUT' as const,
-      body: data
+      url: "/v3/marketing/contacts",
+      method: "PUT" as const,
+      body: data,
     };
 
     // Use the type assertion since we already checked if it exists
     const [response] = await sgClient.request(request);
-    console.log(`Contact added to SendGrid: ${entry.email}`, response.statusCode);
+    console.log(
+      `Contact added to SendGrid: ${entry.email}`,
+      response.statusCode,
+    );
     return response.statusCode >= 200 && response.statusCode < 300;
   } catch (error) {
-    console.error('Failed to add contact to SendGrid:', error);
+    console.error("Failed to add contact to SendGrid:", error);
     return false;
   }
 }
@@ -92,16 +105,20 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Welcome to BuildClub!</h2>
       <p>Hi ${entry.firstName},</p>
-      <p>We're excited to have you join our community of builders. We'll keep you updated on upcoming events and opportunities.</p>
+      <p>We're excited to have you join our community of AI builders. We'll keep you updated on upcoming events and opportunities.</p>
       <p>Here's a summary of what you shared with us:</p>
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        <li><strong>Interest Areas:</strong> ${entry.interestAreas.join(', ')}</li>
-        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ''}
+        ${entry.interestAreas ? `<li><strong>Interest Areas:</strong> ${entry.interestAreas.join(", ")}</li>` : ""}
+        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ""}
       </ul>
       <p>Looking forward to building together!</p>
       <p>The BuildClub Team</p>
+      <br/>
+      <p>P.S. If you have any questions or need assistance, please don't hesitate to</p>
+      <p>reach out to us at <a href="mailto:support@buildclub.io">support@buildclub.io</a>.</p>
+      
     </div>
   `;
 
@@ -109,7 +126,9 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
 }
 
 // Function to send admin notification of new community member
-export async function sendAdminNotification(entry: WaitlistEntry): Promise<boolean> {
+export async function sendAdminNotification(
+  entry: WaitlistEntry,
+): Promise<boolean> {
   if (!process.env.ADMIN_EMAIL) {
     console.warn("ADMIN_EMAIL not set. Admin notification not sent.");
     return false;
@@ -122,8 +141,8 @@ export async function sendAdminNotification(entry: WaitlistEntry): Promise<boole
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        <li><strong>Interest Areas:</strong> ${entry.interestAreas.join(', ')}</li>
-        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ''}
+        ${entry.interestAreas ? `<li><strong>Interest Areas:</strong> ${entry.interestAreas.join(", ")}</li>` : ""}
+        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ""}
       </ul>
     </div>
   `;
@@ -136,37 +155,39 @@ export async function sendAdminNotification(entry: WaitlistEntry): Promise<boole
 export async function sendEventRegistrationConfirmation(
   registration: HubEventRegistration,
   event: Event,
-  hub: Hub
+  hub: Hub,
 ): Promise<boolean> {
   // Format date and time for human readability
-  const eventDate = event.startDateTime 
-    ? new Date(event.startDateTime).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: 'UTC'
+  const eventDate = event.startDateTime
+    ? new Date(event.startDateTime).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC",
       })
-    : (event.startDate || 'Date TBD');
-    
+    : event.startDate || "Date TBD";
+
   const eventTime = event.startDateTime
-    ? new Date(event.startDateTime).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
+    ? new Date(event.startDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
         hour12: true,
-        timeZone: 'UTC'
+        timeZone: "UTC",
       })
-    : (event.startTime || 'Time TBD');
-  
+    : event.startTime || "Time TBD";
+
   const eventEndTime = event.endDateTime
-    ? ` - ${new Date(event.endDateTime).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
+    ? ` - ${new Date(event.endDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
         hour12: true,
-        timeZone: 'UTC'
+        timeZone: "UTC",
       })}`
-    : (event.endTime ? ` - ${event.endTime}` : '');
-  
+    : event.endTime
+      ? ` - ${event.endTime}`
+      : "";
+
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>You're Registered for ${event.title}!</h2>
@@ -178,7 +199,11 @@ export async function sendEventRegistrationConfirmation(
         <p>${event.description}</p>
         <p><strong>Date:</strong> ${eventDate}</p>
         <p><strong>Time:</strong> ${eventTime}${eventEndTime}</p>
-        <p><strong>Location:</strong> ${hub.name}</p>
+        <p><strong>Hosted by:</strong> ${hub.name}</p>
+        <p><strong>Address:</strong><br/></p>
+        <p>${hub.address}</p>
+        <p>${hub.city}, ${hub.state}</p>
+        <p>${hub.country}</p>
       </div>
       
       <p>We recommend adding this event to your calendar to make sure you don't miss it.</p>
@@ -188,44 +213,86 @@ export async function sendEventRegistrationConfirmation(
     </div>
   `;
 
-  return sendEmail(registration.email, `Registered: ${event.title}`, htmlContent);
+  return sendEmail(
+    registration.email,
+    `Registered: ${event.title}`,
+    htmlContent,
+  );
+}
+
+// Generate calendar link (Google Calendar example)
+export function generateCalendarLink(event: Event, hub: Hub) {
+  const eventTime = event.startDateTime
+    ? new Date(event.startDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC",
+      })
+    : event.startTime || "Time TBD";
+
+  const eventEndTime = event.endDateTime
+    ? ` - ${new Date(event.endDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC",
+      })}`
+    : event.endTime
+      ? ` - ${event.endTime}`
+      : "";
+
+  // Create location string
+  const location = `${hub.address}, ${hub.city}, ${hub.state}, ${hub.country}`;
+
+  // Build Google Calendar URL
+  const calendarUrl = new URL("https://calendar.google.com/calendar/render");
+  calendarUrl.searchParams.append("action", "TEMPLATE");
+  calendarUrl.searchParams.append("text", event.title);
+  calendarUrl.searchParams.append("dates", `${eventTime}/${eventEndTime}`);
+  calendarUrl.searchParams.append("details", event.description ?? "TBD");
+  calendarUrl.searchParams.append("location", location);
+
+  return calendarUrl.toString();
 }
 
 // Function to send event reminder email (to be sent 24h before event)
 export async function sendEventReminder(
   registration: HubEventRegistration,
   event: Event,
-  hub: Hub
+  hub: Hub,
 ): Promise<boolean> {
   // Format date and time for human readability
-  const eventDate = event.startDateTime 
-    ? new Date(event.startDateTime).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: 'UTC'
+  const eventDate = event.startDateTime
+    ? new Date(event.startDateTime).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC",
       })
-    : (event.startDate || 'Date TBD');
-    
+    : event.startDate || "Date TBD";
+
   const eventTime = event.startDateTime
-    ? new Date(event.startDateTime).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
+    ? new Date(event.startDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
         hour12: true,
-        timeZone: 'UTC'
+        timeZone: "UTC",
       })
-    : (event.startTime || 'Time TBD');
-  
+    : event.startTime || "Time TBD";
+
   const eventEndTime = event.endDateTime
-    ? ` - ${new Date(event.endDateTime).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
+    ? ` - ${new Date(event.endDateTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
         hour12: true,
-        timeZone: 'UTC'
+        timeZone: "UTC",
       })}`
-    : (event.endTime ? ` - ${event.endTime}` : '');
-  
+    : event.endTime
+      ? ` - ${event.endTime}`
+      : "";
+
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Reminder: ${event.title} is Tomorrow!</h2>
@@ -237,7 +304,11 @@ export async function sendEventReminder(
         <p>${event.description}</p>
         <p><strong>Date:</strong> ${eventDate}</p>
         <p><strong>Time:</strong> ${eventTime}${eventEndTime}</p>
-        <p><strong>Location:</strong> ${hub.name}</p>
+        <p><strong>Hosted by:</strong> ${hub.name}</p>
+        <p><strong>Address:</strong><br/></p>
+        <p>${hub.address}</p>
+        <p>${hub.city}, ${hub.state}</p>
+        <p>${hub.country}</p>
       </div>
       
       <p>If something has come up and you can't make it, please let us know by canceling your registration on your dashboard or replying to this email.</p>
@@ -246,13 +317,17 @@ export async function sendEventReminder(
     </div>
   `;
 
-  return sendEmail(registration.email, `REMINDER: ${event.title} Tomorrow`, htmlContent);
+  return sendEmail(
+    registration.email,
+    `REMINDER: ${event.title} Tomorrow`,
+    htmlContent,
+  );
 }
 
 // Function to send cancellation confirmation
 export async function sendRegistrationCancellation(
   registration: HubEventRegistration,
-  event: Event
+  event: Event,
 ): Promise<boolean> {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -265,5 +340,9 @@ export async function sendRegistrationCancellation(
     </div>
   `;
 
-  return sendEmail(registration.email, `Registration Cancelled: ${event.title}`, htmlContent);
+  return sendEmail(
+    registration.email,
+    `Registration Cancelled: ${event.title}`,
+    htmlContent,
+  );
 }

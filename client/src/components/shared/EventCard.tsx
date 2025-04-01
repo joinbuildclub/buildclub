@@ -190,7 +190,7 @@ export function EventCard({
               </Button>
             </div>
           ) : null}
-          <div className="hidden md:flex md:w-auto justify-end">
+          {/* <div className="hidden md:flex md:w-auto justify-end">
             <div className="flex items-center gap-x-4">
               <Button
                 variant="ghost"
@@ -200,7 +200,7 @@ export function EventCard({
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

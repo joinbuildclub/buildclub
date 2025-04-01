@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, Redirect } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -23,23 +23,43 @@ import Logo from "@/assets/logo.png";
 // No need to import the logo, we'll reference it directly
 
 export default function AuthPage() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading, loginMutation, registerMutation } =
     useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<string>("login");
+  
+  // Parse query parameters to check for email and mode
+  const searchParams = new URLSearchParams(window.location.search);
+  const emailParam = searchParams.get('email');
+  const modeParam = searchParams.get('mode');
+  
+  // Set active tab based on mode param or default to login
+  const [activeTab, setActiveTab] = useState<string>(modeParam === 'register' ? 'register' : 'login');
 
   const [loginData, setLoginData] = useState({
-    email: "",
+    email: emailParam || "",
     password: "",
   });
 
   const [registerData, setRegisterData] = useState({
     password: "",
-    email: "",
+    email: emailParam || "",
     firstName: "",
     lastName: "",
   });
+  
+  // When email param changes, update both forms
+  useEffect(() => {
+    if (emailParam) {
+      setLoginData(prev => ({ ...prev, email: emailParam }));
+      setRegisterData(prev => ({ ...prev, email: emailParam }));
+      
+      // If we're explicitly trying to convert a guest account, switch to register tab
+      if (modeParam === 'register') {
+        setActiveTab('register');
+      }
+    }
+  }, [emailParam, modeParam]);
 
   // If already authenticated, redirect to dashboard
   if (isAuthenticated && user) {
@@ -52,7 +72,13 @@ export default function AuthPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "/auth/google";
+    // If we have an email from the form, pass it to the Google auth endpoint
+    const emailToUse = activeTab === 'login' ? loginData.email : registerData.email;
+    if (emailToUse) {
+      window.location.href = `/auth/google?email=${encodeURIComponent(emailToUse)}`;
+    } else {
+      window.location.href = "/auth/google";
+    }
   };
 
   return (
