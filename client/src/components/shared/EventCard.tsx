@@ -173,9 +173,24 @@ export function EventCard({
           </div>
         </div>
 
-        {/* Arrow section - always displays right arrow, full width container on mobile */}
+        {/* Button on desktop, arrow on mobile */}
         <div className="flex p-4 md:p-6 justify-end border-t border-gray-100 md:border-0">
-          <div className="relative w-full md:w-auto flex justify-end">
+          {showRegisterButton && onRegisterClick ? (
+            <div className="hidden md:block">
+              <Button
+                variant="default"
+                className="bg-black hover:bg-gray-800 text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onRegisterClick(eventId, hubEventId);
+                }}
+              >
+                Register
+              </Button>
+            </div>
+          ) : null}
+          <div className="relative w-full md:w-auto flex justify-end md:hidden">
             <ArrowRight className="w-6 h-6 text-gray-400" />
           </div>
         </div>
@@ -220,6 +235,12 @@ export function EventCardWrapper({
   onClick, 
   onRegisterClick 
 }: EventCardWithProcessedEventProps) {
+  const handleRegisterClick = (eventId: string, hubEventId: string) => {
+    if (onRegisterClick && event) {
+      onRegisterClick(event);
+    }
+  };
+
   return (
     <EventCard
       date={event.date}
@@ -232,7 +253,8 @@ export function EventCardWrapper({
       dateComponents={event.dateComponents}
       eventId={event.id}
       hubEventId={event.hubEventId || ''}
-      showRegisterButton={false}
+      onRegisterClick={onRegisterClick ? handleRegisterClick : undefined}
+      showRegisterButton={!!onRegisterClick}
       linkToDetail={true} // Always link to detail page
     />
   );
