@@ -97,8 +97,23 @@ export default function EventRegistrationForm({
         }),
       });
 
+      // Handle different response status codes
+      if (response.status === 409) {
+        // Handle 409 Conflict - already registered
+        const data = await response.json();
+        
+        toast({
+          title: "Already Registered",
+          description: data.message || "You are already registered for this event.",
+          variant: "default", // Use default variant for informational messages
+        });
+        onSuccess(); // Close the modal even though it's a "conflict"
+        return;
+      } 
+      
       if (!response.ok) {
-        throw new Error("Registration failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
       }
 
       toast({
@@ -106,10 +121,10 @@ export default function EventRegistrationForm({
         description: "You're registered for the event.",
       });
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to register for event. Please try again.",
+        description: error.message || "Failed to register for event. Please try again.",
         variant: "destructive",
       });
     }
