@@ -173,25 +173,11 @@ export function EventCard({
           </div>
         </div>
 
-        {/* Button section - full width on mobile, normal on desktop */}
-        <div className="flex p-4 md:p-6 border-t border-gray-100 md:border-0">
-          {showRegisterButton && onRegisterClick ? (
-            <Button
-              variant="default"
-              className="bg-black hover:bg-gray-800 text-white w-full md:w-auto"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onRegisterClick(eventId, hubEventId);
-              }}
-            >
-              Register
-            </Button>
-          ) : (
-            <div className="relative overflow-hidden w-full flex justify-end">
-              <ArrowRight className="w-6 h-6 text-gray-400" />
-            </div>
-          )}
+        {/* Arrow section - always displays right arrow, full width container on mobile */}
+        <div className="flex p-4 md:p-6 justify-end border-t border-gray-100 md:border-0">
+          <div className="relative w-full md:w-auto flex justify-end">
+            <ArrowRight className="w-6 h-6 text-gray-400" />
+          </div>
         </div>
       </div>
     </div>
@@ -234,12 +220,6 @@ export function EventCardWrapper({
   onClick, 
   onRegisterClick 
 }: EventCardWithProcessedEventProps) {
-  const handleRegisterClick = (eventId: string, hubEventId: string) => {
-    if (onRegisterClick && event) {
-      onRegisterClick(event);
-    }
-  };
-
   return (
     <EventCard
       date={event.date}
@@ -252,9 +232,8 @@ export function EventCardWrapper({
       dateComponents={event.dateComponents}
       eventId={event.id}
       hubEventId={event.hubEventId || ''}
-      onRegisterClick={onRegisterClick ? handleRegisterClick : undefined}
-      showRegisterButton={!!onRegisterClick}
-      linkToDetail={!!onClick}
+      showRegisterButton={false}
+      linkToDetail={true} // Always link to detail page
     />
   );
 }
