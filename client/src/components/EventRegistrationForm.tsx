@@ -56,7 +56,7 @@ export default function EventRegistrationForm({
 }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  
+
   // Fetch event details to display in the form
   const { data: event } = useQuery<EventDetails>({
     queryKey: [`/api/events/${eventId}`],
@@ -101,16 +101,17 @@ export default function EventRegistrationForm({
       if (response.status === 409) {
         // Handle 409 Conflict - already registered
         const data = await response.json();
-        
+
         toast({
           title: "Already Registered",
-          description: data.message || "You are already registered for this event.",
+          description:
+            data.message || "You are already registered for this event.",
           variant: "default", // Use default variant for informational messages
         });
         onSuccess(); // Close the modal even though it's a "conflict"
         return;
-      } 
-      
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Registration failed");
@@ -124,7 +125,8 @@ export default function EventRegistrationForm({
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to register for event. Please try again.",
+        description:
+          error.message || "Failed to register for event. Please try again.",
         variant: "destructive",
       });
     }
@@ -134,21 +136,23 @@ export default function EventRegistrationForm({
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('en-US', { 
-      weekday: 'long', 
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric'
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC",
     }).format(date);
   };
-  
+
   const formatTime = (dateStr?: string) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('en-US', { 
-      hour: 'numeric', 
-      minute: 'numeric',
-      hour12: true 
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+      timeZone: "UTC",
     }).format(date);
   };
 
@@ -156,7 +160,9 @@ export default function EventRegistrationForm({
     <div className="p-0">
       <div className="bg-gray-900 text-white p-6">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl">Register for {eventTitle}</DialogTitle>
+          <DialogTitle className="text-white text-xl">
+            Register for {eventTitle}
+          </DialogTitle>
           <p className="text-gray-300 mt-2 text-sm">
             Join us for this exciting event and connect with fellow AI builders
           </p>
@@ -170,21 +176,29 @@ export default function EventRegistrationForm({
               <Calendar className="w-4 h-4 mr-2 text-gray-400" />
               <span>{formatDate(event.startDateTime)}</span>
             </div>
-            
+
             <div className="flex items-center text-gray-600">
               <Clock className="w-4 h-4 mr-2 text-gray-400" />
-              <span>{formatTime(event.startDateTime)} - {formatTime(event.endDateTime)}</span>
+              <span>
+                {formatTime(event.startDateTime)} -{" "}
+                {formatTime(event.endDateTime)}
+              </span>
             </div>
-            
+
             <div className="flex items-center text-gray-600">
               <MapPin className="w-4 h-4 mr-2 text-gray-400" />
               <span>{event.hub?.location || "Providence, RI"}</span>
             </div>
-            
+
             {event.hub && (
               <div className="flex items-center text-gray-600">
                 <Users className="w-4 h-4 mr-2 text-gray-400" />
-                <span>Hosted by <span className="font-medium text-green-600">{event.hub.name}</span></span>
+                <span>
+                  Hosted by{" "}
+                  <span className="font-medium text-green-600">
+                    {event.hub.name}
+                  </span>
+                </span>
               </div>
             )}
           </div>
@@ -195,8 +209,8 @@ export default function EventRegistrationForm({
         {!user && (
           <div className="mb-6 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
             <span className="text-sm">
-              <span className="font-semibold">Note:</span> You're registering as a
-              guest. Consider{" "}
+              <span className="font-semibold">Note:</span> You're registering as
+              a guest. Consider{" "}
               <a href="/auth" className="underline font-medium">
                 signing up for an account
               </a>{" "}
@@ -217,7 +231,10 @@ export default function EventRegistrationForm({
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="firstName"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     First Name
                   </label>
                   <Input
@@ -233,7 +250,10 @@ export default function EventRegistrationForm({
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="lastName"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Last Name
                   </label>
                   <Input
@@ -250,7 +270,10 @@ export default function EventRegistrationForm({
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Email Address
                 </label>
                 <Input
@@ -269,16 +292,23 @@ export default function EventRegistrationForm({
           ) : (
             <div className="p-3 bg-gray-50 border border-gray-200 rounded-md mb-4">
               <div className="text-sm text-gray-600">
-                <span className="font-medium text-gray-700">Registering as:</span> {user.firstName} {user.lastName}
+                <span className="font-medium text-gray-700">
+                  Registering as:
+                </span>{" "}
+                {user.firstName} {user.lastName}
               </div>
               <div className="text-sm text-gray-600 mt-1">
-                <span className="font-medium text-gray-700">Email:</span> {user.email}
+                <span className="font-medium text-gray-700">Email:</span>{" "}
+                {user.email}
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <label htmlFor="notes" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="notes"
+              className="text-sm font-medium text-gray-700"
+            >
               Additional Notes (Optional)
             </label>
             <Textarea
