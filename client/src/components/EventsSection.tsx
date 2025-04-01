@@ -6,7 +6,7 @@ import {
   PartyPopper,
   Loader2,
 } from "lucide-react";
-import { EventCard as SharedEventCard, type Focus, type Event as SharedEvent, FocusBadge } from "@/components/shared/EventCard";
+import { EventCard as SharedEventCard, type Focus, type Event as SharedEvent } from "@/components/shared/EventCard";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
@@ -166,14 +166,22 @@ export default function EventsSection() {
     : [];
 
   // Handle event registration button click
-  const handleRegisterClick = (eventId: string, hubEventId: string) => {
+  const handleRegisterClick = (event: any) => {
     // If user is not logged in, we'll still show the form but with a notice
     // The form will prefill with user data if available
 
-    // Find the event in our dataset
-    const eventToRegister = events.find((event) => event.id === eventId);
+    // Get the event ID and find the event in our dataset
+    const eventId = event.id;
+    const eventToRegister = events.find((e) => e.id === eventId);
 
     if (eventToRegister) {
+      // Find the hubEvent ID for this event
+      const eventData = Array.isArray(events)
+        ? events.find((e) => e.id === eventId)
+        : null;
+      // The hubEventId should be available in the events data
+      const hubEventId = (eventData as any)?.hubEventId || "1";
+      
       setSelectedEvent(eventToRegister);
       setHubEventId(hubEventId);
       setIsRegistrationOpen(true);
@@ -270,20 +278,26 @@ export default function EventsSection() {
               const hubEventId = (eventData as any)?.hubEventId || "1";
 
               return (
-                <SharedEventCard
-                  key={event.id}
-                  date={event.date}
-                  time={event.time}
-                  title={event.title}
-                  description={event.description}
-                  location={event.location}
-                  focuses={event.focuses}
-                  isHackathon={event.isHackathon}
-                  dateComponents={event.dateComponents}
-                  eventId={event.id}
-                  hubEventId={hubEventId}
-                  onRegisterClick={handleRegisterClick}
-                />
+                <div key={event.id}>
+                  {/* Using the EventCard component directly */}
+                  <SharedEventCard
+                    date={event.date}
+                    time={event.time}
+                    title={event.title}
+                    description={event.description}
+                    location={event.location}
+                    focuses={event.focuses}
+                    isHackathon={event.isHackathon}
+                    dateComponents={event.dateComponents}
+                    eventId={event.id}
+                    hubEventId={hubEventId}
+                    onRegisterClick={(eventId, hubEvtId) => {
+                      handleRegisterClick(event);
+                    }}
+                    showRegisterButton={true}
+                    linkToDetail={true}
+                  />
+                </div>
               );
             })
           )}

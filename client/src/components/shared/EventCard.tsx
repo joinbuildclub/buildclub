@@ -230,6 +230,7 @@ export interface EventCardWithProcessedEventProps {
   onRegisterClick?: (event: any) => void;
 }
 
+// Export the EventCardWrapper component
 export function EventCardWrapper({ 
   event, 
   onClick, 
