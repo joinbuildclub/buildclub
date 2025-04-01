@@ -19,13 +19,17 @@ import logoPath from "../assets/logo.png";
 
 export default function HeroSection() {
   const handleNavigation = (href: string) => {
-    // Smooth scroll to section
-    const element = document.querySelector(href);
-    if (element) {
-      window.scrollTo({
-        top: element.getBoundingClientRect().top + window.scrollY - 80,
-        behavior: "smooth",
-      });
+    // Extract the section ID from the href
+    if (href.includes("#")) {
+      const sectionId = href.split("#")[1];
+      const element = document.getElementById(sectionId);
+      
+      if (element) {
+        window.scrollTo({
+          top: element.getBoundingClientRect().top + window.scrollY - 80,
+          behavior: "smooth",
+        });
+      }
     }
   };
 

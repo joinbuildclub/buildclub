@@ -14,12 +14,11 @@ export default function Navbar() {
     setOpen(false);
     
     // Check if we're on the homepage and trying to scroll to a section
-    if (window.location.pathname === "/" && href.startsWith("#")) {
-      // Remove the slash from "/#section" to get just "#section"
-      const sectionId = href.replace(/\//g, "");
+    if (window.location.pathname === "/" && href.includes("#")) {
+      // Extract the section ID
+      const sectionId = href.split("#")[1];
+      const element = document.getElementById(sectionId);
       
-      // Use the correct selector for ID
-      const element = document.querySelector(sectionId);
       if (element) {
         window.scrollTo({
           top: element.getBoundingClientRect().top + window.scrollY - 80,

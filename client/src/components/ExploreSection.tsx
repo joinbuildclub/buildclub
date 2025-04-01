@@ -101,7 +101,7 @@ export default function ExploreSection() {
 
   return (
     <section
-      id="expectations"
+      id="explore"
       className="py-24 bg-gray-50 relative overflow-hidden"
     >
       <RoundedSquare
