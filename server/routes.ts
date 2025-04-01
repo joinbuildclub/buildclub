@@ -186,43 +186,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Validate user data
       const userData = insertUserSchema.parse(req.body);
-      
+
       // Check if email already exists
       if (userData.email) {
         const existingUser = await storage.getUserByEmail(userData.email);
         if (existingUser) {
-          return res.status(409).json({ message: "Email is already registered" });
+          return res
+            .status(409)
+            .json({ message: "Email is already registered" });
         }
       }
-      
+
       // Auto-generate username from email if not provided
       if (!userData.username && userData.email) {
         // Get the part before the @ sign and add a random suffix to ensure uniqueness
-        userData.username = `${userData.email.split('@')[0]}_${Math.floor(Math.random() * 1000)}`;
+        userData.username = `${userData.email.split("@")[0]}_${Math.floor(Math.random() * 1000)}`;
       }
-      
+
       // Hash password
       if (userData.password) {
         userData.password = await hashPassword(userData.password);
       }
-      
+
       // Create user with default role of "member" if not specified
       if (!userData.role) {
         userData.role = "member";
       }
-      
+
       // Create the user
       const newUser = await storage.createUser(userData);
-      
+
       // Automatically log in the user by creating a session
       req.login(newUser, (err) => {
         if (err) {
-          return res.status(500).json({ message: "Error during login", error: err.message });
+          return res
+            .status(500)
+            .json({ message: "Error during login", error: err.message });
         }
-        
+
         // Generate JWT token
         const token = generateToken(newUser);
-        
+
         // Set JWT token as cookie
         res.cookie("token", token, {
           httpOnly: true,
@@ -231,13 +235,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           path: "/",
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
-        
+
         // Return user data (excluding password)
         const { password, ...userWithoutPassword } = newUser;
         return res.status(201).json({
           message: "User registered successfully",
           user: userWithoutPassword,
-          token
+          token,
         });
       });
     } catch (error) {
@@ -245,35 +249,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const validationError = fromZodError(error);
         return res.status(400).json({ message: validationError.message });
       }
-      
+
       console.error("Error during registration:", error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         message: "An error occurred during registration",
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   });
 
   // LOGIN endpoint - Generate JWT token
-  app.post("/api/auth/login", passport.authenticate('local', { session: true }), (req, res) => {
-    // If we get here, authentication was successful
-    const token = generateToken(req.user as User);
+  app.post(
+    "/api/auth/login",
+    passport.authenticate("local", { session: true }),
+    (req, res) => {
+      // If we get here, authentication was successful
+      const token = generateToken(req.user as User);
 
-    // Set JWT token as cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
-      sameSite: "lax", // Enhanced security
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+      // Set JWT token as cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+        sameSite: "lax", // Enhanced security
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
-    // Also return token in response for clients that need it
-    res.json({
-      token,
-      user: req.user,
-    });
-  });
+      // Also return token in response for clients that need it
+      res.json({
+        token,
+        user: req.user,
+      });
+    },
+  );
 
   // Get user info - supports both session and JWT auth
   app.get("/api/user", async (req, res) => {
@@ -355,9 +363,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req, res) => {
     try {
       const filters = {
-        isPublished: req.query.published === "true" ? true : 
-                    req.query.published === "false" ? false : undefined,
-        hubId: req.query.hubId as string | undefined
+        isPublished:
+          req.query.published === "true"
+            ? true
+            : req.query.published === "false"
+              ? false
+              : undefined,
+        hubId: req.query.hubId as string | undefined,
       };
 
       const events = await storage.getEvents(filters);
@@ -383,16 +395,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get the hub events for this event
       const hubEvents = await storage.getHubEventsByEventId(eventId);
-      
+
       // Get hub information if available
       let hub = null;
       let hubEventId = null;
-      
+
       if (hubEvents.length > 0) {
         // Get the primary hub event or the first one if no primary
-        const primaryHubEvent = hubEvents.find(he => he.isPrimary) || hubEvents[0];
+        const primaryHubEvent =
+          hubEvents.find((he) => he.isPrimary) || hubEvents[0];
         hubEventId = primaryHubEvent.id;
-        
+
         // Get the hub information
         const hubInfo = await storage.getHub(primaryHubEvent.hubId);
         if (hubInfo) {
@@ -407,7 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(200).json({
         ...event,
         hubEventId,
-        hub
+        hub,
       });
     } catch (error) {
       console.error("Error fetching event:", error);
@@ -510,6 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get user ID if authenticated
       const user = await getUserInfo(req);
+
       if (user) {
         validatedRegistration.userId = user.id;
       }
@@ -522,7 +536,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           firstName: validatedRegistration.firstName,
           lastName: validatedRegistration.lastName,
           isGuest: true,
-          role: "member"
+          role: "member",
         });
         validatedRegistration.userId = guestUser.id;
       }
@@ -537,11 +551,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         registration,
       });
     } catch (error) {
-      if (error instanceof ZodError) {
-        const validationError = fromZodError(error);
-        return res.status(400).json({ message: validationError.message });
-      }
-
       console.error("Error registering for event:", error);
       return res.status(500).json({
         message: "An error occurred while processing your registration.",
@@ -793,7 +802,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           aiInterests: hubEventRegistrations.aiInterests,
           status: hubEventRegistrations.status,
           notes: hubEventRegistrations.notes,
-          createdAt: hubEventRegistrations.createdAt
+          createdAt: hubEventRegistrations.createdAt,
         })
         .from(hubEventRegistrations)
         .orderBy(desc(hubEventRegistrations.createdAt));
