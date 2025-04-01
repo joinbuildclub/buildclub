@@ -310,8 +310,6 @@ export class DatabaseStorage implements IStorage {
     // Execute the query
     const joinedResults = await eventsQuery;
 
-    console.log("JOINED_RESULTS", joinedResults);
-
     // Process and map results to Event type
     const res = joinedResults.map((row) => ({
       id: row.id,
