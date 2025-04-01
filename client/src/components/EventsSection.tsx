@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { Calendar, PartyPopper, Loader2 } from "lucide-react";
 import {
-  Calendar,
-  PartyPopper,
-  Loader2,
-} from "lucide-react";
-import { EventCard as SharedEventCard, type Focus, type Event as SharedEvent } from "@/components/shared/EventCard";
+  EventCard as SharedEventCard,
+  type Focus,
+  type Event as SharedEvent,
+} from "@/components/shared/EventCard";
 import RoundedTriangle from "@/components/shapes/RoundedTriangle";
 import RoundedCircle from "@/components/shapes/RoundedCircle";
 import RoundedSquare from "@/components/shapes/RoundedSquare";
@@ -27,8 +27,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 // Use the shared Event type from EventCard.tsx
 export type Event = SharedEvent;
-
-
 
 // Now using the FocusBadge from shared/EventCard.tsx instead of duplicating the implementation
 
@@ -174,28 +172,12 @@ export default function EventsSection() {
     const eventId = event.id;
     const eventToRegister = events.find((e) => e.id === eventId);
 
+    console.log("event:", event);
+    console.log("hubEventId:", event.hubEventId);
     if (eventToRegister) {
-      // We need to look up the actual hubEventId from the database
-      // For AI Agents Workshop
-      if (eventId === "e162c112-6b00-498d-a178-9ff568b179f4") {
-        const hubEventId = "0dd8cbd3-621c-401e-9749-6c630ea1deea";
-        setSelectedEvent(eventToRegister);
-        setHubEventId(hubEventId);
-        setIsRegistrationOpen(true);
-        return;
-      }
-      // For AI UI/UX Workshop
-      if (eventId === "33bc2405-7582-4de0-8304-2e387ebc13e8") {
-        const hubEventId = "6d4e00bf-8aea-443e-95a7-b743fd9dd35b";
-        setSelectedEvent(eventToRegister);
-        setHubEventId(hubEventId);
-        setIsRegistrationOpen(true);
-        return;
-      }
-      
-      // For other events, we'll need to query the server for the hub event ID
-      // But for now, we'll just show an error
-      alert("Sorry, this event is not currently open for registration");
+      setSelectedEvent(eventToRegister);
+      setHubEventId(event.hubEventId);
+      setIsRegistrationOpen(true);
     }
   };
 

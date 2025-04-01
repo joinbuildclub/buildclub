@@ -295,7 +295,9 @@ export class DatabaseStorage implements IStorage {
 
     // Apply filters
     if (filters?.isPublished !== undefined) {
-      eventsQuery = eventsQuery.where(eq(events.isPublished, filters.isPublished));
+      eventsQuery = eventsQuery.where(
+        eq(events.isPublished, filters.isPublished),
+      );
     }
 
     if (filters?.hubId) {
@@ -308,8 +310,10 @@ export class DatabaseStorage implements IStorage {
     // Execute the query
     const joinedResults = await eventsQuery;
 
+    console.log("JOINED_RESULTS", joinedResults);
+
     // Process and map results to Event type
-    return joinedResults.map((row) => ({
+    const res = joinedResults.map((row) => ({
       id: row.id,
       title: row.title,
       description: row.description,
@@ -324,9 +328,13 @@ export class DatabaseStorage implements IStorage {
       focusAreas: row.focusAreas,
       capacity: row.capacity,
       isPublished: row.isPublished,
+      hubId: row.hubId,
+      hubEventId: row.hubEventId,
       createdAt: row.createdAt,
       createdById: row.createdById,
     }));
+
+    return res;
   }
 
   // Hub Event methods

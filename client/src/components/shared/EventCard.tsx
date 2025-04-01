@@ -178,20 +178,28 @@ export function EventCard({
           {showRegisterButton && onRegisterClick ? (
             <div className="md:hidden w-full">
               <Button
-                variant="default"
-                className="bg-black hover:bg-gray-800 text-white w-full"
+                variant="secondary"
+                className="w-full"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   onRegisterClick(eventId, hubEventId);
                 }}
               >
-                Register
+                <span className="uppercase tracking-wider">Register</span>
               </Button>
             </div>
           ) : null}
           <div className="hidden md:flex md:w-auto justify-end">
-            <ArrowRight className="w-6 h-6 text-gray-400" />
+            <div className="flex items-center gap-x-4">
+              <Button
+                variant="ghost"
+                className="gap-x-2 outline outline-border"
+              >
+                <p className="text-gray-400 text-xl">Register</p>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -231,10 +239,10 @@ export interface EventCardWithProcessedEventProps {
 }
 
 // Export the EventCardWrapper component
-export function EventCardWrapper({ 
-  event, 
-  onClick, 
-  onRegisterClick 
+export function EventCardWrapper({
+  event,
+  onClick,
+  onRegisterClick,
 }: EventCardWithProcessedEventProps) {
   const handleRegisterClick = (eventId: string, hubEventId: string) => {
     if (onRegisterClick && event) {
@@ -253,7 +261,7 @@ export function EventCardWrapper({
       isHackathon={event.isHackathon}
       dateComponents={event.dateComponents}
       eventId={event.id}
-      hubEventId={event.hubEventId || ''}
+      hubEventId={event.hubEventId || ""}
       onRegisterClick={onRegisterClick ? handleRegisterClick : undefined}
       showRegisterButton={!!onRegisterClick}
       linkToDetail={true} // Always link to detail page
