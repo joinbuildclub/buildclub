@@ -167,10 +167,28 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const hubsRelations = relations(hubs, ({ many }) => ({
+  events: many(events, {
+    through: {
+      table: hubEvents,
+      references: [
+        [hubEvents.hubId, hubs.id],
+        [hubEvents.eventId, events.id],
+      ],
+    },
+  }),
   hubEvents: many(hubEvents),
 }));
 
 export const eventsRelations = relations(events, ({ many, one }) => ({
+  hubs: many(hubs, {
+    through: {
+      table: hubEvents,
+      references: [
+        [hubEvents.eventId, events.id],
+        [hubEvents.hubId, hubs.id],
+      ],
+    },
+  }),
   hubEvents: many(hubEvents),
   createdBy: one(users, {
     fields: [events.createdById],
