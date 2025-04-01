@@ -30,6 +30,7 @@ const guestSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
+  interestAreas: z.array(z.string()).default([]),
   notes: z.string().optional(),
 });
 
@@ -90,6 +91,7 @@ export default function EventRegistrationForm({
                 lastName: user.lastName || "",
                 email: user.email || "",
                 userId: user.id,
+                interestAreas: user.interests || [],
               }),
           notes: data.notes,
         }),
