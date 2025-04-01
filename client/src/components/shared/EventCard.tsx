@@ -102,10 +102,10 @@ export function EventCard({
   const shortDayOfWeek = dayOfWeek?.substring(0, 3) || "";
 
   const cardContent = (
-    <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-row group transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
-      {/* Left side with date - special animated gradient for hackathons, otherwise based on focus */}
+    <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col md:flex-row group transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+      {/* Date section - will be on top for mobile, on left for desktop */}
       <div
-        className={`w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
+        className={`w-full md:w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
                   ${
                     isHackathon
                       ? "bg-gray-100" // Base color that will be covered by the animated gradient
@@ -123,11 +123,11 @@ export function EventCard({
           <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
         )}
         {/* Date content with z-index to ensure it appears above the gradient */}
-        <div className="relative z-10">
-          <div className="text-sm font-medium opacity-90">
+        <div className="relative z-10 flex md:flex-col items-center">
+          <div className="text-sm font-medium opacity-90 mr-2 md:mr-0">
             {shortDayOfWeek.toUpperCase()}
           </div>
-          <div className="text-4xl font-bold leading-none mt-1 mb-1">
+          <div className="text-4xl font-bold leading-none mx-2 md:mt-1 md:mb-1 md:mx-0">
             {day}
           </div>
           <div className="text-sm font-medium opacity-90">
@@ -136,61 +136,63 @@ export function EventCard({
         </div>
       </div>
 
-      {/* Middle content - enhanced with better typography and spacing */}
-      <div className="flex-1 p-5 flex flex-col justify-center">
-        <div className="flex flex-wrap gap-1.5 mb-2">
-          {focuses &&
-            Array.isArray(focuses) &&
-            focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
+      <div className="flex flex-col flex-1">
+        {/* Middle content section */}
+        <div className="flex-1 p-5 flex flex-col justify-center">
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {focuses &&
+              Array.isArray(focuses) &&
+              focuses.map((focus, i) => <FocusBadge key={i} focus={focus} />)}
 
-          <Badge
-            variant="outline"
-            className="bg-gray-50 text-gray-600 border-gray-100"
-          >
-            {isHackathon ? "Hackathon" : "Workshop"}
-          </Badge>
+            <Badge
+              variant="outline"
+              className="bg-gray-50 text-gray-600 border-gray-100"
+            >
+              {isHackathon ? "Hackathon" : "Workshop"}
+            </Badge>
+          </div>
+
+          <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-[var(--color-blue)] transition-colors">
+            {title}
+          </h3>
+
+          <p className="text-gray-600 mb-3 line-clamp-2 text-sm">
+            {description}
+          </p>
+
+          <div className="flex flex-wrap gap-4 text-gray-500 text-sm">
+            <div className="flex items-center">
+              <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
+              <span>{time || "Time TBD"}</span>
+            </div>
+
+            <div className="flex items-center">
+              <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+              <span>{location}</span>
+            </div>
+          </div>
         </div>
 
-        <h3 className="font-bold text-xl text-gray-900 mb-2 group-hover:text-[var(--color-blue)] transition-colors">
-          {title}
-        </h3>
-
-        <p className="text-gray-600 mb-3 line-clamp-2 text-sm">
-          {description}
-        </p>
-
-        <div className="flex flex-wrap gap-4 text-gray-500 text-sm">
-          <div className="flex items-center">
-            <Clock className="w-4 h-4 mr-1.5 text-gray-400" />
-            <span>{time || "Time TBD"}</span>
-          </div>
-
-          <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
-            <span>{location}</span>
-          </div>
+        {/* Button section - full width on mobile, normal on desktop */}
+        <div className="flex p-4 md:p-6 border-t border-gray-100 md:border-0">
+          {showRegisterButton && onRegisterClick ? (
+            <Button
+              variant="default"
+              className="bg-black hover:bg-gray-800 text-white w-full md:w-auto"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onRegisterClick(eventId, hubEventId);
+              }}
+            >
+              Register
+            </Button>
+          ) : (
+            <div className="relative overflow-hidden w-full flex justify-end">
+              <ArrowRight className="w-6 h-6 text-gray-400" />
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* Right side with register button or arrow icon */}
-      <div className="flex flex-col items-center justify-center p-8">
-        {showRegisterButton && onRegisterClick ? (
-          <Button
-            variant="default"
-            className="bg-black hover:bg-gray-800 text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onRegisterClick(eventId, hubEventId);
-            }}
-          >
-            Register
-          </Button>
-        ) : (
-          <div className="relative overflow-hidden w-full items-center">
-            <ArrowRight className="w-8 h-8 text-gray-400" />
-          </div>
-        )}
       </div>
     </div>
   );

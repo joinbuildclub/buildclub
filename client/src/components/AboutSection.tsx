@@ -98,7 +98,7 @@ export default function AboutSection() {
             What is <span className="text-[var(--color-red)]">BuildClub</span>?
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            We're a playful community of builders making AI come to life through
+            We're a community of builders making AI come to life through
             hands-on collaboration and experimentation in real-world
             environments.
           </p>
