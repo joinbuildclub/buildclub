@@ -67,28 +67,67 @@ export function setupPassport() {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          // Check if user already exists
-          const [existingUser] = await db.select().from(users).where(eq(users.googleId, profile.id));
-
-          if (existingUser) {
-            return done(null, existingUser);
+          // Check if user already exists by Google ID
+          const [existingUserByGoogleId] = await db.select().from(users).where(eq(users.googleId, profile.id));
+          
+          if (existingUserByGoogleId) {
+            return done(null, existingUserByGoogleId);
           }
-
-          // If not, create a new user
+          
+          // Extract profile information
           const emails = profile.emails || [];
           const photos = profile.photos || [];
           const email = emails.length > 0 ? emails[0].value : '';
           const profilePicture = photos.length > 0 ? photos[0].value : '';
+          const firstName = profile.name?.givenName || '';
+          const lastName = profile.name?.familyName || '';
           
+          // If we have an email, check if a user with this email already exists (could be a guest account)
+          if (email) {
+            // First check if there's an existing user with this email (guest or regular)
+            const existingUserByEmail = await storage.getUserByEmail(email);
+            
+            if (existingUserByEmail) {
+              // If this is a guest account, convert it to a permanent Google account
+              if (existingUserByEmail.isGuest) {
+                console.log(`Converting guest account with email ${email} to Google account`);
+                
+                // Update the guest user with Google profile information
+                const updatedUser = await storage.updateUser(existingUserByEmail.id, {
+                  googleId: profile.id,
+                  firstName: firstName || existingUserByEmail.firstName,
+                  lastName: lastName || existingUserByEmail.lastName,
+                  profilePicture: profilePicture || existingUserByEmail.profilePicture,
+                  isGuest: false, // No longer a guest
+                  role: "member" // Make sure role is set
+                });
+                
+                return done(null, updatedUser);
+              }
+              
+              // If it's not a guest but has the same email, we shouldn't create a duplicate
+              // Instead, update the existing account to link it with Google
+              console.log(`Linking existing account with email ${email} to Google`);
+              const updatedUser = await storage.updateUser(existingUserByEmail.id, {
+                googleId: profile.id,
+                profilePicture: profilePicture || existingUserByEmail.profilePicture
+              });
+              
+              return done(null, updatedUser);
+            }
+          }
+          
+          // If we get here, no existing user was found - create a new one
           const username = email.split('@')[0] + '-' + profile.id.substring(0, 5);
           
           const newUser = await storage.createUser({
             username,
             googleId: profile.id,
-            firstName: profile.name?.givenName || '',
-            lastName: profile.name?.familyName || '',
+            firstName,
+            lastName,
             email,
             profilePicture,
+            role: "member" // Make sure role is explicitly set
           });
 
           return done(null, newUser);
