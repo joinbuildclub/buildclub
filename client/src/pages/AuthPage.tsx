@@ -24,14 +24,22 @@ import Logo from "@/assets/logo.png";
 
 export default function AuthPage() {
   const [location, setLocation] = useLocation();
-  const { user, isAuthenticated, isLoading, loginMutation, registerMutation } =
-    useAuth();
+  const { 
+    user, 
+    isAuthenticated, 
+    isLoading, 
+    loginMutation, 
+    registerMutation,
+    resendVerificationEmail,
+    isResendingVerification: isResendingFromAuth
+  } = useAuth();
   const { toast } = useToast();
   
-  // Parse query parameters to check for email and mode
+  // Parse query parameters to check for email, mode, and verification status
   const searchParams = new URLSearchParams(window.location.search);
   const emailParam = searchParams.get('email');
   const modeParam = searchParams.get('mode');
+  const verifiedParam = searchParams.get('verified');
   
   // Set active tab based on mode param or default to login
   const [activeTab, setActiveTab] = useState<string>(modeParam === 'register' ? 'register' : 'login');
@@ -40,6 +48,10 @@ export default function AuthPage() {
     email: emailParam || "",
     password: "",
   });
+  
+  // State for verification resend functionality
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
 
   const [registerData, setRegisterData] = useState({
     password: "",
@@ -60,6 +72,33 @@ export default function AuthPage() {
       }
     }
   }, [emailParam, modeParam]);
+  
+  // Show verification success message if coming from verification page
+  useEffect(() => {
+    if (verifiedParam === 'true') {
+      // Show success toast for verification
+      toast({
+        title: "Email verified",
+        description: "Your email has been successfully verified. You can now log in.",
+        variant: "default",
+      });
+      
+      // Set active tab to login
+      setActiveTab('login');
+    }
+  }, [verifiedParam, toast]);
+  
+  // Watch for login mutation errors to detect verification errors
+  useEffect(() => {
+    if (loginMutation.error) {
+      // @ts-ignore
+      const errorCause = loginMutation.error.cause as any;
+      if (errorCause?.needsVerification && errorCause?.email) {
+        // If we got a verification error with an email, store it for resend UI
+        setVerificationEmail(errorCause.email);
+      }
+    }
+  }, [loginMutation.error]);
 
   // If already authenticated, redirect to dashboard
   if (isAuthenticated && user) {
@@ -69,6 +108,15 @@ export default function AuthPage() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate(loginData);
+  };
+  
+  // Function to handle resend verification
+  const handleResendVerification = async () => {
+    if (!verificationEmail) return;
+    
+    await resendVerificationEmail(verificationEmail);
+    // After sending, we can clear the email to hide the resend UI
+    setVerificationEmail(null);
   };
 
   const handleGoogleLogin = () => {
@@ -142,6 +190,27 @@ export default function AuthPage() {
             <TabsContent value="login">
               <form onSubmit={handleLoginSubmit}>
                 <CardContent className="space-y-4 pt-4">
+                  {/* Verification alert */}
+                  {verificationEmail && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800">
+                      <p className="font-medium mb-2">Email verification required</p>
+                      <p className="mb-2">Please verify your email address before logging in.</p>
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="outline"
+                        className="bg-amber-100 border-amber-300 hover:bg-amber-200 w-full"
+                        onClick={handleResendVerification}
+                        disabled={isResendingFromAuth}
+                      >
+                        {isResendingFromAuth ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        Resend verification email
+                      </Button>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label
                       htmlFor="email"
@@ -256,6 +325,14 @@ export default function AuthPage() {
                 }}
               >
                 <CardContent className="space-y-4 pt-4">
+                  {/* Registration success message */}
+                  {registerMutation.isSuccess && (
+                    <div className="bg-green-50 border border-green-200 rounded-md p-3 text-sm text-green-800">
+                      <p className="font-medium mb-2">Registration successful!</p>
+                      <p>Please check your email for a verification link. You'll need to verify your email before you can log in.</p>
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label

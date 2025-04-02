@@ -9,6 +9,7 @@ import AuthPage from "@/pages/AuthPage";
 import OnboardingPage from "@/pages/OnboardingPage";
 import EventsPage from "@/pages/EventsPage";
 import EventDetailPage from "@/pages/EventDetailPage";
+import VerifyEmailPage from "@/pages/VerifyEmailPage";
 import { AuthProvider } from "@/hooks/use-auth";
 import { useScrollReset } from "@/hooks/use-scroll-reset";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/events" component={EventsPage} />
       <Route path="/events/:id" component={EventDetailPage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/verify-email" component={VerifyEmailPage} />
       
       {/* Protected routes */}
       <Route path="/dashboard">

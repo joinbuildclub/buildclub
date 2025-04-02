@@ -9,7 +9,9 @@ import {
   Event,
   hubEventRegistrations,
   RoleEnum,
+  users,
 } from "@shared/schema";
+import { randomUUID } from 'crypto';
 
 // Extend Express.Session to include our custom fields
 declare module 'express-session' {
@@ -32,6 +34,8 @@ import {
   sendWelcomeEmail,
   sendAdminNotification,
   sendRegistrationCancellation,
+  sendAccountVerificationEmail,
+  sendAccountConfirmedEmail,
 } from "./sendgrid";
 import { hashPassword } from "./auth";
 
@@ -339,10 +343,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData.role = "member";
       }
 
+      // Generate a confirmation token for email verification (unless it's a Google account)
+      const confirmationToken = randomUUID();
+      if (userData.email && !userData.googleId) {
+        userData.isConfirmed = false;
+        userData.accountConfirmationToken = confirmationToken;
+      } else if (userData.googleId) {
+        // Google-authenticated users are automatically verified
+        userData.isConfirmed = true;
+      }
+
       // Create the user
       const newUser = await storage.createUser(userData);
+      
+      // Send verification email for email/password users
+      if (userData.email && !userData.googleId && !userData.isConfirmed) {
+        try {
+          await sendAccountVerificationEmail(newUser, confirmationToken);
+          console.log(`Verification email sent to ${userData.email}`);
+          
+          // For email/password users that need verification, return without logging in
+          return res.status(201).json({
+            message: "Registration successful. Please check your email to verify your account.",
+            needsVerification: true
+          });
+          
+        } catch (error) {
+          console.error("Failed to send verification email:", error);
+          // Continue with registration even if email sending fails, but note that verification is still needed
+          return res.status(201).json({
+            message: "Registration successful, but we couldn't send a verification email. Please try again later.",
+            needsVerification: true
+          });
+        }
+      }
 
-      // Automatically log in the user by creating a session
+      // For social auth users (Google) or any users that don't need verification, log them in immediately
       req.login(newUser, (err) => {
         if (err) {
           return res
@@ -368,6 +404,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "User registered successfully",
           user: userWithoutPassword,
           token,
+          needsVerification: false
         });
       });
     } catch (error) {
@@ -389,8 +426,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     "/api/auth/login",
     passport.authenticate("local", { session: true }),
     (req, res) => {
-      // If we get here, authentication was successful
-      const token = generateToken(req.user as User);
+      // Check if the user's email is confirmed
+      const user = req.user as User;
+      
+      if (user && user.isConfirmed === false) {
+        // User's email is not verified
+        return res.status(403).json({
+          message: "Please verify your email before logging in. Check your email for a verification link or request a new one.",
+          needsVerification: true,
+          email: user.email
+        });
+      }
+      
+      // If we get here, authentication was successful and email is verified
+      const token = generateToken(user);
 
       // Set JWT token as cookie
       res.cookie("token", token, {
@@ -1012,6 +1061,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({
         message: "An error occurred while updating your profile.",
       });
+    }
+  });
+
+  // Email verification endpoints
+  
+  // Verify email with token
+  app.get("/api/auth/verify-email", async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Verification token is required" });
+      }
+      
+      // Find user with this token
+      const [user] = await db.select().from(users).where(eq(users.accountConfirmationToken, token as string));
+      
+      if (!user) {
+        return res.status(404).json({ message: "Invalid or expired verification token" });
+      }
+      
+      // Update user's verification status
+      const updatedUser = await storage.updateUser(user.id, {
+        isConfirmed: true,
+        accountConfirmationToken: null, // Clear the token
+      });
+      
+      // Send welcome email
+      try {
+        await sendAccountConfirmedEmail(updatedUser);
+      } catch (emailError) {
+        console.error("Error sending confirmation email:", emailError);
+        // Continue even if email fails
+      }
+      
+      // Redirect to login page with success message
+      return res.redirect(`/auth?verified=true&email=${encodeURIComponent(user.email || '')}`);
+      
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      return res.status(500).json({ message: "An error occurred during email verification" });
+    }
+  });
+  
+  // Resend verification email
+  app.post("/api/auth/resend-verification", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      
+      // Find the user by email
+      const user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        // Don't reveal whether the email exists for security
+        return res.status(200).json({ message: "If your email exists in our system, a verification link has been sent" });
+      }
+      
+      // Check if account is already verified
+      if (user.isConfirmed) {
+        return res.status(400).json({ message: "Email is already verified" });
+      }
+      
+      // Generate a new confirmation token
+      const confirmationToken = randomUUID();
+      
+      // Update user with new token
+      const updatedUser = await storage.updateUser(user.id, {
+        accountConfirmationToken: confirmationToken,
+      });
+      
+      // Send verification email
+      await sendAccountVerificationEmail(updatedUser, confirmationToken);
+      
+      return res.status(200).json({ message: "Verification email has been sent" });
+      
+    } catch (error) {
+      console.error("Error resending verification email:", error);
+      return res.status(500).json({ message: "An error occurred while sending verification email" });
     }
   });
 

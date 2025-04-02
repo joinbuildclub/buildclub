@@ -37,6 +37,11 @@ export function setupPassport() {
           return done(null, false, { message: 'Invalid email or password' });
         }
         
+        // Check if account is verified (Google users are auto-verified)
+        if (!user.isConfirmed && !user.googleId) {
+          return done(null, false, { message: 'Email not verified. Please check your inbox for verification email.' });
+        }
+        
         // Compare password with stored hash
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
@@ -99,6 +104,7 @@ export function setupPassport() {
                   lastName: lastName || existingUserByEmail.lastName,
                   profilePicture: profilePicture || existingUserByEmail.profilePicture,
                   isGuest: false, // No longer a guest
+                  isConfirmed: true, // Google users are automatically verified
                   role: "member" // Make sure role is set
                 });
                 
@@ -127,6 +133,7 @@ export function setupPassport() {
             lastName,
             email,
             profilePicture,
+            isConfirmed: true, // Google users are automatically verified
             role: "member" // Make sure role is explicitly set
           });
 
