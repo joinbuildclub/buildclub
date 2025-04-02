@@ -353,7 +353,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData.isConfirmed = true;
       }
 
-      // Create the user
+      // Create the user - but skip the automatic sendWelcomeEmail process since we need to verify email first
+      userData.skipWelcomeEmail = userData.email && !userData.googleId && !userData.isConfirmed;
       const newUser = await storage.createUser(userData);
       
       // Send verification email for email/password users
@@ -1088,7 +1089,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         accountConfirmationToken: null, // Clear the token
       });
       
-      // Send welcome email
+      // Send welcome email NOW that the user is verified
       try {
         await sendAccountConfirmedEmail(updatedUser);
       } catch (emailError) {

@@ -194,14 +194,20 @@ export class DatabaseStorage implements IStorage {
         console.error("Error adding user to SendGrid:", err);
       }
 
-      // Try to send welcome email to the user
-      try {
-        const welcomeEmailSent = await sendWelcomeEmail(userEntry as any);
-        if (welcomeEmailSent) {
-          console.log(`Welcome email sent to user ${user.email} successfully`);
+      // Only send welcome email if not marked for skipping (for email verification cases)
+      // @ts-ignore - skipWelcomeEmail is a transient property added in routes.ts
+      if (!(user as any).skipWelcomeEmail) {
+        // Try to send welcome email to the user
+        try {
+          const welcomeEmailSent = await sendWelcomeEmail(userEntry as any);
+          if (welcomeEmailSent) {
+            console.log(`Welcome email sent to user ${user.email} successfully`);
+          }
+        } catch (err) {
+          console.error("Error sending welcome email to user:", err);
         }
-      } catch (err) {
-        console.error("Error sending welcome email to user:", err);
+      } else {
+        console.log(`Skipping welcome email for ${user.email} - will be sent after verification`);
       }
 
       // Try to send notification to admin

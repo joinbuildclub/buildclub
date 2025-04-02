@@ -354,9 +354,11 @@ export async function sendAccountVerificationEmail(
   confirmationToken: string
 ): Promise<boolean> {
   // Base URL from the application environment or fallback to localhost
+  // Include the full protocol and hostname to ensure links work properly
   const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
   
   // Create confirmation link with the token
+  // Note: This URL should point to the client's VerifyEmailPage component that will then call the API endpoint
   const confirmationLink = `${baseUrl}/verify-email?token=${confirmationToken}`;
   
   const htmlContent = `
