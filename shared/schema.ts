@@ -74,6 +74,8 @@ export const users = pgTable("user", {
   githubUsername: text("github_username"),
   bio: text("bio"),
   interests: text("interests").array(),
+  isConfirmed: boolean("is_confirmed").default(false),
+  accountConfirmationToken: uuid("account_confirmation_token"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -241,6 +243,8 @@ const baseUserSchema = createInsertSchema(users).pick({
   githubUsername: true,
   bio: true,
   interests: true,
+  isConfirmed: true,
+  accountConfirmationToken: true,
 });
 
 export const insertUserSchema = baseUserSchema.extend({

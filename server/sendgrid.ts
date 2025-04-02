@@ -5,6 +5,7 @@ import type {
   HubEventRegistration,
   Event,
   Hub,
+  User,
 } from "@shared/schema";
 
 // Initialize SendGrid conditionally
@@ -343,6 +344,83 @@ export async function sendRegistrationCancellation(
   return sendEmail(
     registration.email,
     `Registration Cancelled: ${event.title}`,
+    htmlContent,
+  );
+}
+
+// Send account verification email with confirmation link
+export async function sendAccountVerificationEmail(
+  user: User, 
+  confirmationToken: string
+): Promise<boolean> {
+  // Base URL from the application environment or fallback to localhost
+  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  
+  // Create confirmation link with the token
+  const confirmationLink = `${baseUrl}/verify-email?token=${confirmationToken}`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Verify Your BuildClub Account</h2>
+      <p>Hi ${user.firstName || user.username},</p>
+      <p>Thanks for signing up for BuildClub! Please verify your email address to activate your account.</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${confirmationLink}" 
+           style="background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+           Verify My Email
+        </a>
+      </div>
+      
+      <p>Or copy and paste this link into your browser:</p>
+      <p style="word-break: break-all; color: #4a4a4a;">${confirmationLink}</p>
+      
+      <p>This verification link will expire in 24 hours.</p>
+      
+      <p>If you didn't create an account with BuildClub, you can safely ignore this email.</p>
+      
+      <p>The BuildClub Team</p>
+    </div>
+  `;
+
+  return sendEmail(
+    user.email!, // We know this exists if we're sending a verification email
+    "Verify Your BuildClub Account",
+    htmlContent,
+  );
+}
+
+// Send welcome email after account is verified
+export async function sendAccountConfirmedEmail(user: User): Promise<boolean> {
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Welcome to BuildClub!</h2>
+      <p>Hi ${user.firstName || user.username},</p>
+      <p>Your account has been verified and you're now an official member of the BuildClub community.</p>
+      
+      <p>Here's what you can do now:</p>
+      <ul>
+        <li>Explore upcoming events and register to attend</li>
+        <li>Complete your profile information</li>
+        <li>Connect with other AI builders in our community</li>
+      </ul>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${process.env.BASE_URL || 'http://localhost:5000'}/dashboard" 
+           style="background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+           Go to My Dashboard
+        </a>
+      </div>
+      
+      <p>We're excited to have you join our community of builders creating AI solutions together!</p>
+      
+      <p>The BuildClub Team</p>
+    </div>
+  `;
+
+  return sendEmail(
+    user.email!, 
+    "Welcome to BuildClub - Your Account is Verified!",
     htmlContent,
   );
 }
