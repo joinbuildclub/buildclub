@@ -326,145 +326,169 @@ export default function AuthPage() {
               >
                 <CardContent className="space-y-4 pt-4">
                   {/* Registration success message */}
-                  {registerMutation.isSuccess && (
-                    <div className="bg-green-50 border border-green-200 rounded-md p-3 text-sm text-green-800">
-                      <p className="font-medium mb-2">Registration successful!</p>
-                      <p>Please check your email for a verification link. You'll need to verify your email before you can log in.</p>
+                  {registerMutation.isSuccess ? (
+                    <div className="bg-green-50 border border-green-200 rounded-md p-4 text-sm text-green-800">
+                      <p className="font-medium mb-2 text-lg">Registration successful!</p>
+                      <p className="mb-4">Please check your email for a verification link. You'll need to verify your email before you can log in.</p>
+                      
+                      <div className="flex flex-col space-y-3">
+                        <p className="font-medium text-sm">What's next?</p>
+                        <ol className="list-decimal pl-5 space-y-2">
+                          <li>Check your inbox for the verification email</li>
+                          <li>Click the verification link in the email</li>
+                          <li>Return here to log in after verification</li>
+                        </ol>
+                        
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="mt-4 border-green-300 bg-green-100 hover:bg-green-200 text-green-800"
+                          onClick={() => setActiveTab('login')}
+                        >
+                          Go to login
+                        </Button>
+                      </div>
                     </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="firstName"
+                            className="flex items-center gap-1.5"
+                          >
+                            First Name
+                          </Label>
+                          <Input
+                            id="firstName"
+                            type="text"
+                            placeholder="First name"
+                            value={registerData.firstName}
+                            onChange={(e) =>
+                              setRegisterData({
+                                ...registerData,
+                                firstName: e.target.value,
+                              })
+                            }
+                            className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="lastName"
+                            className="flex items-center gap-1.5"
+                          >
+                            Last Name
+                          </Label>
+                          <Input
+                            id="lastName"
+                            type="text"
+                            placeholder="Last name"
+                            value={registerData.lastName}
+                            onChange={(e) =>
+                              setRegisterData({
+                                ...registerData,
+                                lastName: e.target.value,
+                              })
+                            }
+                            className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="reg-email"
+                          className="flex items-center gap-1.5"
+                        >
+                          <Mail className="h-4 w-4 text-[--color-green]" />
+                          Email
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="reg-email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={registerData.email}
+                            onChange={(e) =>
+                              setRegisterData({
+                                ...registerData,
+                                email: e.target.value,
+                              })
+                            }
+                            required
+                            className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="reg-password"
+                          className="flex items-center gap-1.5"
+                        >
+                          <Key className="h-4 w-4 text-[--color-green]" />
+                          Password
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="reg-password"
+                            type="password"
+                            placeholder="Create a password"
+                            value={registerData.password}
+                            onChange={(e) =>
+                              setRegisterData({
+                                ...registerData,
+                                password: e.target.value,
+                              })
+                            }
+                            required
+                            className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
+                          />
+                        </div>
+                      </div>
+                    </>
                   )}
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="firstName"
-                        className="flex items-center gap-1.5"
-                      >
-                        First Name
-                      </Label>
-                      <Input
-                        id="firstName"
-                        type="text"
-                        placeholder="First name"
-                        value={registerData.firstName}
-                        onChange={(e) =>
-                          setRegisterData({
-                            ...registerData,
-                            firstName: e.target.value,
-                          })
-                        }
-                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="lastName"
-                        className="flex items-center gap-1.5"
-                      >
-                        Last Name
-                      </Label>
-                      <Input
-                        id="lastName"
-                        type="text"
-                        placeholder="Last name"
-                        value={registerData.lastName}
-                        onChange={(e) =>
-                          setRegisterData({
-                            ...registerData,
-                            lastName: e.target.value,
-                          })
-                        }
-                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="reg-email"
-                      className="flex items-center gap-1.5"
-                    >
-                      <Mail className="h-4 w-4 text-[--color-green]" />
-                      Email
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="reg-email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={registerData.email}
-                        onChange={(e) =>
-                          setRegisterData({
-                            ...registerData,
-                            email: e.target.value,
-                          })
-                        }
-                        required
-                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="reg-password"
-                      className="flex items-center gap-1.5"
-                    >
-                      <Key className="h-4 w-4 text-[--color-green]" />
-                      Password
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="reg-password"
-                        type="password"
-                        placeholder="Create a password"
-                        value={registerData.password}
-                        onChange={(e) =>
-                          setRegisterData({
-                            ...registerData,
-                            password: e.target.value,
-                          })
-                        }
-                        required
-                        className="pl-3 pr-3 border-gray-200 focus:border-[--color-green] focus:ring focus:ring-[--color-green]/20"
-                      />
-                    </div>
-                  </div>
                 </CardContent>
 
                 <CardFooter className="flex flex-col space-y-4">
-                  <Button
-                    type="submit"
-                    className="w-full bg-[--color-green] hover:bg-[--color-green]/90 text-white h-11 font-medium"
-                    disabled={registerMutation.isPending}
-                  >
-                    {registerMutation.isPending ? (
-                      <span className="flex items-center">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating account...
-                      </span>
-                    ) : (
-                      "Join the club"
-                    )}
-                  </Button>
+                  {!registerMutation.isSuccess && (
+                    <>
+                      <Button
+                        type="submit"
+                        className="w-full bg-[--color-green] hover:bg-[--color-green]/90 text-white h-11 font-medium"
+                        disabled={registerMutation.isPending}
+                      >
+                        {registerMutation.isPending ? (
+                          <span className="flex items-center">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating account...
+                          </span>
+                        ) : (
+                          "Join the club"
+                        )}
+                      </Button>
 
-                  <div className="relative w-full">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-muted-foreground">
-                        Or continue with
-                      </span>
-                    </div>
-                  </div>
+                      <div className="relative w-full">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-white px-2 text-muted-foreground">
+                            Or continue with
+                          </span>
+                        </div>
+                      </div>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full border-gray-200 hover:bg-gray-50 hover:border-gray-300 h-11 font-medium"
-                    onClick={handleGoogleLogin}
-                  >
-                    <SiGoogle className="mr-2 h-4 w-4" />
-                    Sign up with Google
-                  </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full border-gray-200 hover:bg-gray-50 hover:border-gray-300 h-11 font-medium"
+                        onClick={handleGoogleLogin}
+                      >
+                        <SiGoogle className="mr-2 h-4 w-4" />
+                        Sign up with Google
+                      </Button>
+                    </>
+                  )}
                 </CardFooter>
               </form>
             </TabsContent>
