@@ -11,10 +11,10 @@ import {
   RoleEnum,
   users,
 } from "@shared/schema";
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
 // Extend Express.Session to include our custom fields
-declare module 'express-session' {
+declare module "express-session" {
   interface SessionData {
     convertEmail?: string;
   }
@@ -154,25 +154,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user) {
         return res.redirect("/?error=auth-failed-no-user");
       }
-      
+
       const user = req.user as User;
-      
+
       // Check if we need to convert a guest account
       const convertEmail = req.session.convertEmail;
       if (convertEmail) {
         try {
           // Find if there's a guest account with this email
           const guestUser = await storage.getUserByEmail(convertEmail);
-          
+
           if (guestUser && guestUser.isGuest) {
-            console.log(`Converting guest account ${convertEmail} via Google OAuth`);
-            
+            console.log(
+              `Converting guest account ${convertEmail} via Google OAuth`,
+            );
+
             // Get the Google user's email
             if (user.email !== convertEmail) {
-              console.log(`Warning: Google account email (${user.email}) doesn't match guest account email (${convertEmail})`);
+              console.log(
+                `Warning: Google account email (${user.email}) doesn't match guest account email (${convertEmail})`,
+              );
               // We'll still proceed but log the discrepancy
             }
-            
+
             // Update the guest account with Google user data
             const updatedData: Partial<User> = {
               googleId: user.googleId,
@@ -183,26 +187,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
               isGuest: false, // Mark as no longer a guest
               role: "member", // Ensure role is a valid value
             };
-            
+
             // Convert the guest account
             await storage.convertGuestAccount(convertEmail, updatedData);
-            
+
             // Clear the session variable
             delete req.session.convertEmail;
-            
+
             // After successful conversion, redirect to dashboard
             res.redirect("/dashboard/?success=account-converted");
             return;
           }
         } catch (error) {
-          console.error("Error converting guest account via Google OAuth:", error);
+          console.error(
+            "Error converting guest account via Google OAuth:",
+            error,
+          );
           // Continue with normal flow even if conversion fails
         }
-        
+
         // Clear the session variable even if conversion failed
         delete req.session.convertEmail;
       }
-      
+
       // Normal Google OAuth flow - generate JWT token
       const token = generateToken(user);
 
@@ -259,47 +266,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if email already exists
       if (userData.email) {
         const existingUser = await storage.getUserByEmail(userData.email);
-        
+
         // If there's an existing guest account with this email, convert it instead of creating a new one
         if (existingUser && existingUser.isGuest) {
-          console.log(`Converting guest account with email ${userData.email} to permanent account`);
-          
+          console.log(
+            `Converting guest account with email ${userData.email} to permanent account`,
+          );
+
           // Hash password if provided
           if (userData.password) {
             userData.password = await hashPassword(userData.password);
           }
-          
+
           // Make sure role is one of the valid enum values
-          if (userData.role && !['admin', 'ambassador', 'member'].includes(userData.role as string)) {
+          if (
+            userData.role &&
+            !["admin", "ambassador", "member"].includes(userData.role as string)
+          ) {
             userData.role = "member" as any; // Force it to be a valid value
           }
-          
+
           // Create a properly typed userData object with validated role
           const validatedUserData: Partial<User> = {
             ...userData,
             // Ensure role is cast to the proper type
-            role: (userData.role && ['admin', 'ambassador', 'member'].includes(userData.role as string)) 
-              ? (userData.role as "admin" | "ambassador" | "member") 
-              : "member"
+            role:
+              userData.role &&
+              ["admin", "ambassador", "member"].includes(
+                userData.role as string,
+              )
+                ? (userData.role as "admin" | "ambassador" | "member")
+                : "member",
           };
-          
+
           // Convert the guest account to a permanent one
-          const updatedUser = await storage.convertGuestAccount(userData.email, validatedUserData);
-          
+          const updatedUser = await storage.convertGuestAccount(
+            userData.email,
+            validatedUserData,
+          );
+
           if (!updatedUser) {
-            return res.status(500).json({ message: "Failed to convert guest account" });
+            return res
+              .status(500)
+              .json({ message: "Failed to convert guest account" });
           }
-          
+
           // Log the user in
           req.login(updatedUser, (err) => {
             if (err) {
-              console.error("Error logging in after guest account conversion:", err);
-              return res.status(500).json({ message: "Error during authentication" });
+              console.error(
+                "Error logging in after guest account conversion:",
+                err,
+              );
+              return res
+                .status(500)
+                .json({ message: "Error during authentication" });
             }
-            
+
             // Generate JWT token for the authenticated user
             const token = generateToken(updatedUser);
-            
+
             // Set JWT token as a cookie
             res.cookie("token", token, {
               httpOnly: true,
@@ -308,17 +334,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
               path: "/",
               maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
-            
-            return res.status(200).json({ 
-              message: "Guest account successfully converted to permanent account",
+
+            return res.status(200).json({
+              message:
+                "Guest account successfully converted to permanent account",
               user: updatedUser,
-              token 
+              token,
             });
           });
-          
+
           return;
         }
-        
+
         // Regular case - email already exists and not a guest
         if (existingUser) {
           return res
@@ -354,27 +381,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create the user - but skip the automatic sendWelcomeEmail process since we need to verify email first
-      userData.skipWelcomeEmail = userData.email && !userData.googleId && !userData.isConfirmed;
+      userData.skipWelcomeEmail =
+        userData.email && !userData.googleId && !userData.isConfirmed;
       const newUser = await storage.createUser(userData);
-      
+
       // Send verification email for email/password users
       if (userData.email && !userData.googleId && !userData.isConfirmed) {
         try {
           await sendAccountVerificationEmail(newUser, confirmationToken);
           console.log(`Verification email sent to ${userData.email}`);
-          
+
           // For email/password users that need verification, return without logging in
           return res.status(201).json({
-            message: "Registration successful. Please check your email to verify your account.",
-            needsVerification: true
+            message:
+              "Registration successful. Please check your email to verify your account.",
+            needsVerification: true,
           });
-          
         } catch (error) {
           console.error("Failed to send verification email:", error);
           // Continue with registration even if email sending fails, but note that verification is still needed
           return res.status(201).json({
-            message: "Registration successful, but we couldn't send a verification email. Please try again later.",
-            needsVerification: true
+            message:
+              "Registration successful, but we couldn't send a verification email. Please try again later.",
+            needsVerification: true,
           });
         }
       }
@@ -405,7 +434,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "User registered successfully",
           user: userWithoutPassword,
           token,
-          needsVerification: false
+          needsVerification: false,
         });
       });
     } catch (error) {
@@ -429,16 +458,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     (req, res) => {
       // Check if the user's email is confirmed
       const user = req.user as User;
-      
+
       if (user && user.isConfirmed === false) {
         // User's email is not verified
         return res.status(403).json({
-          message: "Please verify your email before logging in. Check your email for a verification link or request a new one.",
+          message:
+            "Please verify your email before logging in. Check your email for a verification link or request a new one.",
           needsVerification: true,
-          email: user.email
+          email: user.email,
         });
       }
-      
+
       // If we get here, authentication was successful and email is verified
       const token = generateToken(user);
 
@@ -706,15 +736,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // If no user is authenticated, create a guest user account
       if (!user) {
-        const guestUser = await storage.createUser({
-          username: validatedRegistration.email, // Use email as username
-          email: validatedRegistration.email,
-          firstName: validatedRegistration.firstName,
-          lastName: validatedRegistration.lastName,
-          isGuest: true,
-          role: "member",
-        });
-        validatedRegistration.userId = guestUser.id;
+        let userIdToUse = null;
+        const existingUser = await storage.getUserByEmail(
+          validatedRegistration.email,
+        );
+        if (existingUser) {
+          userIdToUse = existingUser.id;
+        } else {
+          // Create a guest user account
+          const guestUser = await storage.createUser({
+            username: validatedRegistration.email, // Use email as username
+            email: validatedRegistration.email,
+            firstName: validatedRegistration.firstName,
+            lastName: validatedRegistration.lastName,
+            isGuest: true,
+            role: "member",
+          });
+          userIdToUse = guestUser.id;
+        }
+
+        validatedRegistration.userId = userIdToUse;
       }
 
       // Create the registration
@@ -1066,29 +1107,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Email verification endpoints
-  
+
   // Verify email with token
   app.get("/api/auth/verify-email", async (req, res) => {
     try {
       const { token } = req.query;
-      
+
       if (!token) {
-        return res.status(400).json({ message: "Verification token is required" });
+        return res
+          .status(400)
+          .json({ message: "Verification token is required" });
       }
-      
+
       // Find user with this token
-      const [user] = await db.select().from(users).where(eq(users.accountConfirmationToken, token as string));
-      
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.accountConfirmationToken, token as string));
+
       if (!user) {
-        return res.status(404).json({ message: "Invalid or expired verification token" });
+        return res
+          .status(404)
+          .json({ message: "Invalid or expired verification token" });
       }
-      
+
       // Update user's verification status
       const updatedUser = await storage.updateUser(user.id, {
         isConfirmed: true,
         accountConfirmationToken: null, // Clear the token
       });
-      
+
       // Send welcome email NOW that the user is verified
       try {
         await sendAccountConfirmedEmail(updatedUser);
@@ -1096,54 +1144,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error sending confirmation email:", emailError);
         // Continue even if email fails
       }
-      
+
       // Redirect to login page with success message
-      return res.redirect(`/auth?verified=true&email=${encodeURIComponent(user.email || '')}`);
-      
+      return res.redirect(
+        `/auth?verified=true&email=${encodeURIComponent(user.email || "")}`,
+      );
     } catch (error) {
       console.error("Error verifying email:", error);
-      return res.status(500).json({ message: "An error occurred during email verification" });
+      return res
+        .status(500)
+        .json({ message: "An error occurred during email verification" });
     }
   });
-  
+
   // Resend verification email
   app.post("/api/auth/resend-verification", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
-      
+
       // Find the user by email
       const user = await storage.getUserByEmail(email);
-      
+
       if (!user) {
         // Don't reveal whether the email exists for security
-        return res.status(200).json({ message: "If your email exists in our system, a verification link has been sent" });
+        return res.status(200).json({
+          message:
+            "If your email exists in our system, a verification link has been sent",
+        });
       }
-      
+
       // Check if account is already verified
       if (user.isConfirmed) {
         return res.status(400).json({ message: "Email is already verified" });
       }
-      
+
       // Generate a new confirmation token
       const confirmationToken = randomUUID();
-      
+
       // Update user with new token
       const updatedUser = await storage.updateUser(user.id, {
         accountConfirmationToken: confirmationToken,
       });
-      
+
       // Send verification email
       await sendAccountVerificationEmail(updatedUser, confirmationToken);
-      
-      return res.status(200).json({ message: "Verification email has been sent" });
-      
+
+      return res
+        .status(200)
+        .json({ message: "Verification email has been sent" });
     } catch (error) {
       console.error("Error resending verification email:", error);
-      return res.status(500).json({ message: "An error occurred while sending verification email" });
+      return res.status(500).json({
+        message: "An error occurred while sending verification email",
+      });
     }
   });
 

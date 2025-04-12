@@ -317,25 +317,3 @@ export type InsertHubEventRegistration = z.infer<
   typeof insertHubEventRegistrationSchema
 >;
 export type HubEventRegistration = typeof hubEventRegistrations.$inferSelect;
-
-// Legacy types for backward compatibility during migration
-export type InsertWaitlistEntry = InsertHubEventRegistration;
-export type WaitlistEntry = HubEventRegistration;
-export type InsertEventRegistration = InsertHubEventRegistration;
-export type EventRegistration = HubEventRegistration;
-export type Registration = HubEventRegistration;
-export type InsertRegistration = InsertHubEventRegistration;
-
-// Legacy schemas for backward compatibility
-export const insertWaitlistSchema = insertHubEventRegistrationSchema;
-export const insertEventRegistrationSchema = insertHubEventRegistrationSchema;
-
-// The original waitlist entry table for reference before dropping it
-export const waitlistEntries = pgTable("waitlist_entry", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull().unique(),
-  interestAreas: text("interest_areas").array().notNull(),
-  aiInterests: text("ai_interests"),
-});

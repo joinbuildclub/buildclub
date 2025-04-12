@@ -35,7 +35,10 @@ export interface IStorage {
   getUsers(filters?: { role?: string }): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, userData: Partial<User>): Promise<User>;
-  convertGuestAccount(email: string, userData: Partial<User>): Promise<User | undefined>;
+  convertGuestAccount(
+    email: string,
+    userData: Partial<User>,
+  ): Promise<User | undefined>;
 
   // Hub methods
   createHub(hub: InsertHub): Promise<Hub>;
@@ -201,13 +204,17 @@ export class DatabaseStorage implements IStorage {
         try {
           const welcomeEmailSent = await sendWelcomeEmail(userEntry as any);
           if (welcomeEmailSent) {
-            console.log(`Welcome email sent to user ${user.email} successfully`);
+            console.log(
+              `Welcome email sent to user ${user.email} successfully`,
+            );
           }
         } catch (err) {
           console.error("Error sending welcome email to user:", err);
         }
       } else {
-        console.log(`Skipping welcome email for ${user.email} - will be sent after verification`);
+        console.log(
+          `Skipping welcome email for ${user.email} - will be sent after verification`,
+        );
       }
 
       // Try to send notification to admin
@@ -616,42 +623,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Convert a guest account to a permanent account
-  async convertGuestAccount(email: string, userData: Partial<User>): Promise<User | undefined> {
+  async convertGuestAccount(
+    email: string,
+    userData: Partial<User>,
+  ): Promise<User | undefined> {
     try {
       // 1. Find the guest user by email
       const guestUser = await this.getUserByEmail(email);
-      
+
       if (!guestUser) {
         console.log(`No user found with email: ${email}`);
         return undefined;
       }
-      
+
       // 2. Make sure it's a guest account
       if (!guestUser.isGuest) {
         console.log(`User with email ${email} is not a guest account`);
         return undefined;
       }
-      
+
       // 3. Update the user record to convert from guest to permanent
       // Make sure the role is one of the valid values from the enum
       let updatedUserData: Partial<User> = {
         ...userData,
         isGuest: false, // Mark as no longer a guest
       };
-      
+
       // Make sure role is set to a valid value
-      if (userData.role && typeof userData.role === 'string') {
+      if (userData.role && typeof userData.role === "string") {
         // If role is provided as a string but not one of the valid roles, default to "member"
-        if (!['admin', 'ambassador', 'member'].includes(userData.role)) {
-          console.log(`Invalid role provided: ${userData.role}, defaulting to "member"`);
+        if (!["admin", "ambassador", "member"].includes(userData.role)) {
+          console.log(
+            `Invalid role provided: ${userData.role}, defaulting to "member"`,
+          );
           updatedUserData.role = "member";
         }
       }
-      
+
       // 4. Update the user in the database
       const updatedUser = await this.updateUser(guestUser.id, updatedUserData);
-      
-      console.log(`Successfully converted guest account ${email} to permanent account`);
+
+      console.log(
+        `Successfully converted guest account ${email} to permanent account`,
+      );
       return updatedUser;
     } catch (error) {
       console.error("Error converting guest account:", error);

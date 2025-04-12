@@ -1,12 +1,6 @@
 import sgMail from "@sendgrid/mail";
 import sgClient from "@sendgrid/client";
-import type {
-  WaitlistEntry,
-  HubEventRegistration,
-  Event,
-  Hub,
-  User,
-} from "@shared/schema";
+import type { HubEventRegistration, Event, Hub, User } from "@shared/schema";
 
 // Initialize SendGrid conditionally
 const isSendGridConfigured =
@@ -56,9 +50,11 @@ export async function sendEmail(
 }
 
 // Function to add a contact to SendGrid
-export async function addContactToSendGrid(
-  entry: WaitlistEntry,
-): Promise<boolean> {
+export async function addContactToSendGrid(entry: {
+  email: string;
+  firstName: string;
+  lastName: string;
+}): Promise<boolean> {
   if (!process.env.SENDGRID_API_KEY) {
     console.warn("SENDGRID_API_KEY not found. Contact not added to SendGrid.");
     return false;
@@ -101,7 +97,11 @@ export async function addContactToSendGrid(
 }
 
 // Function to send welcome email to new BuildClub members
-export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
+export async function sendWelcomeEmail(entry: {
+  email: string;
+  firstName: string;
+  lastName: string;
+}): Promise<boolean> {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Welcome to BuildClub!</h2>
@@ -111,8 +111,6 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        ${entry.interestAreas ? `<li><strong>Interest Areas:</strong> ${entry.interestAreas.join(", ")}</li>` : ""}
-        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ""}
       </ul>
       <p>Looking forward to building together!</p>
       <p>The BuildClub Team</p>
@@ -127,9 +125,11 @@ export async function sendWelcomeEmail(entry: WaitlistEntry): Promise<boolean> {
 }
 
 // Function to send admin notification of new community member
-export async function sendAdminNotification(
-  entry: WaitlistEntry,
-): Promise<boolean> {
+export async function sendAdminNotification(entry: {
+  email: string;
+  firstName: string;
+  lastName: string;
+}): Promise<boolean> {
   if (!process.env.ADMIN_EMAIL) {
     console.warn("ADMIN_EMAIL not set. Admin notification not sent.");
     return false;
@@ -142,8 +142,6 @@ export async function sendAdminNotification(
       <ul>
         <li><strong>Name:</strong> ${entry.firstName} ${entry.lastName}</li>
         <li><strong>Email:</strong> ${entry.email}</li>
-        ${entry.interestAreas ? `<li><strong>Interest Areas:</strong> ${entry.interestAreas.join(", ")}</li>` : ""}
-        ${entry.aiInterests ? `<li><strong>AI Interests:</strong> ${entry.aiInterests}</li>` : ""}
       </ul>
     </div>
   `;
@@ -350,17 +348,17 @@ export async function sendRegistrationCancellation(
 
 // Send account verification email with confirmation link
 export async function sendAccountVerificationEmail(
-  user: User, 
-  confirmationToken: string
+  user: User,
+  confirmationToken: string,
 ): Promise<boolean> {
   // Base URL from the application environment or fallback to localhost
   // Include the full protocol and hostname to ensure links work properly
-  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-  
+  const baseUrl = process.env.BASE_URL || "http://localhost:5000";
+
   // Create confirmation link with the token
   // Note: This URL should point to the client's VerifyEmailPage component that will then call the API endpoint
   const confirmationLink = `${baseUrl}/verify-email?token=${confirmationToken}`;
-  
+
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Verify Your BuildClub Account</h2>
@@ -408,7 +406,7 @@ export async function sendAccountConfirmedEmail(user: User): Promise<boolean> {
       </ul>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.BASE_URL || 'http://localhost:5000'}/dashboard" 
+        <a href="${process.env.BASE_URL || "http://localhost:5000"}/dashboard" 
            style="background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
            Go to My Dashboard
         </a>
@@ -421,7 +419,7 @@ export async function sendAccountConfirmedEmail(user: User): Promise<boolean> {
   `;
 
   return sendEmail(
-    user.email!, 
+    user.email!,
     "Welcome to BuildClub - Your Account is Verified!",
     htmlContent,
   );
