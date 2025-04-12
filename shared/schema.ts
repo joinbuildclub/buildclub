@@ -149,8 +149,6 @@ export const hubEventRegistrations = pgTable(
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     email: text("email").notNull(),
-    interestAreas: text("interest_areas").array(),
-    aiInterests: text("ai_interests"),
     status: text("status").default("registered").$type<RegistrationStatus>(),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow(),
@@ -298,8 +296,6 @@ export const insertHubEventRegistrationSchema = createInsertSchema(
   firstName: true,
   lastName: true,
   email: true,
-  interestAreas: true,
-  aiInterests: true,
   status: true,
   notes: true,
 });
