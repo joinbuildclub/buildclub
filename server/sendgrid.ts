@@ -199,10 +199,10 @@ export async function sendEventRegistrationConfirmation(
         <p><strong>Date:</strong> ${eventDate}</p>
         <p><strong>Time:</strong> ${eventTime}${eventEndTime}</p>
         <p><strong>Hosted by:</strong> ${hub.name}</p>
-        <p><strong>Address:</strong><br/></p>
-        <p>${hub.address}</p>
-        <p>${hub.city}, ${hub.state}</p>
-        <p>${hub.country}</p>
+        ${hub.address ? `<p><strong>Address:</strong><br/></p>` : ""}
+        ${hub.address ? `<p>${hub.address}</p>` : ""}
+        ${hub.city && hub.state ? `<p>${hub.city}, ${hub.state}</p>` : ""} 
+        ${hub.country ? `<p>${hub.country}</p>` : ""}
       </div>
       
       <p>We recommend adding this event to your calendar to make sure you don't miss it.</p>
