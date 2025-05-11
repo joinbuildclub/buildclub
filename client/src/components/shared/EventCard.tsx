@@ -101,27 +101,51 @@ export function EventCard({
   // Get shortened day of week (Mon, Tue, etc.)
   const shortDayOfWeek = dayOfWeek?.substring(0, 3) || "";
 
+  // Generate gradient classes based on event focus areas
+  const generateGradientClass = () => {
+    if (!focuses || !Array.isArray(focuses) || focuses.length === 0) {
+      // Default gradient if no focus areas
+      return "bg-gradient-to-br from-purple-400 to-purple-500";
+    }
+
+    // Define color variables
+    const colorMap = {
+      product: "var(--color-red)",
+      design: "var(--color-blue)",
+      engineering: "var(--color-yellow)",
+    };
+
+    // Get unique focus areas to avoid duplicates
+    const uniqueFocuses = [...new Set(focuses)];
+
+    // If only one focus area, make a simple gradient of that color
+    if (uniqueFocuses.length === 1) {
+      const color = colorMap[uniqueFocuses[0]];
+      return `bg-gradient-to-br from-[${color}] to-[${color}]/80`;
+    }
+    
+    // Two focus areas
+    if (uniqueFocuses.length === 2) {
+      return `bg-gradient-to-br from-[${colorMap[uniqueFocuses[0]]}] to-[${colorMap[uniqueFocuses[1]]}]`;
+    }
+    
+    // Three or more focus areas (use the first 3)
+    if (uniqueFocuses.length >= 3) {
+      return `bg-gradient-to-br from-[${colorMap[uniqueFocuses[0]]}] via-[${colorMap[uniqueFocuses[1]]}] to-[${colorMap[uniqueFocuses[2]]}]`;
+    }
+
+    // Default fallback
+    return "bg-gradient-to-br from-purple-400 to-purple-500";
+  };
+
   const cardContent = (
     <div className="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col md:flex-row group transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
       {/* Date section - will be on top for mobile, on left for desktop */}
       <div
-        className={`w-full md:w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden
-                  ${
-                    isHackathon
-                      ? "bg-gray-100" // Base color that will be covered by the animated gradient
-                      : focuses.includes("engineering")
-                        ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
-                        : focuses.includes("design")
-                          ? "bg-gradient-to-br from-blue-400 to-blue-500"
-                          : focuses.includes("product")
-                            ? "bg-gradient-to-br from-red-400 to-red-500"
-                            : "bg-gradient-to-br from-purple-400 to-purple-500"
-                  }`}
+        className={`w-full md:w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden bg-gray-800`}
       >
-        {/* Animated gradient overlay for hackathons */}
-        {isHackathon && (
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-red)] via-[var(--color-blue)] to-[var(--color-yellow)] animate-gradient-x"></div>
-        )}
+        {/* Dynamic gradient overlay based on focus areas */}
+        <div className={`absolute inset-0 ${generateGradientClass()} ${isHackathon ? 'animate-gradient-x' : ''}`}></div>
         {/* Date content with z-index to ensure it appears above the gradient */}
         <div className="relative z-10 flex md:flex-col items-center">
           <div className="text-sm font-medium opacity-90 mr-2 md:mr-0">
