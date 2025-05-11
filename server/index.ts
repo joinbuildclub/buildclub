@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -12,7 +13,7 @@ const { Pool } = pg;
 const app = express();
 
 // Trust the first proxy in the chain when in production
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -24,19 +25,19 @@ app.use(
   session({
     store: new PgSession({
       pool: new Pool({ connectionString: process.env.DATABASE_URL }),
-      tableName: 'session', // This table will be created automatically
-      createTableIfMissing: true
+      tableName: "session", // This table will be created automatically
+      createTableIfMissing: true,
     }),
-    secret: process.env.SESSION_SECRET || 'buildclub-secret',
+    secret: process.env.SESSION_SECRET || "buildclub-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      secure: process.env.NODE_ENV === 'production', // Secure in production, allow HTTP for development
-      sameSite: 'lax',
-      path: '/'
+      secure: process.env.NODE_ENV === "production", // Secure in production, allow HTTP for development
+      sameSite: "lax",
+      path: "/",
     },
-    proxy: process.env.NODE_ENV === 'production' // Trust the reverse proxy in production
+    proxy: process.env.NODE_ENV === "production", // Trust the reverse proxy in production
   })
 );
 
@@ -99,11 +100,14 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    },
+    () => {
+      log(`serving on port ${port}`);
+    }
+  );
 })();

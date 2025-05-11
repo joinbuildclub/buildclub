@@ -47,17 +47,12 @@ export default function EventsSection() {
     queryKey: ["/api/events", "providence-hub"],
     queryFn: () =>
       fetch(
-        "/api/events?hubId=fff7df05-4a4c-4abb-8957-8857b4e1b8d7&published=true",
+        "/api/events?hubId=fff7df05-4a4c-4abb-8957-8857b4e1b8d7&published=true"
       ).then((res) => res.json()),
     staleTime: 10000, // 10 seconds
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-
-  // We're now using our utility functions from dateUtils.ts instead
-
-  // Add some debugging
-  console.log("Events data:", events);
 
   // Process events for display, using our utility functions
   const processedEvents = Array.isArray(events)
@@ -155,10 +150,10 @@ export default function EventsSection() {
           time: timeDisplay,
           dateComponents, // Pass the extracted components for the date card
           title: event.title,
+          eventType: event.eventType,
           description: event.description,
           location: "Providence, RI", // Default location since it's not in our model
           focuses: event.focusAreas,
-          isHackathon: event.eventType === "hackathon",
         };
       })
     : [];
