@@ -26,6 +26,10 @@ import {
   sendRegistrationCancellation,
 } from "./sendgrid";
 
+export interface InsertUserWithTransientProps extends InsertUser {
+  skipWelcomeEmail?: boolean;
+}
+
 export interface IStorage {
   // User methods
   getUser(id: string): Promise<User | undefined>;
@@ -33,11 +37,11 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   getUsers(filters?: { role?: string }): Promise<User[]>;
-  createUser(user: InsertUser): Promise<User>;
+  createUser(user: InsertUserWithTransientProps): Promise<User>;
   updateUser(id: string, userData: Partial<User>): Promise<User>;
   convertGuestAccount(
     email: string,
-    userData: Partial<User>,
+    userData: Partial<User>
   ): Promise<User | undefined>;
 
   // Hub methods
@@ -63,23 +67,23 @@ export interface IStorage {
 
   // Hub Event Registration methods
   createHubEventRegistration(
-    registration: InsertHubEventRegistration,
+    registration: InsertHubEventRegistration
   ): Promise<HubEventRegistration>;
   getHubEventRegistration(
-    id: string,
+    id: string
   ): Promise<HubEventRegistration | undefined>;
   getHubEventRegistrationsByHubEventId(
-    hubEventId: string,
+    hubEventId: string
   ): Promise<HubEventRegistration[]>;
   getHubEventRegistrationByEmail(
     hubEventId: string,
-    email: string,
+    email: string
   ): Promise<HubEventRegistration | undefined>;
   getRegistrationsByUserId(userId: string): Promise<HubEventRegistration[]>;
   getUserEventRegistrations(userId: string): Promise<any[]>;
   updateRegistrationStatus(
     id: string,
-    status: "registered" | "confirmed" | "attended" | "cancelled",
+    status: "registered" | "confirmed" | "attended" | "cancelled"
   ): Promise<HubEventRegistration>;
   deleteRegistration(id: string): Promise<boolean>;
 }
@@ -153,7 +157,7 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(insertUser: InsertUserWithTransientProps): Promise<User> {
     const [user] = await db
       .insert(users)
       .values(this.safeData(insertUser))
@@ -175,7 +179,7 @@ export class DatabaseStorage implements IStorage {
 
     if (!isSendGridConfigured) {
       console.log(
-        "SendGrid not fully configured. Skipping email operations for user registration.",
+        "SendGrid not fully configured. Skipping email operations for user registration."
       );
       return;
     }
@@ -206,7 +210,7 @@ export class DatabaseStorage implements IStorage {
           const welcomeEmailSent = await sendWelcomeEmail(userEntry as any);
           if (welcomeEmailSent) {
             console.log(
-              `Welcome email sent to user ${user.email} successfully`,
+              `Welcome email sent to user ${user.email} successfully`
             );
           }
         } catch (err) {
@@ -214,18 +218,18 @@ export class DatabaseStorage implements IStorage {
         }
       } else {
         console.log(
-          `Skipping welcome email for ${user.email} - will be sent after verification`,
+          `Skipping welcome email for ${user.email} - will be sent after verification`
         );
       }
 
       // Try to send notification to admin
       try {
         const adminNotificationSent = await sendAdminNotification(
-          userEntry as any,
+          userEntry as any
         );
         if (adminNotificationSent) {
           console.log(
-            `Admin notification sent for user ${user.email} successfully`,
+            `Admin notification sent for user ${user.email} successfully`
           );
         }
       } catch (err) {
@@ -282,7 +286,11 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
 
-  async getEvents(filters?: { isPublished?: boolean; hubId?: string; includePassedEvents?: boolean }) {
+  async getEvents(filters?: {
+    isPublished?: boolean;
+    hubId?: string;
+    includePassedEvents?: boolean;
+  }) {
     // Start building the query
     let eventsQuery = db
       .select({
@@ -324,9 +332,11 @@ export class DatabaseStorage implements IStorage {
       // Get today's date at the start of the day in UTC
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
-      
+
       // Filter for events with startDateTime >= today
-      whereConditions.push(sql`${events.startDateTime} >= ${today.toISOString()}`);
+      whereConditions.push(
+        sql`${events.startDateTime} >= ${today.toISOString()}`
+      );
     }
 
     // Apply where conditions if any
@@ -396,7 +406,7 @@ export class DatabaseStorage implements IStorage {
 
   // Hub Event Registration methods
   async createHubEventRegistration(
-    insertRegistration: InsertHubEventRegistration,
+    insertRegistration: InsertHubEventRegistration
   ): Promise<HubEventRegistration> {
     const [registration] = await db
       .insert(hubEventRegistrations)
@@ -410,7 +420,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHubEventRegistration(
-    id: string,
+    id: string
   ): Promise<HubEventRegistration | undefined> {
     const [registration] = await db
       .select()
@@ -420,7 +430,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getHubEventRegistrationsByHubEventId(
-    hubEventId: string,
+    hubEventId: string
   ): Promise<HubEventRegistration[]> {
     return db
       .select()
@@ -430,7 +440,7 @@ export class DatabaseStorage implements IStorage {
 
   async getHubEventRegistrationByEmail(
     hubEventId: string,
-    email: string,
+    email: string
   ): Promise<HubEventRegistration | undefined> {
     const [registration] = await db
       .select()
@@ -438,15 +448,15 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(hubEventRegistrations.hubEventId, hubEventId),
-          eq(hubEventRegistrations.email, email),
-        ),
+          eq(hubEventRegistrations.email, email)
+        )
       );
     return registration || undefined;
   }
 
   // Get all registrations for a specific user by user ID
   async getRegistrationsByUserId(
-    userId: string,
+    userId: string
   ): Promise<HubEventRegistration[]> {
     return db
       .select()
@@ -486,7 +496,7 @@ export class DatabaseStorage implements IStorage {
           hub,
           hubEvent,
         };
-      }),
+      })
     );
 
     // Filter out any null values (from failed lookups)
@@ -496,7 +506,7 @@ export class DatabaseStorage implements IStorage {
   // Update registration status
   async updateRegistrationStatus(
     id: string,
-    status: "registered" | "confirmed" | "attended" | "cancelled",
+    status: "registered" | "confirmed" | "attended" | "cancelled"
   ): Promise<HubEventRegistration> {
     const [registration] = await db
       .update(hubEventRegistrations)
@@ -530,7 +540,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   private async processWithSendGrid(
-    entry: HubEventRegistration,
+    entry: HubEventRegistration
   ): Promise<void> {
     // Check if SendGrid is properly configured
     const isSendGridConfigured =
@@ -538,7 +548,7 @@ export class DatabaseStorage implements IStorage {
 
     if (!isSendGridConfigured) {
       console.log(
-        "SendGrid not fully configured. Skipping email operations but form submission was successful.",
+        "SendGrid not fully configured. Skipping email operations but form submission was successful."
       );
       return;
     }
@@ -560,7 +570,7 @@ export class DatabaseStorage implements IStorage {
       if (!hubEvent) {
         console.error(
           "Hub event not found in processWithSendGrid:",
-          entry.hubEventId,
+          entry.hubEventId
         );
         return;
       }
@@ -578,11 +588,11 @@ export class DatabaseStorage implements IStorage {
         const confirmationSent = await sendEventRegistrationConfirmation(
           entry,
           event,
-          hub,
+          hub
         );
         if (confirmationSent) {
           console.log(
-            `Event registration confirmation email sent to ${entry.email} successfully`,
+            `Event registration confirmation email sent to ${entry.email} successfully`
           );
         }
       } catch (err) {
@@ -594,7 +604,7 @@ export class DatabaseStorage implements IStorage {
         const adminNotificationSent = await sendAdminNotification(entry);
         if (adminNotificationSent) {
           console.log(
-            `Admin notification sent for ${entry.email} event registration successfully`,
+            `Admin notification sent for ${entry.email} event registration successfully`
           );
         }
       } catch (err) {
@@ -617,7 +627,7 @@ export class DatabaseStorage implements IStorage {
         SELECT * FROM "user" 
         WHERE role = ${filters.role}
         ORDER BY "created_at" DESC
-      `,
+      `
         )
         .then((result) => result.rows as User[]);
     } else {
@@ -627,7 +637,7 @@ export class DatabaseStorage implements IStorage {
           sql`
         SELECT * FROM "user"
         ORDER BY "created_at" DESC
-      `,
+      `
         )
         .then((result) => result.rows as User[]);
     }
@@ -636,7 +646,7 @@ export class DatabaseStorage implements IStorage {
   // Convert a guest account to a permanent account
   async convertGuestAccount(
     email: string,
-    userData: Partial<User>,
+    userData: Partial<User>
   ): Promise<User | undefined> {
     try {
       // 1. Find the guest user by email
@@ -665,7 +675,7 @@ export class DatabaseStorage implements IStorage {
         // If role is provided as a string but not one of the valid roles, default to "member"
         if (!["admin", "ambassador", "member"].includes(userData.role)) {
           console.log(
-            `Invalid role provided: ${userData.role}, defaulting to "member"`,
+            `Invalid role provided: ${userData.role}, defaulting to "member"`
           );
           updatedUserData.role = "member";
         }
@@ -675,7 +685,7 @@ export class DatabaseStorage implements IStorage {
       const updatedUser = await this.updateUser(guestUser.id, updatedUserData);
 
       console.log(
-        `Successfully converted guest account ${email} to permanent account`,
+        `Successfully converted guest account ${email} to permanent account`
       );
       return updatedUser;
     } catch (error) {

@@ -67,7 +67,7 @@ export const users = pgTable("user", {
   lastName: text("last_name"),
   profilePicture: text("profile_picture"),
   role: text("role", { enum: ["admin", "ambassador", "member"] }).default(
-    "member",
+    "member"
   ),
   isOnboarded: boolean("is_onboarded").default(false),
   isGuest: boolean("is_guest").default(false),
@@ -134,7 +134,7 @@ export const hubEvents = pgTable(
   (t) => ({
     // Ensure an event can only be linked to a hub once
     uniqHubEvent: uniqueIndex("uniq_hub_event_idx_new").on(t.hubId, t.eventId),
-  }),
+  })
 );
 
 // Hub Event Registration table
@@ -149,6 +149,8 @@ export const hubEventRegistrations = pgTable(
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     email: text("email").notNull(),
+    interestAreas: text("interest_areas").array(),
+    aiInterests: text("ai_interests"),
     status: text("status").default("registered").$type<RegistrationStatus>(),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow(),
@@ -157,10 +159,18 @@ export const hubEventRegistrations = pgTable(
     // Ensure a user can only register once for a hub event
     uniqEventUser: uniqueIndex("uniq_hubevent_user_idx_new").on(
       t.hubEventId,
-      t.email,
+      t.email
     ),
-  }),
+  })
 );
+
+// After the other table definitions, add the session table
+// Session table for connect-pg-simple
+export const sessions = pgTable("session", {
+  sid: text("sid").notNull().primaryKey(),
+  sess: text("sess").notNull(), // storing JSON as text
+  expire: timestamp("expire", { precision: 6 }).notNull(),
+});
 
 // Define relations after all tables are declared
 export const usersRelations = relations(users, ({ many }) => ({
@@ -222,7 +232,7 @@ export const hubEventRegistrationsRelations = relations(
       fields: [hubEventRegistrations.userId],
       references: [users.id],
     }),
-  }),
+  })
 );
 
 // Schemas for insert operations
@@ -289,13 +299,15 @@ export const insertHubEventSchema = createInsertSchema(hubEvents).pick({
 });
 
 export const insertHubEventRegistrationSchema = createInsertSchema(
-  hubEventRegistrations,
+  hubEventRegistrations
 ).pick({
   hubEventId: true,
   userId: true,
   firstName: true,
   lastName: true,
   email: true,
+  interestAreas: true,
+  aiInterests: true,
   status: true,
   notes: true,
 });

@@ -1,6 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage, InsertUserWithTransientProps } from "./storage";
 import { db } from "./db";
 import {
   insertHubEventRegistrationSchema,
@@ -114,7 +114,7 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
 const isAmbassadorOrAdmin = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = await getUserInfo(req);
 
@@ -142,7 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       next();
     },
-    passport.authenticate("google", { scope: ["profile", "email"] }),
+    passport.authenticate("google", { scope: ["profile", "email"] })
   );
 
   app.get(
@@ -166,13 +166,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           if (guestUser && guestUser.isGuest) {
             console.log(
-              `Converting guest account ${convertEmail} via Google OAuth`,
+              `Converting guest account ${convertEmail} via Google OAuth`
             );
 
             // Get the Google user's email
             if (user.email !== convertEmail) {
               console.log(
-                `Warning: Google account email (${user.email}) doesn't match guest account email (${convertEmail})`,
+                `Warning: Google account email (${user.email}) doesn't match guest account email (${convertEmail})`
               );
               // We'll still proceed but log the discrepancy
             }
@@ -201,7 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (error) {
           console.error(
             "Error converting guest account via Google OAuth:",
-            error,
+            error
           );
           // Continue with normal flow even if conversion fails
         }
@@ -224,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Successful authentication
       res.redirect("/dashboard/?success=google-auth");
-    },
+    }
   );
 
   app.get("/auth/logout", (req, res) => {
@@ -270,7 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // If there's an existing guest account with this email, convert it instead of creating a new one
         if (existingUser && existingUser.isGuest) {
           console.log(
-            `Converting guest account with email ${userData.email} to permanent account`,
+            `Converting guest account with email ${userData.email} to permanent account`
           );
 
           // Hash password if provided
@@ -293,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             role:
               userData.role &&
               ["admin", "ambassador", "member"].includes(
-                userData.role as string,
+                userData.role as string
               )
                 ? (userData.role as "admin" | "ambassador" | "member")
                 : "member",
@@ -302,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Convert the guest account to a permanent one
           const updatedUser = await storage.convertGuestAccount(
             userData.email,
-            validatedUserData,
+            validatedUserData
           );
 
           if (!updatedUser) {
@@ -316,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (err) {
               console.error(
                 "Error logging in after guest account conversion:",
-                err,
+                err
               );
               return res
                 .status(500)
@@ -357,7 +357,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Auto-generate username from email if not provided
       if (!userData.username && userData.email) {
         // Get the part before the @ sign and add a random suffix to ensure uniqueness
-        userData.username = `${userData.email.split("@")[0]}_${Math.floor(Math.random() * 1000)}`;
+        userData.username = `${userData.email.split("@")[0]}_${Math.floor(
+          Math.random() * 1000
+        )}`;
       }
 
       // Hash password
@@ -381,9 +383,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create the user - but skip the automatic sendWelcomeEmail process since we need to verify email first
-      userData.skipWelcomeEmail =
-        userData.email && !userData.googleId && !userData.isConfirmed;
-      const newUser = await storage.createUser(userData);
+      const userDataWithProps: InsertUserWithTransientProps = userData;
+      userDataWithProps.skipWelcomeEmail = !!(
+        userData.email &&
+        !userData.googleId &&
+        !userData.isConfirmed
+      );
+      const newUser = await storage.createUser(userDataWithProps);
 
       // Send verification email for email/password users
       if (userData.email && !userData.googleId && !userData.isConfirmed) {
@@ -486,7 +492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         token,
         user: req.user,
       });
-    },
+    }
   );
 
   // Get user info - supports both session and JWT auth
@@ -573,8 +579,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           req.query.published === "true"
             ? true
             : req.query.published === "false"
-              ? false
-              : undefined,
+            ? false
+            : undefined,
         hubId: req.query.hubId as string | undefined,
         includePassedEvents: req.query.includePassedEvents === "true",
       };
@@ -713,13 +719,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Validate the request body using the Zod schema
       const validatedRegistration = insertHubEventRegistrationSchema.parse(
-        req.body,
+        req.body
       );
 
       // Check if email already exists for this hub event
       const existingRegistration = await storage.getHubEventRegistrationByEmail(
         validatedRegistration.hubEventId,
-        validatedRegistration.email,
+        validatedRegistration.email
       );
 
       if (existingRegistration) {
@@ -739,7 +745,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         let userIdToUse = null;
         const existingUser = await storage.getUserByEmail(
-          validatedRegistration.email,
+          validatedRegistration.email
         );
         if (existingUser) {
           userIdToUse = existingUser.id;
@@ -761,7 +767,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create the registration
       const registration = await storage.createHubEventRegistration(
-        validatedRegistration,
+        validatedRegistration
       );
 
       return res.status(201).json({
@@ -816,8 +822,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const registration =
-          await storage.getHubEventRegistration(registrationId);
+        const registration = await storage.getHubEventRegistration(
+          registrationId
+        );
         if (!registration) {
           return res.status(404).json({ message: "Registration not found" });
         }
@@ -836,7 +843,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update status
         const updatedRegistration = await storage.updateRegistrationStatus(
           registrationId,
-          status as "registered" | "confirmed" | "attended" | "cancelled",
+          status as "registered" | "confirmed" | "attended" | "cancelled"
         );
 
         // If cancelled, send cancellation email
@@ -866,7 +873,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "An error occurred while updating the registration status.",
         });
       }
-    },
+    }
   );
 
   // Delete registration (unregister)
@@ -880,8 +887,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const registration =
-        await storage.getHubEventRegistration(registrationId);
+      const registration = await storage.getHubEventRegistration(
+        registrationId
+      );
       if (!registration) {
         return res.status(404).json({ message: "Registration not found" });
       }
@@ -905,7 +913,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (emailError) {
         console.error(
           "Error sending cancellation email before deletion:",
-          emailError,
+          emailError
         );
         // Continue with deletion even if email fails
       }
@@ -947,7 +955,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "An error occurred while fetching the registrations.",
         });
       }
-    },
+    }
   );
 
   // Community members API endpoints (renamed from registrations/waitlist)
@@ -1008,27 +1016,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Get all registrations from hubEventRegistrations table
       // Use a specific column selection to avoid errors with missing columns
-      const registrations = await db
-        .select({
-          id: hubEventRegistrations.id,
-          hubEventId: hubEventRegistrations.hubEventId,
-          userId: hubEventRegistrations.userId,
-          firstName: hubEventRegistrations.firstName,
-          lastName: hubEventRegistrations.lastName,
-          email: hubEventRegistrations.email,
-          interestAreas: hubEventRegistrations.interestAreas,
-          aiInterests: hubEventRegistrations.aiInterests,
-          status: hubEventRegistrations.status,
-          notes: hubEventRegistrations.notes,
-          createdAt: hubEventRegistrations.createdAt,
-        })
-        .from(hubEventRegistrations)
-        .orderBy(desc(hubEventRegistrations.createdAt));
+      let registrations;
+      try {
+        registrations = await db
+          .select({
+            id: hubEventRegistrations.id,
+            hubEventId: hubEventRegistrations.hubEventId,
+            userId: hubEventRegistrations.userId,
+            firstName: hubEventRegistrations.firstName,
+            lastName: hubEventRegistrations.lastName,
+            email: hubEventRegistrations.email,
+            interestAreas: hubEventRegistrations.interestAreas,
+            aiInterests: hubEventRegistrations.aiInterests,
+            status: hubEventRegistrations.status,
+            notes: hubEventRegistrations.notes,
+            createdAt: hubEventRegistrations.createdAt,
+          })
+          .from(hubEventRegistrations)
+          .orderBy(desc(hubEventRegistrations.createdAt));
+      } catch (dbError) {
+        console.error("Database query error:", dbError);
+        return res.status(500).json({
+          message: "Error querying registrations database",
+        });
+      }
+
+      if (!registrations || !Array.isArray(registrations)) {
+        console.error(
+          "Registrations query returned invalid data:",
+          registrations
+        );
+        return res.status(200).json([]);
+      }
 
       // For each registration, fetch associated event and hub data
       const enrichedRegistrations = await Promise.all(
         registrations.map(async (registration) => {
           try {
+            if (!registration || !registration.hubEventId) {
+              return null;
+            }
+
             const hubEvent = await storage.getHubEvent(registration.hubEventId);
 
             if (!hubEvent) {
@@ -1051,14 +1079,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             };
           } catch (err) {
             console.error("Error enriching registration data:", err);
-            return {
-              registration,
-              event: { title: "Error loading event" },
-              hub: { name: "Error loading hub" },
-              hubEvent: { id: registration.hubEventId },
-            };
+            return null;
           }
-        }),
+        })
       );
 
       // Filter out any null values (from failed lookups)
@@ -1148,7 +1171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Redirect to login page with success message
       return res.redirect(
-        `/auth?verified=true&email=${encodeURIComponent(user.email || "")}`,
+        `/auth?verified=true&email=${encodeURIComponent(user.email || "")}`
       );
     } catch (error) {
       console.error("Error verifying email:", error);
