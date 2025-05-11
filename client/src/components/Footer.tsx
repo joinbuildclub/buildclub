@@ -100,7 +100,7 @@ export default function Footer() {
                 <div className="clay-shape bg-[var(--color-red)] p-2 mr-3">
                   <Mail className="h-4 w-4 text-white" />
                 </div>
-                <span className="text-white/90 pt-1">join@buildclub.io</span>
+                <span className="text-white/90 pt-1">join@buildclub.co</span>
               </li>
               <li className="flex items-start">
                 <div className="clay-shape bg-[var(--color-green)] p-2 mr-3">

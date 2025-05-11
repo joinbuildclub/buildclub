@@ -18,7 +18,7 @@ if (isSendGridConfigured) {
   }
 } else {
   console.warn(
-    "SendGrid not configured. SENDGRID_API_KEY and/or ADMIN_EMAIL missing.",
+    "SendGrid not configured. SENDGRID_API_KEY and/or ADMIN_EMAIL missing."
   );
 }
 
@@ -26,7 +26,7 @@ if (isSendGridConfigured) {
 export async function sendEmail(
   to: string,
   subject: string,
-  htmlContent: string,
+  htmlContent: string
 ): Promise<boolean> {
   if (!process.env.SENDGRID_API_KEY || !process.env.ADMIN_EMAIL) {
     console.warn("SendGrid credentials not found. Email not sent.");
@@ -87,7 +87,7 @@ export async function addContactToSendGrid(entry: {
     const [response] = await sgClient.request(request);
     console.log(
       `Contact added to SendGrid: ${entry.email}`,
-      response.statusCode,
+      response.statusCode
     );
     return response.statusCode >= 200 && response.statusCode < 300;
   } catch (error) {
@@ -116,7 +116,7 @@ export async function sendWelcomeEmail(entry: {
       <p>The BuildClub Team</p>
       <br/>
       <p>P.S. If you have any questions or need assistance, please don't hesitate to</p>
-      <p>reach out to us at <a href="mailto:support@buildclub.io">support@buildclub.io</a>.</p>
+      <p>reach out to us at <a href="mailto:support@buildclub.co">support@buildclub.co</a>.</p>
       
     </div>
   `;
@@ -154,7 +154,7 @@ export async function sendAdminNotification(entry: {
 export async function sendEventRegistrationConfirmation(
   registration: HubEventRegistration,
   event: Event,
-  hub: Hub,
+  hub: Hub
 ): Promise<boolean> {
   // Format date and time for human readability
   const eventDate = event.startDateTime
@@ -184,8 +184,8 @@ export async function sendEventRegistrationConfirmation(
         timeZone: "UTC",
       })}`
     : event.endTime
-      ? ` - ${event.endTime}`
-      : "";
+    ? ` - ${event.endTime}`
+    : "";
 
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -215,7 +215,7 @@ export async function sendEventRegistrationConfirmation(
   return sendEmail(
     registration.email,
     `Registered: ${event.title}`,
-    htmlContent,
+    htmlContent
   );
 }
 
@@ -238,8 +238,8 @@ export function generateCalendarLink(event: Event, hub: Hub) {
         timeZone: "UTC",
       })}`
     : event.endTime
-      ? ` - ${event.endTime}`
-      : "";
+    ? ` - ${event.endTime}`
+    : "";
 
   // Create location string
   const location = `${hub.address}, ${hub.city}, ${hub.state}, ${hub.country}`;
@@ -259,7 +259,7 @@ export function generateCalendarLink(event: Event, hub: Hub) {
 export async function sendEventReminder(
   registration: HubEventRegistration,
   event: Event,
-  hub: Hub,
+  hub: Hub
 ): Promise<boolean> {
   // Format date and time for human readability
   const eventDate = event.startDateTime
@@ -289,8 +289,8 @@ export async function sendEventReminder(
         timeZone: "UTC",
       })}`
     : event.endTime
-      ? ` - ${event.endTime}`
-      : "";
+    ? ` - ${event.endTime}`
+    : "";
 
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -319,14 +319,14 @@ export async function sendEventReminder(
   return sendEmail(
     registration.email,
     `REMINDER: ${event.title} Tomorrow`,
-    htmlContent,
+    htmlContent
   );
 }
 
 // Function to send cancellation confirmation
 export async function sendRegistrationCancellation(
   registration: HubEventRegistration,
-  event: Event,
+  event: Event
 ): Promise<boolean> {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -342,14 +342,14 @@ export async function sendRegistrationCancellation(
   return sendEmail(
     registration.email,
     `Registration Cancelled: ${event.title}`,
-    htmlContent,
+    htmlContent
   );
 }
 
 // Send account verification email with confirmation link
 export async function sendAccountVerificationEmail(
   user: User,
-  confirmationToken: string,
+  confirmationToken: string
 ): Promise<boolean> {
   // Base URL from the application environment or fallback to localhost
   // Include the full protocol and hostname to ensure links work properly
@@ -386,7 +386,7 @@ export async function sendAccountVerificationEmail(
   return sendEmail(
     user.email!, // We know this exists if we're sending a verification email
     "Verify Your BuildClub Account",
-    htmlContent,
+    htmlContent
   );
 }
 
@@ -421,6 +421,6 @@ export async function sendAccountConfirmedEmail(user: User): Promise<boolean> {
   return sendEmail(
     user.email!,
     "Welcome to BuildClub - Your Account is Verified!",
-    htmlContent,
+    htmlContent
   );
 }
