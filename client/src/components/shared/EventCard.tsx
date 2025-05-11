@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { Clock, MapPin } from "lucide-react";
 import { Link } from "wouter";
-import { FocusAreaEnum } from "@shared/schema";
 import { extractDateComponents } from "@/lib/dateUtils";
 
 // Define Focus type locally to avoid circular dependencies
@@ -22,7 +21,7 @@ export interface Event {
   endDate?: string;
   startTime?: string;
   endTime?: string;
-  eventType: string;
+  eventType: "conference" | "hackathon" | "meetup" | "workshop";
   focusAreas: Focus[];
   location?: string;
   isPublished: boolean;
@@ -64,7 +63,7 @@ export interface EventCardProps {
   description: string;
   location: string;
   focuses: Focus[];
-  isHackathon?: boolean;
+  eventType?: "conference" | "hackathon" | "meetup" | "workshop";
   dateComponents?: {
     day: string;
     month: string;
@@ -84,7 +83,7 @@ export function EventCard({
   description,
   location,
   focuses,
-  isHackathon = false,
+  eventType,
   dateComponents,
   eventId,
   hubEventId,
@@ -93,6 +92,23 @@ export function EventCard({
   linkToDetail = true,
 }: EventCardProps) {
   const { user } = useAuth();
+
+  const mapEventType = (eventType: string) => {
+    switch (eventType) {
+      case "conference":
+        return "Conference";
+      case "hackathon":
+        return "Hackathon";
+      case "meetup":
+        return "Meetup";
+      case "workshop":
+        return "Workshop";
+      default:
+        return "Event";
+    }
+  };
+
+  const mappedEventType = mapEventType(eventType);
 
   // Use the provided date components or extract them from the date string
   const { day, month, dayOfWeek } =
@@ -123,12 +139,12 @@ export function EventCard({
       const color = colorMap[uniqueFocuses[0]];
       return `bg-gradient-to-br from-[${color}] to-[${color}]/80`;
     }
-    
+
     // Two focus areas
     if (uniqueFocuses.length === 2) {
       return `bg-gradient-to-br from-[${colorMap[uniqueFocuses[0]]}] to-[${colorMap[uniqueFocuses[1]]}]`;
     }
-    
+
     // Three or more focus areas (use the first 3)
     if (uniqueFocuses.length >= 3) {
       return `bg-gradient-to-br from-[${colorMap[uniqueFocuses[0]]}] via-[${colorMap[uniqueFocuses[1]]}] to-[${colorMap[uniqueFocuses[2]]}]`;
@@ -145,7 +161,9 @@ export function EventCard({
         className={`w-full md:w-24 p-4 flex flex-col items-center justify-center text-white relative overflow-hidden bg-gray-800`}
       >
         {/* Dynamic gradient overlay based on focus areas */}
-        <div className={`absolute inset-0 ${generateGradientClass()} ${isHackathon ? 'animate-gradient-x' : ''}`}></div>
+        <div
+          className={`absolute inset-0 ${generateGradientClass()} ${mappedEventType === "Hackathon" ? "animate-gradient-x" : ""}`}
+        ></div>
         {/* Date content with z-index to ensure it appears above the gradient */}
         <div className="relative z-10 flex md:flex-col items-center">
           <div className="text-sm font-medium opacity-90 mr-2 md:mr-0">
@@ -172,7 +190,7 @@ export function EventCard({
               variant="outline"
               className="bg-gray-50 text-gray-600 border-gray-100"
             >
-              {isHackathon ? "Hackathon" : "Workshop"}
+              {mappedEventType}
             </Badge>
           </div>
 
@@ -282,7 +300,7 @@ export function EventCardWrapper({
       description={event.description}
       location={event.location}
       focuses={event.focuses}
-      isHackathon={event.isHackathon}
+      eventType={event.eventType}
       dateComponents={event.dateComponents}
       eventId={event.id}
       hubEventId={event.hubEventId || ""}
