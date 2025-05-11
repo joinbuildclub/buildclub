@@ -63,7 +63,7 @@ export interface EventCardProps {
   description: string;
   location: string;
   focuses: Focus[];
-  eventType?: "conference" | "hackathon" | "meetup" | "workshop";
+  eventType: "conference" | "hackathon" | "meetup" | "workshop";
   dateComponents?: {
     day: string;
     month: string;
@@ -93,7 +93,9 @@ export function EventCard({
 }: EventCardProps) {
   const { user } = useAuth();
 
-  const mapEventType = (eventType: string) => {
+  const mapEventType = (
+    eventType: "conference" | "hackathon" | "meetup" | "workshop",
+  ) => {
     switch (eventType) {
       case "conference":
         return "Conference";
@@ -286,7 +288,7 @@ export function EventCardWrapper({
   onClick,
   onRegisterClick,
 }: EventCardWithProcessedEventProps) {
-  const handleRegisterClick = (eventId: string, hubEventId: string) => {
+  const handleRegisterClick = () => {
     if (onRegisterClick && event) {
       onRegisterClick(event);
     }
@@ -300,7 +302,9 @@ export function EventCardWrapper({
       description={event.description}
       location={event.location}
       focuses={event.focuses}
-      eventType={event.eventType}
+      eventType={
+        event.eventType as "hackathon" | "conference" | "meetup" | "workshop"
+      }
       dateComponents={event.dateComponents}
       eventId={event.id}
       hubEventId={event.hubEventId || ""}

@@ -280,11 +280,11 @@ export default function EventsSection() {
                     description={event.description}
                     location={event.location}
                     focuses={event.focuses}
-                    isHackathon={event.isHackathon}
+                    eventType={event.eventType}
                     dateComponents={event.dateComponents}
                     eventId={event.id}
                     hubEventId={hubEventId}
-                    onRegisterClick={(eventId, hubEvtId) => {
+                    onRegisterClick={() => {
                       handleRegisterClick(event);
                     }}
                     showRegisterButton={true}
