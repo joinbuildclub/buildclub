@@ -576,6 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ? false
               : undefined,
         hubId: req.query.hubId as string | undefined,
+        includePassedEvents: req.query.includePassedEvents === "true",
       };
 
       const events = await storage.getEvents(filters);

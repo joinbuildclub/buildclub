@@ -52,6 +52,7 @@ export interface IStorage {
   getEvents(filters?: {
     isPublished?: boolean;
     hubId?: string;
+    includePassedEvents?: boolean;
   }): Promise<Event[]>;
 
   // Hub Event methods
@@ -281,7 +282,7 @@ export class DatabaseStorage implements IStorage {
     return event || undefined;
   }
 
-  async getEvents(filters?: { isPublished?: boolean; hubId?: string }) {
+  async getEvents(filters?: { isPublished?: boolean; hubId?: string; includePassedEvents?: boolean }) {
     // Start building the query
     let eventsQuery = db
       .select({
@@ -316,6 +317,16 @@ export class DatabaseStorage implements IStorage {
 
     if (filters?.hubId) {
       whereConditions.push(eq(hubEvents.hubId, filters.hubId));
+    }
+
+    // Filter out past events unless explicitly requested to include them
+    if (filters?.includePassedEvents !== true) {
+      // Get today's date at the start of the day in UTC
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      
+      // Filter for events with startDateTime >= today
+      whereConditions.push(sql`${events.startDateTime} >= ${today.toISOString()}`);
     }
 
     // Apply where conditions if any
