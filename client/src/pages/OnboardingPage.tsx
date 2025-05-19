@@ -103,11 +103,11 @@ const interestOptions = [
 
 // Build Club community links
 const communityLinks = {
-  discord: {
-    name: "Discord Community",
-    url: "https://discord.gg/JumvhCbabY",
-    description: "Join our Discord community to connect with other AI builders",
-    icon: "discord",
+  slack: {
+    name: "Slack Community",
+    url: "https://join.slack.com/t/joinbuildclub/shared_invite/zt-35oxsm40k-bokmXmq3VLq8g~T_vSNmTA",
+    description: "Join our Slack community to connect with other AI builders",
+    icon: "slack",
   },
   twitter: {
     name: "Twitter",
