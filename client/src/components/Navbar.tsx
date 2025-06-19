@@ -131,7 +131,7 @@ export default function Navbar() {
                       href="/ideas"
                       className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors block"
                     >
-                      Ideas
+                      Community Ideas
                     </Link>
                   )}
                   {isAuthenticated ? (
