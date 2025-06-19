@@ -10,6 +10,7 @@ import OnboardingPage from "@/pages/OnboardingPage";
 import EventsPage from "@/pages/EventsPage";
 import EventDetailPage from "@/pages/EventDetailPage";
 import VerifyEmailPage from "@/pages/VerifyEmailPage";
+import IdeaGeneratorPage from "@/pages/IdeaGeneratorPage";
 import { AuthProvider } from "@/hooks/use-auth";
 import { useScrollReset } from "@/hooks/use-scroll-reset";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -37,6 +38,12 @@ function Router() {
       <Route path="/onboarding">
         <ProtectedRoute skipOnboarding={true}>
           <OnboardingPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/ideas">
+        <ProtectedRoute>
+          <IdeaGeneratorPage />
         </ProtectedRoute>
       </Route>
       

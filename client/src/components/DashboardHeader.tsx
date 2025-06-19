@@ -171,6 +171,10 @@ export default function DashboardHeader() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem className="px-4 py-2 text-sm" asChild>
+                  <Link href="/ideas">Idea Generator</Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="px-4 py-2 text-sm" asChild>
                   <Link href="/profile">Profile Settings</Link>
                 </DropdownMenuItem>
 

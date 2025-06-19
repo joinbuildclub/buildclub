@@ -67,6 +67,14 @@ export default function Navbar() {
               >
                 Events
               </Link>
+              {isAuthenticated && (
+                <Link
+                  href="/ideas"
+                  className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+                >
+                  Ideas
+                </Link>
+              )}
               {isAuthenticated ? (
                 <Link href="/dashboard">
                   <Button variant="default" className="gap-2">
@@ -118,6 +126,14 @@ export default function Navbar() {
                   >
                     Events
                   </Link>
+                  {isAuthenticated && (
+                    <Link
+                      href="/ideas"
+                      className="text-left px-2 py-2 text-gray-600 hover:text-gray-900 text-lg font-medium transition-colors block"
+                    >
+                      Ideas
+                    </Link>
+                  )}
                   {isAuthenticated ? (
                     <Link href="/dashboard">
                       <Button variant="default" className="gap-2 w-full">

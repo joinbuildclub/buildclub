@@ -39,6 +39,126 @@ import {
 } from "./sendgrid";
 import { hashPassword } from "./auth";
 
+// Idea generation function
+function generatePrototypeIdeas(interests: string[] = [], skillLevel: string = "beginner", timeframe: string = "2-3 hours") {
+  const ideaTemplates = {
+    "ai_tools": [
+      "Build a simple chatbot using OpenAI API that answers questions about a specific topic",
+      "Create a text summarizer that condenses long articles into key points",
+      "Develop a sentiment analysis tool for social media posts",
+      "Build an AI-powered todo list that prioritizes tasks based on urgency",
+      "Create a simple image caption generator using vision APIs"
+    ],
+    "llms": [
+      "Build a prompt testing playground for different LLM models",
+      "Create a simple RAG (Retrieval Augmented Generation) system with document upload",
+      "Develop a conversation history analyzer that tracks topic changes",
+      "Build a text style transfer tool (formal to casual, etc.)",
+      "Create a simple code explanation tool using LLMs"
+    ],
+    "computer_vision": [
+      "Build a simple object detection app using pre-trained models",
+      "Create a basic image classifier for common objects",
+      "Develop a simple face detection and blur tool",
+      "Build a color palette extractor from images",
+      "Create a basic OCR tool for extracting text from images"
+    ],
+    "nlp": [
+      "Build a keyword extraction tool from text documents",
+      "Create a simple language detector for multilingual text",
+      "Develop a basic text similarity checker",
+      "Build a simple named entity recognition tool",
+      "Create a text readability analyzer"
+    ],
+    "product": [
+      "Design a simple landing page generator with customizable templates",
+      "Build a basic user feedback collection and display system",
+      "Create a simple A/B testing framework for web elements",
+      "Develop a basic analytics dashboard for website metrics",
+      "Build a simple feature flag management system"
+    ],
+    "design": [
+      "Create a color palette generator with accessibility checking",
+      "Build a simple wireframe generator for basic layouts",
+      "Develop a typography pairing tool",
+      "Create a simple logo generator using geometric shapes",
+      "Build a basic design system component library"
+    ],
+    "engineering": [
+      "Build a simple REST API performance monitor",
+      "Create a basic code snippet organizer and searcher",
+      "Develop a simple database schema visualizer",
+      "Build a basic deployment status dashboard",
+      "Create a simple API documentation generator"
+    ]
+  };
+
+  const generalIdeas = [
+    "Build a simple habit tracker with streak counting",
+    "Create a basic expense tracker with category visualization",
+    "Develop a simple note-taking app with tagging",
+    "Build a basic weather dashboard for multiple cities",
+    "Create a simple password strength checker",
+    "Develop a basic URL shortener service",
+    "Build a simple polling/voting app",
+    "Create a basic countdown timer with custom events",
+    "Develop a simple QR code generator and scanner",
+    "Build a basic random quote generator with categories"
+  ];
+
+  // Get ideas based on user interests
+  let relevantIdeas: string[] = [];
+  
+  if (interests && interests.length > 0) {
+    interests.forEach(interest => {
+      const interestKey = interest.toLowerCase().replace(/\s+/g, '_');
+      if (ideaTemplates[interestKey as keyof typeof ideaTemplates]) {
+        relevantIdeas = relevantIdeas.concat(ideaTemplates[interestKey as keyof typeof ideaTemplates]);
+      }
+    });
+  }
+
+  // If no specific interests or not enough ideas, add general ones
+  if (relevantIdeas.length < 5) {
+    relevantIdeas = relevantIdeas.concat(generalIdeas);
+  }
+
+  // Shuffle and select 8-10 ideas
+  const shuffled = relevantIdeas.sort(() => 0.5 - Math.random());
+  const selectedIdeas = shuffled.slice(0, Math.min(10, shuffled.length));
+
+  // Add complexity suggestions based on skill level and timeframe
+  return selectedIdeas.map((idea, index) => ({
+    id: index + 1,
+    title: idea,
+    estimatedTime: timeframe,
+    difficulty: skillLevel === "beginner" ? "Easy" : skillLevel === "intermediate" ? "Medium" : "Hard",
+    tags: interests || ["general"],
+    description: `A ${timeframe} project perfect for ${skillLevel} level builders`,
+    techStack: getSuggestedTechStack(idea, skillLevel)
+  }));
+}
+
+function getSuggestedTechStack(idea: string, skillLevel: string): string[] {
+  const basicStack = ["HTML", "CSS", "JavaScript"];
+  const intermediateStack = ["React", "Node.js", "Express"];
+  const advancedStack = ["TypeScript", "Next.js", "PostgreSQL"];
+
+  if (idea.includes("API") || idea.includes("chatbot")) {
+    return skillLevel === "beginner" ? [...basicStack, "API"] : [...intermediateStack, "API"];
+  }
+  
+  if (idea.includes("database") || idea.includes("tracker")) {
+    return skillLevel === "beginner" ? [...basicStack, "localStorage"] : [...intermediateStack, "Database"];
+  }
+
+  if (idea.includes("dashboard") || idea.includes("analytics")) {
+    return skillLevel === "advanced" ? [...advancedStack, "Charts.js"] : [...intermediateStack, "Charts"];
+  }
+
+  return skillLevel === "beginner" ? basicStack : skillLevel === "intermediate" ? intermediateStack : advancedStack;
+}
+
 // Middleware for role-based access control
 interface AuthUser {
   id: string;
@@ -1126,6 +1246,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error updating user profile:", error);
       return res.status(500).json({
         message: "An error occurred while updating your profile.",
+      });
+    }
+  });
+
+  // Idea generation endpoint for authenticated users
+  app.post("/api/generate-ideas", isAuthenticated, async (req, res) => {
+    try {
+      const user = await getUserInfo(req);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { interests, skillLevel, timeframe } = req.body;
+
+      // Generate ideas based on user preferences
+      const ideas = generatePrototypeIdeas(interests, skillLevel, timeframe || "2-3 hours");
+
+      return res.status(200).json({
+        ideas,
+        generatedAt: new Date().toISOString(),
+        userId: user.id
+      });
+    } catch (error) {
+      console.error("Error generating ideas:", error);
+      return res.status(500).json({
+        message: "An error occurred while generating ideas."
       });
     }
   });

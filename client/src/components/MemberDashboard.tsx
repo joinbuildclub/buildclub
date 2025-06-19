@@ -1,7 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
+import { Link } from "wouter";
+import { Lightbulb, ArrowRight } from "lucide-react";
 import UserRegistrations from "./UserRegistrations";
 
 export default function MemberDashboard() {
@@ -11,6 +14,33 @@ export default function MemberDashboard() {
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 dashboard-heading">My Dashboard</h1>
+      
+      {/* Idea Generator CTA */}
+      <Card className="bg-gradient-to-r from-primary/10 to-blue-50 border-primary/20 mb-6">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <Lightbulb className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Need Project Ideas?
+                </h3>
+                <p className="text-gray-600">
+                  Generate personalized prototype ideas you can build in 2-3 hours
+                </p>
+              </div>
+            </div>
+            <Button asChild className="bg-primary hover:bg-primary/90">
+              <Link href="/ideas">
+                Generate Ideas
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       
       <Tabs defaultValue="my-registrations" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6 dashboard-font">
