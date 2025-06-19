@@ -42,68 +42,79 @@ import { hashPassword } from "./auth";
 // Idea generation function
 function generatePrototypeIdeas(interests: string[] = [], skillLevel: string = "beginner", timeframe: string = "2-3 hours") {
   const ideaTemplates = {
-    "ai_tools": [
-      "Build a simple chatbot using OpenAI API that answers questions about a specific topic",
-      "Create a text summarizer that condenses long articles into key points",
-      "Develop a sentiment analysis tool for social media posts",
-      "Build an AI-powered todo list that prioritizes tasks based on urgency",
-      "Create a simple image caption generator using vision APIs"
+    "community_tools": [
+      "Build a Providence neighborhood directory with local business listings",
+      "Create a community event calendar for Rhode Island happenings",
+      "Develop a local resource finder (food banks, libraries, services) for Providence",
+      "Build a simple volunteer opportunity matcher for RI nonprofits",
+      "Create a neighborhood watch or safety alert system for Providence areas",
+      "Design a local farmers market finder with seasonal produce info",
+      "Build a Providence public transit helper with real-time updates",
+      "Create a community skill-sharing platform for local expertise exchange"
     ],
-    "llms": [
-      "Build a prompt testing playground for different LLM models",
-      "Create a simple RAG (Retrieval Augmented Generation) system with document upload",
-      "Develop a conversation history analyzer that tracks topic changes",
-      "Build a text style transfer tool (formal to casual, etc.)",
-      "Create a simple code explanation tool using LLMs"
+    "creative_projects": [
+      "Design a digital art gallery showcasing Providence artists",
+      "Build a simple podcast platform for local voices and stories",
+      "Create a community storytelling app for sharing Providence history",
+      "Develop a local music venue and artist discovery platform",
+      "Build a digital scavenger hunt featuring Providence landmarks",
+      "Create a community photo sharing app for neighborhood pride",
+      "Design a simple website builder for local small businesses",
+      "Build a community cookbook with family recipes from Providence residents"
     ],
-    "computer_vision": [
-      "Build a simple object detection app using pre-trained models",
-      "Create a basic image classifier for common objects",
-      "Develop a simple face detection and blur tool",
-      "Build a color palette extractor from images",
-      "Create a basic OCR tool for extracting text from images"
+    "problem_solving": [
+      "Create a budget tracker tailored for Providence cost of living",
+      "Build a simple habit tracker with community challenges",
+      "Develop a study group organizer for local students",
+      "Create a car-sharing or ride coordination app for Providence",
+      "Build a simple task reminder system with accountability partners",
+      "Design a goal-setting app with local milestone celebrations",
+      "Create a time management tool for busy parents and professionals",
+      "Build a decision-making helper for daily choices"
     ],
-    "nlp": [
-      "Build a keyword extraction tool from text documents",
-      "Create a simple language detector for multilingual text",
-      "Develop a basic text similarity checker",
-      "Build a simple named entity recognition tool",
-      "Create a text readability analyzer"
+    "learning_tools": [
+      "Create a language learning app focusing on Providence's diverse communities",
+      "Build a simple quiz maker for local history and trivia",
+      "Develop a skill-tracking app for personal development",
+      "Create a reading list organizer with Providence library integration",
+      "Build a simple flashcard system for any subject",
+      "Design a progress tracker for online courses and certifications",
+      "Create a mentor-mentee matching system for local professionals",
+      "Build a workshop and class finder for Providence area"
     ],
-    "product": [
-      "Design a simple landing page generator with customizable templates",
-      "Build a basic user feedback collection and display system",
-      "Create a simple A/B testing framework for web elements",
-      "Develop a basic analytics dashboard for website metrics",
-      "Build a simple feature flag management system"
+    "wellness_lifestyle": [
+      "Create a mental health check-in app with local resource connections",
+      "Build a simple meditation timer with Providence nature sounds",
+      "Develop a fitness challenge app for friends and family",
+      "Create a meal planning tool using local Providence ingredients",
+      "Build a sleep tracker with personalized improvement tips",
+      "Design a gratitude journal with community sharing features",
+      "Create a walking route generator for Providence neighborhoods",
+      "Build a habit formation app with celebration milestones"
     ],
-    "design": [
-      "Create a color palette generator with accessibility checking",
-      "Build a simple wireframe generator for basic layouts",
-      "Develop a typography pairing tool",
-      "Create a simple logo generator using geometric shapes",
-      "Build a basic design system component library"
-    ],
-    "engineering": [
-      "Build a simple REST API performance monitor",
-      "Create a basic code snippet organizer and searcher",
-      "Develop a simple database schema visualizer",
-      "Build a basic deployment status dashboard",
-      "Create a simple API documentation generator"
+    "business_tools": [
+      "Create a simple invoice generator for Providence freelancers",
+      "Build a customer feedback collection system for local businesses",
+      "Develop a social media post scheduler for small businesses",
+      "Create a simple inventory tracker for local retailers",
+      "Build a basic appointment booking system",
+      "Design a customer loyalty program for Providence shops",
+      "Create a simple expense tracker for small business owners",
+      "Build a vendor comparison tool for local services"
     ]
   };
 
   const generalIdeas = [
-    "Build a simple habit tracker with streak counting",
-    "Create a basic expense tracker with category visualization",
-    "Develop a simple note-taking app with tagging",
-    "Build a basic weather dashboard for multiple cities",
-    "Create a simple password strength checker",
-    "Develop a basic URL shortener service",
-    "Build a simple polling/voting app",
-    "Create a basic countdown timer with custom events",
-    "Develop a simple QR code generator and scanner",
-    "Build a basic random quote generator with categories"
+    "Create a simple community bulletin board for Providence neighborhoods",
+    "Build a local business review system for Rhode Island",
+    "Develop a neighborhood resource sharing platform",
+    "Create a Providence weather and outdoor activity suggestions app",
+    "Build a simple community event RSVP system",
+    "Design a local service provider directory for Providence",
+    "Create a community garden management tool for local plots",
+    "Build a simple carpooling coordination app for Providence commuters",
+    "Develop a local news aggregator for Rhode Island happenings",
+    "Create a community feedback collection tool for city improvements"
   ];
 
   // Get ideas based on user interests
@@ -140,23 +151,39 @@ function generatePrototypeIdeas(interests: string[] = [], skillLevel: string = "
 }
 
 function getSuggestedTechStack(idea: string, skillLevel: string): string[] {
-  const basicStack = ["HTML", "CSS", "JavaScript"];
-  const intermediateStack = ["React", "Node.js", "Express"];
-  const advancedStack = ["TypeScript", "Next.js", "PostgreSQL"];
+  const noCodeStack = ["Airtable", "Google Forms", "Canva", "Wix/WordPress"];
+  const basicStack = ["HTML", "CSS", "JavaScript", "Bootstrap"];
+  const intermediateStack = ["React", "Firebase", "GitHub Pages"];
+  const advancedStack = ["React", "Node.js", "Database", "APIs"];
 
-  if (idea.includes("API") || idea.includes("chatbot")) {
-    return skillLevel === "beginner" ? [...basicStack, "API"] : [...intermediateStack, "API"];
+  // For non-technical approaches
+  if (skillLevel === "beginner") {
+    if (idea.includes("directory") || idea.includes("calendar") || idea.includes("tracker")) {
+      return ["Google Sheets", "Airtable", "Google Forms"];
+    }
+    if (idea.includes("website") || idea.includes("gallery") || idea.includes("platform")) {
+      return ["Wix", "WordPress", "Canva"];
+    }
+    if (idea.includes("app") || idea.includes("system")) {
+      return ["Google Forms", "Airtable", "Zapier"];
+    }
+    return noCodeStack;
+  }
+
+  // For technical implementations
+  if (idea.includes("community") || idea.includes("local") || idea.includes("Providence")) {
+    return skillLevel === "intermediate" ? [...intermediateStack, "Maps API"] : [...advancedStack, "Google Maps"];
   }
   
-  if (idea.includes("database") || idea.includes("tracker")) {
-    return skillLevel === "beginner" ? [...basicStack, "localStorage"] : [...intermediateStack, "Database"];
+  if (idea.includes("tracker") || idea.includes("organizer") || idea.includes("planner")) {
+    return skillLevel === "intermediate" ? [...intermediateStack, "Local Storage"] : [...advancedStack, "User Auth"];
   }
 
-  if (idea.includes("dashboard") || idea.includes("analytics")) {
-    return skillLevel === "advanced" ? [...advancedStack, "Charts.js"] : [...intermediateStack, "Charts"];
+  if (idea.includes("finder") || idea.includes("directory") || idea.includes("platform")) {
+    return skillLevel === "intermediate" ? [...intermediateStack, "Search"] : [...advancedStack, "Search", "Filters"];
   }
 
-  return skillLevel === "beginner" ? basicStack : skillLevel === "intermediate" ? intermediateStack : advancedStack;
+  return skillLevel === "intermediate" ? intermediateStack : advancedStack;
 }
 
 // Middleware for role-based access control

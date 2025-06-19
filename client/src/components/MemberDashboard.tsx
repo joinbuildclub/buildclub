@@ -25,16 +25,16 @@ export default function MemberDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Need Project Ideas?
+                  Build for Your Community
                 </h3>
                 <p className="text-gray-600">
-                  Generate personalized prototype ideas you can build in 2-3 hours
+                  Get project ideas that make a real impact in Providence and Rhode Island
                 </p>
               </div>
             </div>
             <Button asChild className="bg-primary hover:bg-primary/90">
               <Link href="/ideas">
-                Generate Ideas
+                Get Community Ideas
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>

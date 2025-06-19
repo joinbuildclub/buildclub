@@ -28,13 +28,12 @@ interface GeneratedIdea {
 }
 
 const interestOptions = [
-  { id: "ai_tools", label: "AI Tools" },
-  { id: "llms", label: "Large Language Models" },
-  { id: "computer_vision", label: "Computer Vision" },
-  { id: "nlp", label: "Natural Language Processing" },
-  { id: "product", label: "Product Development" },
-  { id: "design", label: "Design" },
-  { id: "engineering", label: "Engineering" },
+  { id: "community_tools", label: "Community Tools" },
+  { id: "creative_projects", label: "Creative Projects" },
+  { id: "problem_solving", label: "Problem Solving" },
+  { id: "learning_tools", label: "Learning Tools" },
+  { id: "wellness_lifestyle", label: "Wellness & Lifestyle" },
+  { id: "business_tools", label: "Business Tools" },
 ];
 
 const timeframeOptions = [
@@ -125,10 +124,10 @@ export default function IdeaGeneratorPage() {
           <Lightbulb className="w-6 h-6 text-primary" />
         </div>
         <h1 className="text-3xl font-bold mb-3 text-gray-800">
-          Project Idea Generator
+          Community Impact Ideas
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Get personalized project ideas that you can prototype in just a few hours
+          Generate project ideas that add value to Providence and Rhode Island communities
         </p>
       </div>
 
