@@ -72,7 +72,7 @@ export default function Navbar() {
                   href="/ideas"
                   className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
                 >
-                  Community Ideas
+                  AI Ideas
                 </Link>
               )}
               {isAuthenticated ? (

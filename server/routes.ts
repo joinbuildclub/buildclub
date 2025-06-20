@@ -42,79 +42,79 @@ import { hashPassword } from "./auth";
 // Idea generation function
 function generatePrototypeIdeas(interests: string[] = [], skillLevel: string = "beginner", timeframe: string = "2-3 hours") {
   const ideaTemplates = {
+    "ai_powered": [
+      "Build a chatbot that answers questions about Providence events and activities",
+      "Create an AI writing assistant that helps with emails and social posts",
+      "Develop an image generator for social media content using AI APIs",
+      "Build a smart recipe suggester based on dietary preferences and local ingredients",
+      "Create an AI-powered language learning tutor for conversational practice",
+      "Design a mood-based music playlist generator using AI recommendations",
+      "Build a smart document summarizer for research and news articles",
+      "Create an AI mentor that gives personalized advice based on your goals"
+    ],
     "community_tools": [
-      "Build a Providence neighborhood directory with local business listings",
-      "Create a community event calendar for Rhode Island happenings",
-      "Develop a local resource finder (food banks, libraries, services) for Providence",
-      "Build a simple volunteer opportunity matcher for RI nonprofits",
-      "Create a neighborhood watch or safety alert system for Providence areas",
-      "Design a local farmers market finder with seasonal produce info",
-      "Build a Providence public transit helper with real-time updates",
-      "Create a community skill-sharing platform for local expertise exchange"
+      "Build a Providence neighborhood directory with AI-powered search",
+      "Create a community event calendar with smart recommendations",
+      "Develop a local resource finder using natural language queries",
+      "Build a volunteer opportunity matcher using preference algorithms",
+      "Create a neighborhood safety network with automated alerts",
+      "Design a farmers market finder with seasonal AI predictions",
+      "Build a public transit helper with AI-powered delay predictions",
+      "Create a skill-sharing platform with intelligent matching"
     ],
     "creative_projects": [
-      "Design a digital art gallery showcasing Providence artists",
-      "Build a simple podcast platform for local voices and stories",
-      "Create a community storytelling app for sharing Providence history",
-      "Develop a local music venue and artist discovery platform",
-      "Build a digital scavenger hunt featuring Providence landmarks",
-      "Create a community photo sharing app for neighborhood pride",
-      "Design a simple website builder for local small businesses",
-      "Build a community cookbook with family recipes from Providence residents"
+      "Build an AI art generator for personalized profile pictures",
+      "Create a story generator that writes short tales based on prompts",
+      "Develop a color palette generator using AI for design projects",
+      "Build a creative writing prompt generator with AI suggestions",
+      "Create an AI-powered meme generator for social media",
+      "Design a music composition helper using AI chord progressions",
+      "Build a photo editing tool with AI-powered filters",
+      "Create a logo generator using AI design principles"
     ],
-    "problem_solving": [
-      "Create a budget tracker tailored for Providence cost of living",
-      "Build a simple habit tracker with community challenges",
-      "Develop a study group organizer for local students",
-      "Create a car-sharing or ride coordination app for Providence",
-      "Build a simple task reminder system with accountability partners",
-      "Design a goal-setting app with local milestone celebrations",
-      "Create a time management tool for busy parents and professionals",
-      "Build a decision-making helper for daily choices"
+    "productivity": [
+      "Build an AI-powered todo list that prioritizes tasks intelligently",
+      "Create a smart calendar assistant that suggests optimal meeting times",
+      "Develop a habit tracker with AI coaching and motivation",
+      "Build an expense tracker with AI category detection",
+      "Create a goal-setting app with AI progress tracking",
+      "Design a time management tool with intelligent break suggestions",
+      "Build a decision-making helper using AI pros/cons analysis",
+      "Create a focus timer with AI-powered distraction blocking"
     ],
     "learning_tools": [
-      "Create a language learning app focusing on Providence's diverse communities",
-      "Build a simple quiz maker for local history and trivia",
-      "Develop a skill-tracking app for personal development",
-      "Create a reading list organizer with Providence library integration",
-      "Build a simple flashcard system for any subject",
-      "Design a progress tracker for online courses and certifications",
-      "Create a mentor-mentee matching system for local professionals",
-      "Build a workshop and class finder for Providence area"
+      "Build a flashcard system with AI-powered spaced repetition",
+      "Create a quiz generator that adapts to your learning style",
+      "Develop a language practice app with AI conversation partners",
+      "Build a skill tracker with AI-recommended learning paths",
+      "Create a reading comprehension tool with AI-generated questions",
+      "Design a study buddy finder with intelligent matching",
+      "Build a course recommendation engine based on your interests",
+      "Create a knowledge retention tracker with AI insights"
     ],
-    "wellness_lifestyle": [
-      "Create a mental health check-in app with local resource connections",
-      "Build a simple meditation timer with Providence nature sounds",
-      "Develop a fitness challenge app for friends and family",
-      "Create a meal planning tool using local Providence ingredients",
-      "Build a sleep tracker with personalized improvement tips",
-      "Design a gratitude journal with community sharing features",
-      "Create a walking route generator for Providence neighborhoods",
-      "Build a habit formation app with celebration milestones"
-    ],
-    "business_tools": [
-      "Create a simple invoice generator for Providence freelancers",
-      "Build a customer feedback collection system for local businesses",
-      "Develop a social media post scheduler for small businesses",
-      "Create a simple inventory tracker for local retailers",
-      "Build a basic appointment booking system",
-      "Design a customer loyalty program for Providence shops",
-      "Create a simple expense tracker for small business owners",
-      "Build a vendor comparison tool for local services"
+    "wellness_tools": [
+      "Build a mood tracker with AI-powered insights and suggestions",
+      "Create a meditation app with AI-personalized sessions",
+      "Develop a fitness assistant with AI workout recommendations",
+      "Build a sleep optimizer with AI pattern analysis",
+      "Create a nutrition tracker with AI meal suggestions",
+      "Design a mental health check-in with AI emotional support",
+      "Build a mindfulness reminder system with intelligent timing",
+      "Create a stress management tool with AI coping strategies"
     ]
   };
 
   const generalIdeas = [
-    "Create a simple community bulletin board for Providence neighborhoods",
-    "Build a local business review system for Rhode Island",
-    "Develop a neighborhood resource sharing platform",
-    "Create a Providence weather and outdoor activity suggestions app",
-    "Build a simple community event RSVP system",
-    "Design a local service provider directory for Providence",
-    "Create a community garden management tool for local plots",
-    "Build a simple carpooling coordination app for Providence commuters",
-    "Develop a local news aggregator for Rhode Island happenings",
-    "Create a community feedback collection tool for city improvements"
+    "Build an AI-powered personal assistant that learns your daily routines",
+    "Create a smart photo organizer that automatically tags and sorts images",
+    "Develop an AI homework helper that explains concepts step-by-step",
+    "Build a conversation starter generator for networking events",
+    "Create an AI-powered email writer that matches your tone",
+    "Design a smart shopping list that predicts what you need",
+    "Build an AI travel planner that creates custom itineraries",
+    "Create a mood-based activity suggester using machine learning",
+    "Develop an AI-powered price tracker for online shopping",
+    "Build a smart reminder system that learns your preferences"
   ];
 
   // Get ideas based on user interests
@@ -151,39 +151,49 @@ function generatePrototypeIdeas(interests: string[] = [], skillLevel: string = "
 }
 
 function getSuggestedTechStack(idea: string, skillLevel: string): string[] {
-  const noCodeStack = ["Airtable", "Google Forms", "Canva", "Wix/WordPress"];
-  const basicStack = ["HTML", "CSS", "JavaScript", "Bootstrap"];
-  const intermediateStack = ["React", "Firebase", "GitHub Pages"];
-  const advancedStack = ["React", "Node.js", "Database", "APIs"];
+  const noCodeAI = ["ChatGPT API", "Zapier", "Google Forms", "Airtable"];
+  const basicAI = ["OpenAI API", "HTML", "CSS", "JavaScript"];
+  const intermediateAI = ["React", "OpenAI API", "Firebase", "Vercel"];
+  const advancedAI = ["React", "OpenAI API", "Node.js", "Vector DB", "Auth"];
+
+  // AI-powered suggestions
+  if (idea.includes("AI") || idea.includes("chatbot") || idea.includes("smart") || idea.includes("intelligent")) {
+    if (skillLevel === "beginner") {
+      return ["OpenAI API", "Zapier", "Google Sheets"];
+    }
+    return skillLevel === "intermediate" ? [...intermediateAI] : [...advancedAI];
+  }
 
   // For non-technical approaches
   if (skillLevel === "beginner") {
-    if (idea.includes("directory") || idea.includes("calendar") || idea.includes("tracker")) {
-      return ["Google Sheets", "Airtable", "Google Forms"];
+    if (idea.includes("generator") || idea.includes("assistant") || idea.includes("recommender")) {
+      return ["OpenAI API", "Google Forms", "Zapier"];
     }
-    if (idea.includes("website") || idea.includes("gallery") || idea.includes("platform")) {
-      return ["Wix", "WordPress", "Canva"];
+    if (idea.includes("tracker") || idea.includes("organizer")) {
+      return ["Airtable", "Google Sheets", "Zapier"];
     }
-    if (idea.includes("app") || idea.includes("system")) {
-      return ["Google Forms", "Airtable", "Zapier"];
+    if (idea.includes("website") || idea.includes("platform")) {
+      return ["Wix", "WordPress", "OpenAI API"];
     }
-    return noCodeStack;
+    return noCodeAI;
   }
 
-  // For technical implementations
+  // Community/local features
   if (idea.includes("community") || idea.includes("local") || idea.includes("Providence")) {
-    return skillLevel === "intermediate" ? [...intermediateStack, "Maps API"] : [...advancedStack, "Google Maps"];
+    return skillLevel === "intermediate" ? [...intermediateAI, "Maps API"] : [...advancedAI, "Google Maps"];
   }
   
-  if (idea.includes("tracker") || idea.includes("organizer") || idea.includes("planner")) {
-    return skillLevel === "intermediate" ? [...intermediateStack, "Local Storage"] : [...advancedStack, "User Auth"];
+  // Creative projects
+  if (idea.includes("art") || idea.includes("image") || idea.includes("photo") || idea.includes("design")) {
+    return skillLevel === "intermediate" ? [...intermediateAI, "DALL-E API"] : [...advancedAI, "Image APIs"];
   }
 
-  if (idea.includes("finder") || idea.includes("directory") || idea.includes("platform")) {
-    return skillLevel === "intermediate" ? [...intermediateStack, "Search"] : [...advancedStack, "Search", "Filters"];
+  // Learning and productivity
+  if (idea.includes("learning") || idea.includes("study") || idea.includes("productivity")) {
+    return skillLevel === "intermediate" ? [...intermediateAI, "Local Storage"] : [...advancedAI, "User Auth"];
   }
 
-  return skillLevel === "intermediate" ? intermediateStack : advancedStack;
+  return skillLevel === "intermediate" ? intermediateAI : advancedAI;
 }
 
 // Middleware for role-based access control
