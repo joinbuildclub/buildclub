@@ -44,9 +44,9 @@ const timeframeOptions = [
 ];
 
 const skillLevelOptions = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
+  { value: "beginner", label: "Non-Technical (No-code tools)" },
+  { value: "intermediate", label: "Some Technical (Basic coding)" },
+  { value: "advanced", label: "Very Technical (Full development)" },
 ];
 
 export default function IdeaGeneratorPage() {
@@ -170,10 +170,10 @@ export default function IdeaGeneratorPage() {
 
               <Separator />
 
-              {/* Skill Level */}
+              {/* Technical Level */}
               <div>
                 <label className="text-sm font-medium mb-3 block">
-                  Skill Level
+                  Technical Level
                 </label>
                 <Select value={skillLevel} onValueChange={setSkillLevel}>
                   <SelectTrigger>
