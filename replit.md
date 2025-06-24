@@ -101,9 +101,15 @@ Build Club is a modern web platform designed to connect AI enthusiasts, product 
 
 ## Deployment Strategy
 
+### Docker Containerization
+- **Docker Support**: Full containerization with Dockerfile and docker-compose.yml
+- **Multi-service Setup**: Application and PostgreSQL containers with volume persistence
+- **Environment Management**: Environment variables passed through docker-compose
+- **Production Ready**: Optimized build process within container
+
 ### Environment Configuration
-- **Development**: Local PostgreSQL with Vite dev server
-- **Production**: Autoscale deployment with built assets
+- **Development**: Local PostgreSQL with Vite dev server or Docker Compose
+- **Production**: Autoscale deployment with built assets or Docker deployment
 - **Environment Variables**: Secure configuration for API keys and database URLs
 - **Session Security**: Production-ready session configuration with secure cookies
 
@@ -111,17 +117,22 @@ Build Club is a modern web platform designed to connect AI enthusiasts, product 
 - **Migrations**: Version-controlled schema changes via Drizzle
 - **UUID Strategy**: Future-proof identification system
 - **Connection Pooling**: PostgreSQL connection pool for scalability
-- **Backup Strategy**: Regular automated backups recommended
+- **Docker Database**: Containerized PostgreSQL with persistent volumes
 
 ### Build Process
 - **Frontend**: Vite builds optimized React bundle
 - **Backend**: ESBuild creates production Node.js bundle
 - **Asset Management**: Static file serving with proper caching headers
 - **Type Safety**: Full TypeScript compilation before deployment
+- **Container Build**: Multi-stage Docker build for optimized production images
 
 ## Changelog
 
-- June 19, 2025. Initial setup
+- June 24, 2025: Added Docker containerization with Dockerfile, docker-compose.yml, and comprehensive README
+- June 24, 2025: Enhanced AI idea generator with clearer technical levels (Non-Technical, Some Technical, Very Technical)
+- June 24, 2025: Updated community links from Discord to Slack throughout application
+- June 24, 2025: Implemented AI prototype ideas generator with authentication requirement
+- June 19, 2025: Initial setup
 
 ## User Preferences
 

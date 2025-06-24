@@ -1,123 +1,112 @@
-# Build Club
+# Build Club - Community Platform for AI Builders
 
-A platform for AI enthusiasts to connect, collaborate, and build together in real life.
+A modern web platform connecting AI enthusiasts, product makers, designers, and engineers through real-life events and meetups in Providence, RI.
 
-## 🚀 About
+## Quick Start
 
-Build Club is a community of product makers, designers, and engineers collaborating to build impactful AI solutions in real life. Our platform facilitates event organization, registration, and community building.
+### Using Docker (Recommended)
 
-## 📋 Tech Stack
+1. **Clone and setup environment:**
+   ```bash
+   git clone <repository-url>
+   cd buildclub
+   cp .env.example .env
+   ```
 
-- **Frontend**: React (TypeScript), Tailwind CSS, Shadcn UI
-- **Backend**: Express.js, Node.js
+2. **Configure environment variables in `.env`:**
+   ```
+   DATABASE_URL=postgresql://buildclub:buildclub@db:5432/buildclub
+   SENDGRID_API_KEY=your_sendgrid_api_key
+   ADMIN_EMAIL=your_admin_email
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   ```
+
+3. **Start with Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+
+4. **Access the application:**
+   - Frontend & Backend: http://localhost:5000
+   - PostgreSQL: localhost:5432
+
+### Local Development
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Start development servers:**
+   ```bash
+   npm run dev
+   ```
+
+3. **Build for production:**
+   ```bash
+   npm run build
+   npm start
+   ```
+
+## Features
+
+- **Event Management**: Create and manage AI-focused workshops, meetups, hackathons, and conferences
+- **User Authentication**: Email/password and Google OAuth with role-based access
+- **Hub System**: Geographic organization for multi-location events
+- **AI Idea Generator**: Personalized prototype suggestions for 2-3 hour projects
+- **Email Integration**: SendGrid-powered notifications and confirmations
+- **Admin Dashboard**: Comprehensive management tools for organizers
+
+## Tech Stack
+
+- **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Node.js, Express, TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Passport.js, JWT
-- **Email**: SendGrid
+- **Authentication**: Passport.js with session management
+- **Email**: SendGrid integration
+- **Build Tools**: Vite, ESBuild
 
-## 🔧 Getting Started
+## Environment Variables
 
-### Prerequisites
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `SENDGRID_API_KEY` | SendGrid API key for emails | Yes |
+| `ADMIN_EMAIL` | Admin email for notifications | Yes |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | Yes |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | Yes |
 
-- Node.js LTS/Hydrogen (v18.x) - We use nvm for Node.js version management
-- PostgreSQL database
-- pnpm package manager
-
-### Environment Setup
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/joinbuildclub/buildclub.git
-cd buildclub
-```
-
-2. **Use the correct Node.js version**
+## Docker Commands
 
 ```bash
-nvm use
+# Build and start services
+docker-compose up --build
+
+# Start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Reset database
+docker-compose down -v
+docker-compose up --build
 ```
 
-3. **Install dependencies**
+## Database Management
 
 ```bash
-pnpm install
+# Push schema changes
+npm run db:push
+
+# Access database in Docker
+docker-compose exec db psql -U buildclub -d buildclub
 ```
 
-4. **Create a .env file in the root directory with the following variables:**
+## License
 
-```
-# Database Configuration
-DATABASE_URL=postgresql://postgres:password@localhost:5432/buildclub
-
-# Authentication
-SESSION_SECRET=your-secret-key-here
-
-# Environment
-NODE_ENV=development
-
-# SendGrid (Optional)
-SENDGRID_API_KEY=your-sendgrid-api-key
-ADMIN_EMAIL=admin@buildclub.co
-
-# Google OAuth (Optional)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
-
-### Running the Development Server
-
-```bash
-pnpm dev
-```
-
-This will start the development server at http://localhost:5000.
-
-## 📊 Database Migrations
-
-We use Drizzle ORM for database management.
-
-### Create and apply migrations
-
-```bash
-pnpm db:push
-```
-
-## 📁 Project Structure
-
-```
-buildclub/
-├── client/             # Frontend React application
-│   ├── src/
-│   │   ├── components/ # Reusable React components
-│   │   ├── pages/      # Page components
-│   │   ├── hooks/      # Custom React hooks
-│   │   └── lib/        # Utility functions and configuration
-├── server/             # Backend Express.js application
-│   ├── index.ts        # Main server entry point
-│   ├── routes.ts       # API routes
-│   ├── auth.ts         # Authentication setup
-│   └── db.ts           # Database connection
-├── shared/             # Shared code between client and server
-│   └── schema.ts       # Database schema definitions
-└── migrations/         # Database migration files
-```
-
-## 🔑 Available Scripts
-
-- `pnpm dev` - Start the development server
-- `pnpm build` - Build the production application
-- `pnpm start` - Start the production server
-- `pnpm db:push` - Apply database schema changes
-
-## 🤝 Contributing
-
-We welcome contributions to the Build Club platform! Please feel free to submit issues and pull requests.
-
-## 📫 Contact
-
-- Website: [buildclub.co](https://buildclub.co)
-- Email: [join@buildclub.co](mailto:join@buildclub.co)
-
-## 📄 License
-
-This project is licensed under the MIT License.
+MIT
