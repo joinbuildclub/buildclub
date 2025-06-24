@@ -7,13 +7,13 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including devDependencies)
+RUN npm ci
 
 # Copy application code
 COPY . .
 
-# Build the client
+# Build the client and server
 RUN npm run build
 
 # Expose port 5000
